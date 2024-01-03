@@ -6,6 +6,7 @@ import { TemplateResult } from 'lit';
 
 import { List } from '@material/mwc-list';
 import { Select } from '@material/mwc-select';
+import { TextArea } from '@material/mwc-textarea';
 import { TextField } from '@material/mwc-textfield';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Edit } from '@openscd/open-scd-core';
@@ -27,11 +28,11 @@ export function crossProduct<T>(...arrays: T[][]): T[][] {
 }
 
 export const wizardInputSelector =
-  'scl-textfield, mwc-textfield, ace-editor, mwc-select, scl-select, scl-checkbox';
+  'scl-textfield, mwc-textfield, mwc-textarea, ace-editor, mwc-select, scl-select, scl-checkbox';
 export type WizardInputElement =
   | SclTextfield
   | TextField
-  // TODO(c-dinkel): extend component
+  | TextArea
   | Select
   | SclSelect;
 
@@ -205,7 +206,7 @@ const pTypes2003: string[] = [
   'OSI-AE-Invoke',
   'OSI-NSAP',
   'VLAN-ID',
-  'VLAN-PRIORITY',
+  'VLAN-PRIORITY'
 ];
 
 const pTypes2007B: string[] = [
@@ -215,7 +216,7 @@ const pTypes2007B: string[] = [
   'DNSName',
   'UDP-Port',
   'TCP-Port',
-  'C37-118-IP-Port',
+  'C37-118-IP-Port'
 ];
 
 const pTypes2007B4: string[] = [
@@ -227,7 +228,7 @@ const pTypes2007B4: string[] = [
   'IPv6ClassOfTraffic',
   'IPv6-IGMPv3Src',
   'IP-IGMPv3Sr',
-  'IP-ClassOfTraffic',
+  'IP-ClassOfTraffic'
 ];
 
 const typeBase = {
@@ -241,7 +242,7 @@ const typeBase = {
   VLANid: '[0-9A-F]{3}',
   port: '0|([1-9][0-9]{0,3})|([1-5][0-9]{4,4})|(6[0-4][0-9]{3,3})|(65[0-4][0-9]{2,2})|(655[0-2][0-9])|(6553[0-5])',
   IPv6: '([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}',
-  IPv6sub: '/[1-9]|/[1-9][0-9]|/1[0-1][0-9]|/12[0-7]',
+  IPv6sub: '/[1-9]|/[1-9][0-9]|/1[0-1][0-9]|/12[0-7]'
 };
 
 /** Patterns from IEC 61850-6 for all `P` elements */
@@ -275,7 +276,7 @@ export const typePattern: Partial<Record<string, string>> = {
   IPv6ClassOfTraffic: '[0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]',
   'IPv6-IGMPv3Src': typeBase.IPv6,
   'IP-IGMPv3Sr': typeBase.IP,
-  'IP-ClassOfTraffic': typeBase.OSI,
+  'IP-ClassOfTraffic': typeBase.OSI
 };
 
 /** Whether `P` element is required within `Address` */
@@ -308,7 +309,7 @@ export const typeNullable: Partial<Record<string, boolean>> = {
   IPv6ClassOfTraffic: true,
   'IPv6-IGMPv3Src': true,
   'IP-IGMPv3Sr': true,
-  'IP-ClassOfTraffic': true,
+  'IP-ClassOfTraffic': true
 };
 
 /** Max length definition for all `P` element */
@@ -320,7 +321,7 @@ export const typeMaxLength: Partial<Record<string, number>> = {
   'OSI-AE-Qualifier': 5,
   'OSI-AE-Invoke': 5,
   'OSI-NSAP': 40,
-  'IP-ClassOfTraffic': 2,
+  'IP-ClassOfTraffic': 2
 };
 
 /** Sorts selected `ListItem`s to the top and disabled ones to the bottom. */

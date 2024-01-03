@@ -37,7 +37,7 @@ export function newEditWizardEvent(
     bubbles: true,
     composed: true,
     ...eventInitDict,
-    detail: { element, subWizard, ...eventInitDict?.detail },
+    detail: { element, subWizard, ...eventInitDict?.detail }
   });
 }
 
@@ -55,8 +55,8 @@ export function newCreateWizardEvent(
       parent,
       tagName,
       subWizard,
-      ...eventInitDict?.detail,
-    },
+      ...eventInitDict?.detail
+    }
   });
 }
 
@@ -68,7 +68,7 @@ export function newCloseWizardEvent(
     bubbles: true,
     composed: true,
     ...eventInitDict,
-    detail: wizard,
+    detail: wizard
   });
 }
 
