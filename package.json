@@ -10,18 +10,22 @@
     ".": "./dist/scl-wizarding.js"
   },
   "scripts": {
+    "start": "npm run build && concurrently -k -r \"tsc -b --watch --preserveWatchOutput\" \"wds\"",
+    "start:build": "npm run build && es-dev-server --root-dir dist --app-index index.html --compatibility none --open",
+    "start:bundle": "npm run bundle && es-dev-server --root-dir dist --app-index index.html --compatibility none --open",
+    "test": "playwright install && wtr --coverage",
+    "test:watch": "npm run build && concurrently -k -r \"tsc -b --watch --preserveWatchOutput\" \"wtr --watch --coverage\"",
+    "test:update": "npm run build && wtr --update-visual-baseline",
     "analyze": "cem analyze --litelement",
-    "start": "tsc && concurrently -k -r \"tsc --watch --preserveWatchOutput\" \"wds\"",
-    "build": "rimraf dist && rollup -c rollup.config.js",
-    "deploy": "npm run build && gh-pages --dist 'dist'",
-    "prepublish": "tsc && npm run analyze -- --exclude dist",
+    "deploy": "npm run bundle && gh-pages --dist 'dist'",
+    "build": "npm run compile",
+    "compile": "tsc -b",
+    "bundle": "rimraf dist && rollup -c rollup.config.js",
+    "doc": "npm run analyze -- --exclude dist && typedoc --out dist/doc foundation.ts",
+    "prepublish": "npm run lint && npm run build && npm run doc",
     "lint": "eslint --ext .ts,.html . --ignore-path .gitignore && prettier \"**/*.ts\" --check --ignore-path .gitignore",
     "format": "eslint --ext .ts,.html . --fix --ignore-path .gitignore && prettier \"**/*.ts\" --write --ignore-path .gitignore",
-    "test": "playwright install && tsc && wtr --coverage",
-    "test:watch": "tsc && concurrently -k -r \"tsc --watch --preserveWatchOutput\" \"wtr --watch --coverage\"",
-    "test:unit": "tsc && concurrently -k -r \"tsc --watch --preserveWatchOutput\" \"wtr --group unit --watch --coverage\"",
-    "test:visual": "tsc && concurrently -k -r \"tsc --watch --preserveWatchOutput\" \"wtr --group visual --watch --coverage\"",
-    "test:update": "tsc && wtr --group visual --update-visual-baseline"
+    "prepare": "husky install"
   },
   "dependencies": {
     "@material/mwc-checkbox": "^0.27.0",
