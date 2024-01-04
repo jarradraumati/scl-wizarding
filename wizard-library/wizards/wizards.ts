@@ -35,6 +35,7 @@ import {
   createPowerTransformerWizard,
   editPowerTransformerWizard,
 } from './powertransformer.js';
+import { createPrivateWizard, editPrivateWizard } from './private.js';
 import { createProcessWizard, editProcessWizard } from './process.js';
 import { createSDoWizard, editSDoWizard } from './sdo.js';
 import { editSMvWizard } from './smv.js';
@@ -369,8 +370,8 @@ export const wizards: Record<
     create: createPowerTransformerWizard,
   },
   Private: {
-    edit: emptyWizard,
-    create: emptyWizard,
+    edit: editPrivateWizard,
+    create: createPrivateWizard,
   },
   Process: {
     edit: editProcessWizard,
