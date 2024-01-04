@@ -23,8 +23,10 @@ import {
   WizardActor,
   WizardInputElement,
   createElement,
+  getValue,
 } from '../foundation.js';
 import { selector } from '../../foundation/identities/selector.js';
+import { patterns, maxLength } from './patterns.js';
 
 // global variables
 const selectedIEDs: string[] = [];
@@ -42,21 +44,94 @@ function compare(
   return 0;
 }
 
+type RenderOptions = {
+  desc: string | null;
+  iedName: string | null;
+  ldInst: string | null;
+  prefix: string | null;
+  lnClass: string | null;
+  lnInst: string | null;
+  lnType: string | null;
+};
+
+export function renderLNodeWizard(options: RenderOptions): TemplateResult[] {
+  const iedAssigned = options.iedName !== 'None';
+
+  return [
+    html`<scl-textfield
+      label="iedName"
+      .maybeValue=${options.iedName}
+      helper="Referenced IED"
+      helperPersistent
+      disabled
+    ></scl-textfield>`,
+    html`<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+    html`<scl-textfield
+      label="ldInst"
+      .maybeValue=${options.ldInst}
+      helper="Referenced Logical Device"
+      maxLength="${maxLength.ldInst}"
+      pattern="${patterns.ldInst}"
+      ?nullable="${!iedAssigned}"
+      ?disabled="${iedAssigned}"
+    ></scl-textfield>`,
+    html`<scl-textfield
+      label="prefix"
+      .maybeValue=${options.prefix}
+      helper="Logical Node Prefix"
+      maxLength="${maxLength.prefix}"
+      pattern="${patterns.prefix}"
+      ?nullable="${!iedAssigned}"
+      ?disabled="${iedAssigned}"
+    ></scl-textfield>`,
+    html`<scl-textfield
+      label="lnClass"
+      .maybeValue=${options.lnClass}
+      helper="Logical Node Class"
+      helperPersistent
+      required
+      disabled
+    ></scl-textfield>`,
+    html`<scl-textfield
+      label="lnInst"
+      .maybeValue=${options.lnInst}
+      helper="Logical Node Instance"
+      maxLength="${maxLength.lnInst}"
+      pattern="${patterns.lnInst}"
+      helperPersistent
+      ?disabled="${iedAssigned}"
+    ></scl-textfield>`,
+    html`<scl-textfield
+      label="lnType"
+      .maybeValue=${options.lnType}
+      helper="Logical Node Type"
+      helperPersistent
+      disabled
+    ></scl-textfield>`,
+  ];
+}
+
 function logicalNodeParameters(anyLn: Element): {
   prefix: string;
   lnClass: string;
   inst: string;
   iedName: string;
   ldInst: string;
+  lnType: string;
 } {
   const prefix = anyLn.getAttribute('prefix') ?? '';
   const lnClass = anyLn.getAttribute('lnClass') ?? '';
   const inst = anyLn.getAttribute('inst') ?? '';
+  const lnType = anyLn.getAttribute('lnType') ?? '';
 
   const iedName = anyLn.closest('IED')?.getAttribute('name') ?? '';
   const ldInst = anyLn.closest('LDevice')?.getAttribute('inst') ?? '';
 
-  return { prefix, lnClass, inst, iedName, ldInst };
+  return { prefix, lnClass, inst, iedName, ldInst, lnType };
 }
 
 function allAnyLNs(doc: XMLDocument): Element[] {
@@ -163,13 +238,15 @@ function createSingleLNode(parent: Element, ln: Element): Insert | null {
     };
   }
 
-  const { iedName, ldInst, prefix, lnClass, inst } = logicalNodeParameters(ln);
+  const { iedName, ldInst, prefix, lnClass, inst, lnType } =
+    logicalNodeParameters(ln);
   const node = createElement(parent.ownerDocument, 'LNode', {
     iedName,
     ldInst,
     prefix,
     lnClass,
     lnInst: inst,
+    lnType,
   });
 
   return {
@@ -201,6 +278,24 @@ function createAction(parent: Element): WizardActor {
     return selectedLNs
       .map(ln => createSingleLNode(parent, ln))
       .filter(insert => insert) as Insert[];
+  };
+}
+
+function updateAction(element: Element): WizardActor {
+  return (inputs: WizardInputElement[]): Edit[] => {
+    const attributes: Record<string, string | null> = {};
+    const lNodeTypeKeys = ['desc', 'iedName', 'ldInst', 'prefix', 'lnInst'];
+    lNodeTypeKeys.forEach(key => {
+      attributes[key] = getValue(inputs.find(i => i.label === key)!);
+    });
+
+    if (
+      lNodeTypeKeys.some(key => attributes[key] !== element.getAttribute(key))
+    ) {
+      return [{ element, attributes }];
+    }
+
+    return [];
   };
 }
 
@@ -330,6 +425,28 @@ export function createLNodeWizard(parent: Element): Wizard {
           </div>
         </div>`,
       ],
+    },
+  ];
+}
+
+export function editLNodeWizard(element: Element): Wizard {
+  return [
+    {
+      title: 'Edit LNode',
+      primary: {
+        icon: 'edit',
+        label: 'Save',
+        action: updateAction(element),
+      },
+      content: renderLNodeWizard({
+        desc: element.getAttribute('desc'),
+        iedName: element.getAttribute('iedName'),
+        ldInst: element.getAttribute('ldInst'),
+        prefix: element.getAttribute('prefix'),
+        lnClass: element.getAttribute('lnClass'),
+        lnInst: element.getAttribute('lnInst'),
+        lnType: element.getAttribute('lnType'),
+      }),
     },
   ];
 }

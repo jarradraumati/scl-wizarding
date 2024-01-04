@@ -21,7 +21,11 @@ export const patterns = {
   integer: '[+\\-]?[0-9]+([0-9]*)',
   alphanumericFirstUpperCase: '[A-Z][0-9,A-Z,a-z]*',
   alphanumericFirstLowerCase: '[a-z][0-9,A-Z,a-z]*',
+  alphanumericFirst: '[A-Z,a-z][0-9,A-Z,a-z]*',
+  ldInst: '[A-Za-z0-9][0-9A-Za-z_]*',
+  prefix: '[A-Za-z][0-9A-Za-z_]*',
   lnClass: '(LLN0)|[A-Z]{4,4}',
+  lnInst: '[0-9]{1,12}',
   abstractDataAttributeName:
     '((T)|(Test)|(Check)|(SIUnit)|(Oper)|(SBO)|(SBOw)|(Cancel)|[a-z][0-9A-Za-z]*)',
   cdc:
@@ -34,6 +38,9 @@ export const patterns = {
 export const maxLength = {
   cbName: 32,
   abstracDaName: 60,
+  ldInst: 64,
+  prefix: 11,
+  lnInst: 12,
 };
 
 export const predefinedBasicTypeEnum = [
