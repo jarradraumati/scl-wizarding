@@ -24,7 +24,7 @@ type RenderOptions = {
 };
 
 function contentTransformerWindingWizard(
-  options: RenderOptions
+  options: RenderOptions,
 ): TemplateResult[] {
   return [
     html`<scl-textfield
@@ -63,7 +63,7 @@ function createAction(parent: Element): WizardActor {
     const transformerWinding = createElement(
       parent.ownerDocument,
       'TransformerWinding',
-      attributes
+      attributes,
     );
 
     return [
@@ -113,7 +113,7 @@ function updateAction(element: Element): WizardActor {
 
     if (
       transformerWindingKeys.some(
-        key => attributes[key] !== element.getAttribute(key)
+        key => attributes[key] !== element.getAttribute(key),
       )
     )
       return [{ element, attributes }];

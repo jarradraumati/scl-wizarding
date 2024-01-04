@@ -61,7 +61,7 @@ function createAction(parent: Element): WizardActor {
     const tapChanger = createElement(
       parent.ownerDocument,
       'TapChanger',
-      tapChangerAttrs
+      tapChangerAttrs,
     );
 
     return [

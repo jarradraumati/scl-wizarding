@@ -24,7 +24,7 @@ function createEnumTypeAction(parent: Element): WizardActor {
     const enumType = createElement(
       parent.ownerDocument,
       'EnumType',
-      enumTypeAttrs
+      enumTypeAttrs,
     );
 
     return [

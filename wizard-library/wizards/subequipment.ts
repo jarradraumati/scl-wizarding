@@ -49,7 +49,7 @@ function contentSubEquipmentWizard(options: RenderOptions): TemplateResult[] {
         value =>
           html`<mwc-list-item value="${value}">
             ${value.charAt(0).toUpperCase() + value.slice(1)}
-          </mwc-list-item>`
+          </mwc-list-item>`,
       )}
     </scl-select> `,
     html`<scl-checkbox
@@ -71,7 +71,7 @@ function createAction(parent: Element): WizardActor {
     const subEquipment = createElement(
       parent.ownerDocument,
       'SubEquipment',
-      subEquipmentAttrs
+      subEquipmentAttrs,
     );
 
     return [

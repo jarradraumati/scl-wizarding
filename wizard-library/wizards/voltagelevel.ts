@@ -151,7 +151,7 @@ function getVoltageAction(
   oldVoltage: Element | null,
   Voltage: string | null,
   multiplier: string | null,
-  voltageLevel: Element
+  voltageLevel: Element,
 ): Edit[] {
   if (oldVoltage === null) {
     const element = createElement(voltageLevel.ownerDocument, 'Voltage', {
@@ -229,14 +229,14 @@ export function updateAction(element: Element): WizardActor {
         element.querySelector('VoltageLevel > Voltage'),
         Voltage,
         multiplier,
-        element
+        element,
       );
     }
 
     const complexAction: Edit[] = [];
     if (voltageLevelAction)
       complexAction.push(
-        ...updateVoltageLevel(voltageLevelAction as SimpleUpdate)
+        ...updateVoltageLevel(voltageLevelAction as SimpleUpdate),
       );
     if (voltageAction) complexAction.push(voltageAction);
     return complexAction.length ? [complexAction] : [];

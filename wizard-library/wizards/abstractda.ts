@@ -28,26 +28,26 @@ function selectType(e: SelectedEvent, data: Element, Val: string | null): void {
   const typeSelected = (<SclSelect>e.target).selected?.value;
   const selectedBType = (<SclSelect>(
     (<SclSelect>e.target).parentElement!.querySelector(
-      'scl-select[label="bType"]'
+      'scl-select[label="bType"]',
     )!
   )).value;
 
   if (selectedBType !== 'Enum') return;
 
   const enumVals = Array.from(
-    data.querySelectorAll(`EnumType[id="${typeSelected}"] > EnumVal`)
+    data.querySelectorAll(`EnumType[id="${typeSelected}"] > EnumVal`),
   ).map(
     enumval =>
       html`<mwc-list-item
         value="${enumval.textContent?.trim() ?? ''}"
         ?selected=${enumval.textContent?.trim() === Val}
         >${enumval.textContent?.trim()}</mwc-list-item
-      >`
+      >`,
   );
 
   const selectValOptionUI = <SclSelect>(
     (<SclSelect>e.target).parentElement!.querySelector(
-      'scl-select[label="Val"]'
+      'scl-select[label="Val"]',
     )!
   );
   render(html`${enumVals}`, selectValOptionUI);
@@ -57,13 +57,13 @@ function selectType(e: SelectedEvent, data: Element, Val: string | null): void {
 function selectBType(
   e: SelectedEvent,
   bType: string | null,
-  type: string | null
+  type: string | null,
 ): void {
   const bTypeSelected = (<SclSelect>e.target).selected!.value;
 
   const typeUI = <SclSelect>(
     (<SclSelect>e.target).parentElement!.querySelector(
-      'scl-select[label="type"]'
+      'scl-select[label="type"]',
     )!
   );
   typeUI.disabled = !(bTypeSelected === 'Enum' || bTypeSelected === 'Struct');
@@ -82,7 +82,7 @@ function selectBType(
 
   const selectValOptionUI = <SclSelect>(
     (<SclSelect>e.target).parentElement!.querySelector(
-      'scl-select[label="Val"]'
+      'scl-select[label="Val"]',
     )!
   );
   if (bTypeSelected === 'Enum') selectValOptionUI.style.display = '';
@@ -90,7 +90,7 @@ function selectBType(
 
   const textfieldValOptionUI = <SclTextfield>(
     (<SclSelect>e.target).parentElement!.querySelector(
-      'scl-textfield[label="Val"]'
+      'scl-textfield[label="Val"]',
     )!
   );
   if (bTypeSelected === 'Enum' || bTypeSelected === 'Struct')
@@ -112,7 +112,7 @@ export function renderAbstractDataAttributeContent(
   valKind: string | null,
   valImport: string | null,
   Val: string | null,
-  data: Element
+  data: Element,
 ): TemplateResult[] {
   return [
     html`<scl-textfield
@@ -141,7 +141,7 @@ export function renderAbstractDataAttributeContent(
         redefinedBType =>
           html`<mwc-list-item value="${redefinedBType}"
             >${redefinedBType}</mwc-list-item
-          >`
+          >`,
       )}</scl-select
     >`,
     html`<scl-select
@@ -155,7 +155,7 @@ export function renderAbstractDataAttributeContent(
             class="${dataType.tagName === 'EnumType' ? 'Enum' : 'Struct'}"
             value=${dataType.id}
             >${dataType.id}</mwc-list-item
-          >`
+          >`,
       )}</scl-select
     >`,
     html`<scl-textfield
@@ -174,7 +174,7 @@ export function renderAbstractDataAttributeContent(
         valKindOption =>
           html`<mwc-list-item value="${valKindOption}"
             >${valKindOption}</mwc-list-item
-          >`
+          >`,
       )}</scl-select
     >`,
     html`<scl-checkbox
@@ -185,12 +185,12 @@ export function renderAbstractDataAttributeContent(
     ></scl-checkbox>`,
     html`<scl-select label="Val" .maybeValue=${Val} nullable
       >${Array.from(
-        data.querySelectorAll(`EnumType > EnumVal[id="${type}"]`)
+        data.querySelectorAll(`EnumType > EnumVal[id="${type}"]`),
       ).map(
         enumVal =>
           html`<mwc-list-item value="${enumVal.textContent?.trim() ?? ''}"
             >${enumVal.textContent?.trim()}</mwc-list-item
-          >`
+          >`,
       )}</scl-select
     >`,
     html`<scl-textfield
@@ -204,7 +204,7 @@ export function renderAbstractDataAttributeContent(
 export function getValAction(
   oldVal: Element | null,
   Val: string | null,
-  abstractda: Element
+  abstractda: Element,
 ): Edit[] {
   if (oldVal === null) {
     const element = createElement(abstractda.ownerDocument, 'Val', {});

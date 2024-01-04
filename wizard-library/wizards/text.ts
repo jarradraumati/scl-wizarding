@@ -73,7 +73,7 @@ export function updateAction(element: Element): WizardActor {
     node.textContent = content;
 
     Array.from(element.querySelectorAll('Private')).forEach(priv =>
-      node.prepend(priv.cloneNode(true))
+      node.prepend(priv.cloneNode(true)),
     );
 
     const reference = element.nextElementSibling;

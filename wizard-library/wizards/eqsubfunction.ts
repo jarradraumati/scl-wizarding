@@ -23,7 +23,7 @@ function createEqSubFunctionAction(parent: Element): WizardActor {
     const eqSubFunction = createElement(
       parent.ownerDocument,
       'EqSubFunction',
-      attributes
+      attributes,
     );
 
     return [

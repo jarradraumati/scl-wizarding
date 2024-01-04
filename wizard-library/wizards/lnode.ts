@@ -33,7 +33,7 @@ let isLogicalNodeInstance = true;
 /** Sorts selected `ListItem`s to the top and disabled ones to the bottom. */
 function compare(
   a: { anyLn: Element; childLNode: boolean; selected: boolean },
-  b: { anyLn: Element; childLNode: boolean; selected: boolean }
+  b: { anyLn: Element; childLNode: boolean; selected: boolean },
 ): number {
   if (a.childLNode !== b.childLNode) return a.childLNode ? -1 : 1;
 
@@ -62,14 +62,14 @@ function logicalNodeParameters(anyLn: Element): {
 function allAnyLNs(doc: XMLDocument): Element[] {
   return Array.from(
     doc.querySelectorAll(
-      ':root > IED > AccessPoint > Server > LDevice > LN0, :root > IED > AccessPoint > Server > LDevice > LN'
-    )
+      ':root > IED > AccessPoint > Server > LDevice > LN0, :root > IED > AccessPoint > Server > LDevice > LN',
+    ),
   );
 }
 
 function anyLnObject(
   parent: Element,
-  anyLn: Element
+  anyLn: Element,
 ): { anyLn: Element; childLNode: boolean; selected: boolean } {
   const { iedName, ldInst, prefix, lnClass, inst } =
     logicalNodeParameters(anyLn);
@@ -88,7 +88,7 @@ function anyLnObject(
   if (childLNode) return { anyLn, childLNode, selected: true };
 
   const selected = Array.from(
-    parent.closest('Substation')?.querySelectorAll('LNode') ?? []
+    parent.closest('Substation')?.querySelectorAll('LNode') ?? [],
   ).some(child => {
     if (child.tagName !== 'LNode') return false;
     return (
@@ -115,7 +115,7 @@ function showLogicalNodeTypes(evt: Event, parent: Element): void {
   const button = evt.target as Button;
 
   const instanceFilter = button.parentElement!.parentElement!.querySelector(
-    '#instanceFilter'
+    '#instanceFilter',
   ) as Element;
 
   if (isLogicalNodeInstance) instanceFilter.classList.remove('hidden');
@@ -128,7 +128,7 @@ function showLogicalNodeTypes(evt: Event, parent: Element): void {
       ? // eslint-disable-next-line no-use-before-define
         renderInstances(parent)
       : renderTypicals(doc)}`,
-    lnFilterList(button)
+    lnFilterList(button),
   );
 }
 
@@ -182,7 +182,7 @@ function createSingleLNode(parent: Element, ln: Element): Insert | null {
 function createAction(parent: Element): WizardActor {
   return (_: WizardInputElement[], wizard: Element): Edit[] => {
     const list = wizard.shadowRoot?.querySelector(
-      '#lnList'
+      '#lnList',
     ) as OscdFilteredList;
 
     const selectedLNs = (list.selected as ListItemBase[])
@@ -207,7 +207,7 @@ function createAction(parent: Element): WizardActor {
 function filterIED(evt: Event, parent: Element): void {
   const iedFilterList = evt.target as OscdFilteredList;
   const ieds = (iedFilterList.selected as ListItemBase[]).map(
-    selection => selection.value
+    selection => selection.value,
   );
 
   // update global array selectedIEDs
@@ -223,7 +223,7 @@ function renderListItem(value: {
   selected: boolean;
 }): TemplateResult {
   const { iedName, ldInst, prefix, lnClass, inst } = logicalNodeParameters(
-    value.anyLn
+    value.anyLn,
   );
 
   return html`<mwc-check-list-item
@@ -238,7 +238,7 @@ function renderListItem(value: {
 
 function renderTypicals(doc: XMLDocument): TemplateResult[] {
   return Array.from(
-    doc.querySelectorAll(':root > DataTypeTemplates > LNodeType')
+    doc.querySelectorAll(':root > DataTypeTemplates > LNodeType'),
   ).map(lNodeType => {
     const lnClass = lNodeType.getAttribute('lnClass');
     const id = lNodeType.getAttribute('id');
@@ -255,7 +255,7 @@ function renderInstances(parent: Element): TemplateResult[] {
 
   return allAnyLNs(doc)
     .filter(anyLn =>
-      selectedIEDs.includes(anyLn.closest('IED')?.getAttribute('name') ?? '')
+      selectedIEDs.includes(anyLn.closest('IED')?.getAttribute('name') ?? ''),
     )
     .map(anyLn => anyLnObject(parent, anyLn))
     .sort(compare)
@@ -267,7 +267,7 @@ function renderIEDItems(parent: Element): TemplateResult[] {
 
   return Array.from(doc.querySelectorAll(':root > IED')).map(ied => {
     const [iedName, manufacturer] = ['name', 'manufacturer'].map(value =>
-      ied.getAttribute(value)
+      ied.getAttribute(value),
     );
 
     return html`<mwc-check-list-item

@@ -29,13 +29,13 @@ export function renderAdditionalDaContent(
   fc: string,
   dchg: string | null,
   qchg: string | null,
-  dupd: string | null
+  dupd: string | null,
 ): TemplateResult[] {
   return [
     html`<scl-select label="fc" .maybeValue=${fc} required fixedMenuPosition
       >${functionalConstraintEnum.map(
         fcOption =>
-          html`<mwc-list-item value="${fcOption}">${fcOption}</mwc-list-item>`
+          html`<mwc-list-item value="${fcOption}">${fcOption}</mwc-list-item>`,
       )}</scl-select
     >`,
     html`<scl-checkbox
@@ -69,7 +69,7 @@ function createDaAction(parent: Element): WizardActor {
     const valKind = getValue(inputs.find(i => i.label === 'valKind')!);
     const valImport = getValue(inputs.find(i => i.label === 'valImport')!);
     const valField = inputs.find(
-      i => i.label === 'Val' && i.style.display !== 'none'
+      i => i.label === 'Val' && i.style.display !== 'none',
     );
     const Val = valField ? getValue(valField) : null;
 
@@ -151,7 +151,7 @@ export function createDaWizard(element: Element): Wizard {
           valKind,
           valImport,
           Val,
-          data
+          data,
         ),
         ...renderAdditionalDaContent(fc, dchg, qchg, dupd),
       ],
@@ -172,7 +172,7 @@ function updateDaAction(element: Element): WizardActor {
     const valKind = getValue(inputs.find(i => i.label === 'valKind')!);
     const valImport = getValue(inputs.find(i => i.label === 'valImport')!);
     const valField = inputs.find(
-      i => i.label === 'Val' && i.style.display !== 'none'
+      i => i.label === 'Val' && i.style.display !== 'none',
     );
     const Val = valField ? getValue(valField) : null;
 
@@ -222,8 +222,8 @@ function updateDaAction(element: Element): WizardActor {
         getValAction(
           element.querySelector('Val'),
           Val,
-          daAction?.element ?? element
-        )
+          daAction?.element ?? element,
+        ),
       );
     }
 
@@ -275,7 +275,7 @@ export function editDAWizard(element: Element): Wizard {
           valKind,
           valImport,
           Val,
-          data
+          data,
         ),
         ...renderAdditionalDaContent(fc, dchg, qchg, dupd),
       ],

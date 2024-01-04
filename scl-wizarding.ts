@@ -19,7 +19,7 @@ export default class SclWizarding extends LitElement {
   updateWizardLibraries(): void {
     this.updateComplete.then(() => {
       (this.libraryLitElements ?? []).forEach(libraryLitElement =>
-        libraryLitElement.requestUpdate()
+        libraryLitElement.requestUpdate(),
       );
     });
   }
@@ -44,13 +44,13 @@ export default class SclWizarding extends LitElement {
     super();
 
     window.addEventListener('oscd-edit-wizard-request', event =>
-      this.onWizard(event as WizardEvent)
+      this.onWizard(event as WizardEvent),
     );
     window.addEventListener('oscd-create-wizard-request', event =>
-      this.onWizard(event as WizardEvent)
+      this.onWizard(event as WizardEvent),
     );
     this.addEventListener('oscd-close-wizard', event =>
-      this.closeWizard(event as WizardEvent)
+      this.closeWizard(event as WizardEvent),
     );
   }
 

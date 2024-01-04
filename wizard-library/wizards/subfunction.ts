@@ -23,7 +23,7 @@ function createAction(parent: Element): WizardActor {
     const subFunction = createElement(
       parent.ownerDocument,
       'SubFunction',
-      attributes
+      attributes,
     );
 
     return [

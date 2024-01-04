@@ -42,7 +42,7 @@ function hideFiltered(item: ListItemBase, searchText: string): void {
     // regexp escape
     const reTerm = new RegExp(
       `*${term}*`.replace(/\*/g, '.*').replace(/\?/g, '.{1}'),
-      'i'
+      'i',
     );
     return reTerm.test(filterTarget);
   })
@@ -99,10 +99,10 @@ export class SclFilteredList extends ListBase {
   onFilterInput(): void {
     Array.from(
       this.querySelectorAll(
-        'mwc-list-item, mwc-check-list-item, mwc-radio-list-item'
-      )
+        'mwc-list-item, mwc-check-list-item, mwc-radio-list-item',
+      ),
     ).forEach(item =>
-      hideFiltered(item as ListItemBase, this.searchField.value)
+      hideFiltered(item as ListItemBase, this.searchField.value),
     );
   }
 

@@ -28,7 +28,7 @@ export function lNodeIdentity(e: Element): string {
     'prefix',
     'lnClass',
     'lnInst',
-    'lnType'
+    'lnType',
   ].map(name => e.getAttribute(name));
   if (iedName === 'None')
     return `${identity(e.parentElement)}>(${lnClass} ${lnType})`;
@@ -39,7 +39,7 @@ export function lNodeIdentity(e: Element): string {
 
 export function kDCIdentity(e: Element): string {
   return `${identity(e.parentElement)}>${e.getAttribute(
-    'iedName'
+    'iedName',
   )} ${e.getAttribute('apName')}`;
 }
 
@@ -60,7 +60,7 @@ export function iEDNameIdentity(e: Element): string {
     'ldInst',
     'prefix',
     'lnClass',
-    'lnInst'
+    'lnInst',
   ].map(name => e.getAttribute(name));
   return `${identity(e.parentElement)}>${iedName} ${apRef || ''} ${
     ldInst || ''
@@ -76,7 +76,7 @@ export function fCDAIdentity(e: Element): string {
     'doName',
     'daName',
     'fc',
-    'ix'
+    'ix',
   ].map(name => e.getAttribute(name));
   const dataPath = `${ldInst}/${prefix ?? ''} ${lnClass} ${
     lnInst ?? ''
@@ -92,7 +92,7 @@ export function extRefIdentity(e: Element): string | number {
   const iedName = e.getAttribute('iedName');
   const intAddr = e.getAttribute('intAddr');
   const intAddrIndex = Array.from(
-    e.parentElement.querySelectorAll(`ExtRef[intAddr="${intAddr}"]`)
+    e.parentElement.querySelectorAll(`ExtRef[intAddr="${intAddr}"]`),
   ).indexOf(e);
   if (!iedName) return `${parentIdentity}>${intAddr}[${intAddrIndex}]`;
   const [
@@ -107,7 +107,7 @@ export function extRefIdentity(e: Element): string | number {
     srcPrefix,
     srcLNClass,
     srcLNInst,
-    srcCBName
+    srcCBName,
   ] = [
     'ldInst',
     'prefix',
@@ -120,7 +120,7 @@ export function extRefIdentity(e: Element): string | number {
     'srcPrefix',
     'srcLNClass',
     'srcLNInst',
-    'srcCBName'
+    'srcCBName',
   ].map(name => e.getAttribute(name));
 
   const cbPath = srcCBName
@@ -139,7 +139,7 @@ export function extRefIdentity(e: Element): string | number {
 
 export function lNIdentity(e: Element): string {
   const [prefix, lnClass, inst] = ['prefix', 'lnClass', 'inst'].map(name =>
-    e.getAttribute(name)
+    e.getAttribute(name),
   );
   return `${identity(e.parentElement)}>${prefix ?? ''} ${lnClass} ${inst}`;
 }
@@ -151,7 +151,7 @@ export function clientLNIdentity(e: Element): string {
     'ldInst',
     'prefix',
     'lnClass',
-    'lnInst'
+    'lnInst',
   ].map(name => e.getAttribute(name));
   return `${identity(e.parentElement)}>${iedName} ${apRef || ''} ${ldInst}/${
     prefix ?? ''
@@ -174,14 +174,14 @@ export function valIdentity(e: Element): string | number {
 
 export function connectedAPIdentity(e: Element): string {
   const [iedName, apName] = ['iedName', 'apName'].map(name =>
-    e.getAttribute(name)
+    e.getAttribute(name),
   );
   return `${iedName} ${apName}`;
 }
 
 export function controlBlockIdentity(e: Element): string {
   const [ldInst, cbName] = ['ldInst', 'cbName'].map(name =>
-    e.getAttribute(name)
+    e.getAttribute(name),
   );
   return `${ldInst} ${cbName}`;
 }

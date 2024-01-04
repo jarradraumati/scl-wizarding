@@ -50,7 +50,7 @@ function renderContent(content: DoContent): TemplateResult[] {
             value=${dataType.id}
             ?selected=${dataType.id === content.type}
             >${dataType.id}</mwc-list-item
-          >`
+          >`,
       )}</scl-select
     >`,
     html`<scl-textfield
@@ -73,7 +73,7 @@ function createDoAction(parent: Element): WizardActor {
     const desc = getValue(inputs.find(i => i.label === 'desc')!);
     const type = getValue(inputs.find(i => i.label === 'type')!);
     const accessControl = getValue(
-      inputs.find(i => i.label === 'accessControl')!
+      inputs.find(i => i.label === 'accessControl')!,
     );
     const transient =
       getValue(inputs.find(i => i.label === 'transient')!) !== ''
@@ -110,7 +110,7 @@ export function createDoWizard(parent: Element): Wizard {
   ];
 
   const doTypes = Array.from(
-    parent.ownerDocument.querySelectorAll('DOType')
+    parent.ownerDocument.querySelectorAll('DOType'),
   ).filter(doType => doType.getAttribute('id'));
 
   return [
@@ -135,7 +135,7 @@ function updateDoAction(element: Element): WizardActor {
     const desc = getValue(inputs.find(i => i.label === 'desc')!);
     const type = getValue(inputs.find(i => i.label === 'type')!)!;
     const accessControl = getValue(
-      inputs.find(i => i.label === 'accessControl')!
+      inputs.find(i => i.label === 'accessControl')!,
     );
     const transient =
       getValue(inputs.find(i => i.label === 'transient')!) !== ''
@@ -168,7 +168,7 @@ export function editDoWizard(element: Element): Wizard {
   ];
 
   const doTypes = Array.from(
-    element.ownerDocument.querySelectorAll('DOType')
+    element.ownerDocument.querySelectorAll('DOType'),
   ).filter(doType => doType.getAttribute('id'));
 
   return [

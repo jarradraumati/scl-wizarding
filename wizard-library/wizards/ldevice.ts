@@ -9,7 +9,7 @@ import { Wizard, WizardActor, WizardInputElement } from '../foundation.js';
 function render(
   inst: string,
   name: string | null,
-  ldNames: string[]
+  ldNames: string[],
 ): TemplateResult[] {
   return [
     html`<scl-textfield
@@ -44,8 +44,8 @@ export function updateAction(element: Element): WizardActor {
 export function lDeviceEditWizard(element: Element): Wizard {
   const ldNames: string[] = Array.from(
     element.ownerDocument.querySelectorAll(
-      ':root > IED > AccessPoint > Server > LDevice'
-    )
+      ':root > IED > AccessPoint > Server > LDevice',
+    ),
   ).map(ied => ied.getAttribute('name')!);
 
   return [
@@ -59,7 +59,7 @@ export function lDeviceEditWizard(element: Element): Wizard {
       content: render(
         element.getAttribute('inst') ?? '',
         element.getAttribute('name'),
-        ldNames
+        ldNames,
       ),
     },
   ];

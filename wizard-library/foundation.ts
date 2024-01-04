@@ -23,7 +23,7 @@ export function unreachable(message: string): never {
 export function crossProduct<T>(...arrays: T[][]): T[][] {
   return arrays.reduce<T[][]>(
     (a, b) => <T[][]>a.flatMap(d => b.map(e => [d, e].flat())),
-    [[]]
+    [[]],
   );
 }
 
@@ -40,11 +40,11 @@ export type WizardInputElement =
 export type WizardActor = (
   inputs: WizardInputElement[],
   wizard: Element,
-  list?: List | null
+  list?: List | null,
 ) => Edit[];
 
 export function canCheckValidity(
-  type: any
+  type: any,
 ): type is SclTextfield | SclSelect | TextField | Select {
   return 'checkValidity' in type;
 }
@@ -56,7 +56,7 @@ export function checkValidity(input: WizardInputElement): boolean {
 }
 
 export function canReportValidity(
-  type: any
+  type: any,
 ): type is SclTextfield | SclSelect | TextField | Select {
   return 'reportValidity' in type;
 }
@@ -68,7 +68,7 @@ export function reportValidity(input: WizardInputElement): boolean {
 }
 
 export function isInputWithMaybeValue(
-  type: any
+  type: any,
 ): type is SclTextfield | SclCheckbox | SclSelect {
   return 'maybeValue' in type;
 }
@@ -129,7 +129,7 @@ export interface WizardDetail {
 /** @returns a clone of `element` with attributes set to values from `attrs`. */
 export function cloneElement(
   element: Element,
-  attrs: Record<string, string | null>
+  attrs: Record<string, string | null>,
 ): Element {
   const newElement = <Element>element.cloneNode(false);
   Object.entries(attrs).forEach(([name, value]) => {
@@ -157,7 +157,7 @@ export function isPublic(element: Element): boolean {
 export function createElement(
   doc: Document,
   tag: string,
-  attrs: Record<string, string | null>
+  attrs: Record<string, string | null>,
 ): Element {
   const element = doc.createElementNS(doc.documentElement.namespaceURI, tag);
   Object.entries(attrs)
@@ -168,11 +168,11 @@ export function createElement(
 
 export function getChildElementsByTagName(
   element: Element | null | undefined,
-  tag: string | null | undefined
+  tag: string | null | undefined,
 ): Element[] {
   if (!element || !tag) return [];
   return Array.from(element.children).filter(
-    element => element.tagName === tag
+    element => element.tagName === tag,
   );
 }
 
@@ -206,7 +206,7 @@ const pTypes2003: string[] = [
   'OSI-AE-Invoke',
   'OSI-NSAP',
   'VLAN-ID',
-  'VLAN-PRIORITY'
+  'VLAN-PRIORITY',
 ];
 
 const pTypes2007B: string[] = [
@@ -216,7 +216,7 @@ const pTypes2007B: string[] = [
   'DNSName',
   'UDP-Port',
   'TCP-Port',
-  'C37-118-IP-Port'
+  'C37-118-IP-Port',
 ];
 
 const pTypes2007B4: string[] = [
@@ -228,7 +228,7 @@ const pTypes2007B4: string[] = [
   'IPv6ClassOfTraffic',
   'IPv6-IGMPv3Src',
   'IP-IGMPv3Sr',
-  'IP-ClassOfTraffic'
+  'IP-ClassOfTraffic',
 ];
 
 const typeBase = {
@@ -242,7 +242,7 @@ const typeBase = {
   VLANid: '[0-9A-F]{3}',
   port: '0|([1-9][0-9]{0,3})|([1-5][0-9]{4,4})|(6[0-4][0-9]{3,3})|(65[0-4][0-9]{2,2})|(655[0-2][0-9])|(6553[0-5])',
   IPv6: '([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}',
-  IPv6sub: '/[1-9]|/[1-9][0-9]|/1[0-1][0-9]|/12[0-7]'
+  IPv6sub: '/[1-9]|/[1-9][0-9]|/1[0-1][0-9]|/12[0-7]',
 };
 
 /** Patterns from IEC 61850-6 for all `P` elements */
@@ -276,7 +276,7 @@ export const typePattern: Partial<Record<string, string>> = {
   IPv6ClassOfTraffic: '[0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]',
   'IPv6-IGMPv3Src': typeBase.IPv6,
   'IP-IGMPv3Sr': typeBase.IP,
-  'IP-ClassOfTraffic': typeBase.OSI
+  'IP-ClassOfTraffic': typeBase.OSI,
 };
 
 /** Whether `P` element is required within `Address` */
@@ -309,7 +309,7 @@ export const typeNullable: Partial<Record<string, boolean>> = {
   IPv6ClassOfTraffic: true,
   'IPv6-IGMPv3Src': true,
   'IP-IGMPv3Sr': true,
-  'IP-ClassOfTraffic': true
+  'IP-ClassOfTraffic': true,
 };
 
 /** Max length definition for all `P` element */
@@ -321,7 +321,7 @@ export const typeMaxLength: Partial<Record<string, number>> = {
   'OSI-AE-Qualifier': 5,
   'OSI-AE-Invoke': 5,
   'OSI-NSAP': 40,
-  'IP-ClassOfTraffic': 2
+  'IP-ClassOfTraffic': 2,
 };
 
 /** Sorts selected `ListItem`s to the top and disabled ones to the bottom. */
@@ -336,7 +336,7 @@ export function compareNames(a: Element | string, b: Element | string): number {
 
   if (typeof a === 'object' && typeof b === 'object')
     return (a.getAttribute('name') ?? '').localeCompare(
-      b.getAttribute('name') ?? ''
+      b.getAttribute('name') ?? '',
     );
 
   return 0;
@@ -346,7 +346,7 @@ export function compareNames(a: Element | string, b: Element | string): number {
 export function reservedNames(element: Element, tagName?: string): string[] {
   if (tagName)
     return getChildElementsByTagName(element, tagName).map(
-      sibling => sibling.getAttribute('name')!
+      sibling => sibling.getAttribute('name')!,
     );
 
   if (!element.parentElement) return [];

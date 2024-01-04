@@ -3,7 +3,6 @@
 import { LitElement, TemplateResult, css, html } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 
-import 'ace-custom-element';
 import '@material/mwc-dialog';
 import AceEditor from 'ace-custom-element';
 

@@ -165,7 +165,7 @@ export class OscdTextfield extends TextField {
           >${multiplier === null
             ? 'textfield.noMultiplier'
             : multiplier}</mwc-list-item
-        >`
+        >`,
     )}`;
   }
 

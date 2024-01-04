@@ -36,7 +36,7 @@ function createBDaAction(parent: Element): WizardActor {
         : null;
 
     const valField = inputs.find(
-      i => i.label === 'Val' && i.style.display !== 'none'
+      i => i.label === 'Val' && i.style.display !== 'none',
     );
     const Val = valField ? getValue(valField) : null;
 
@@ -79,7 +79,7 @@ export function createBDaWizard(element: Element): Wizard {
   const valImport = null;
 
   const doOrEnumTypes = Array.from(
-    doc.querySelectorAll('DAType, EnumType')
+    doc.querySelectorAll('DAType, EnumType'),
   ).filter(doOrEnumType => doOrEnumType.getAttribute('id'));
 
   const data = element.closest('DataTypeTemplates')!;
@@ -103,7 +103,7 @@ export function createBDaWizard(element: Element): Wizard {
           valKind,
           valImport,
           Val,
-          data
+          data,
         ),
       ],
     },
@@ -123,7 +123,7 @@ function updateBDaAction(element: Element): WizardActor {
     const valKind = getValue(inputs.find(i => i.label === 'valKind')!);
     const valImport = getValue(inputs.find(i => i.label === 'valImport')!);
     const valField = inputs.find(
-      i => i.label === 'Val' && i.style.display !== 'none'
+      i => i.label === 'Val' && i.style.display !== 'none',
     );
     const Val = valField ? getValue(valField) : null;
 
@@ -160,8 +160,8 @@ function updateBDaAction(element: Element): WizardActor {
         getValAction(
           element.querySelector('Val'),
           Val,
-          bdaAction?.element ?? element
-        )
+          bdaAction?.element ?? element,
+        ),
       );
     }
 
@@ -208,7 +208,7 @@ export function editBDaWizard(element: Element): Wizard {
           valKind,
           valImport,
           Val,
-          data
+          data,
         ),
       ],
     },

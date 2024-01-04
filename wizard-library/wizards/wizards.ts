@@ -61,7 +61,7 @@ import {
 
 type SclElementWizard = (
   element: Element,
-  instanceElement?: Element
+  instanceElement?: Element,
 ) => Wizard | undefined;
 
 export function emptyWizard(): Wizard | undefined {

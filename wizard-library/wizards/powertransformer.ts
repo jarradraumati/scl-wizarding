@@ -25,7 +25,7 @@ type RenderOptions = {
 };
 
 function renderPowerTransformerWizard(
-  options: RenderOptions
+  options: RenderOptions,
 ): TemplateResult[] {
   return [
     html`<scl-textfield
@@ -59,7 +59,7 @@ function createAction(parent: Element): WizardActor {
         name,
         desc,
         type: defaultPowerTransformerType,
-      }
+      },
     );
 
     return [

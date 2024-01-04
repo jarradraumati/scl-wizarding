@@ -24,7 +24,7 @@ function createLNodeTypeAction(parent: Element): WizardActor {
     const lNodeType = createElement(
       parent.ownerDocument,
       'LNodeType',
-      lNodeTypeAttrs
+      lNodeTypeAttrs,
     );
 
     return [

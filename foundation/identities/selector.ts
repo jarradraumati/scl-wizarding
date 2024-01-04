@@ -13,7 +13,7 @@ export function selector(tagName: string, identity: string | number): string {
 
 export function findElement(
   root: XMLDocument | Element,
-  { tagName, identity }: { tagName: SCLTag; identity: string }
+  { tagName, identity }: { tagName: SCLTag; identity: string },
 ): Element | null {
   return root.querySelector(selector(tagName, identity));
 }
@@ -21,7 +21,7 @@ export function findElement(
 function crossProduct<T>(...arrays: T[][]): T[][] {
   return arrays.reduce<T[][]>(
     (a, b) => <T[][]>a.flatMap(d => b.map(e => [d, e].flat())),
-    [[]]
+    [[]],
   );
 }
 
@@ -44,13 +44,13 @@ export function terminalSelector(tagName: SCLTag, identity: string): string {
   const [parentIdentity, connectivityNode] = pathParts(identity);
 
   const parentSelectors = relatives[tagName].parents.flatMap(parentTag =>
-    selector(parentTag, parentIdentity).split(',')
+    selector(parentTag, parentIdentity).split(','),
   );
 
   return crossProduct(
     parentSelectors,
     ['>'],
-    [`${tagName}[connectivityNode="${connectivityNode}"]`]
+    [`${tagName}[connectivityNode="${connectivityNode}"]`],
   )
     .map(strings => strings.join(''))
     .join(',');
@@ -66,13 +66,13 @@ export function lNodeSelector(tagName: SCLTag, identity: string): string {
     if (!lnClass || !lnType) return voidSelector;
 
     const parentSelectors = relatives[tagName].parents.flatMap(parentTag =>
-      selector(parentTag, parentIdentity).split(',')
+      selector(parentTag, parentIdentity).split(','),
     );
 
     return crossProduct(
       parentSelectors,
       ['>'],
-      [`${tagName}[iedName="None"][lnClass="${lnClass}"][lnType="${lnType}"]`]
+      [`${tagName}[iedName="None"][lnClass="${lnClass}"][lnType="${lnType}"]`],
     )
       .map(strings => strings.join(''))
       .join(',');
@@ -87,7 +87,7 @@ export function lNodeSelector(tagName: SCLTag, identity: string): string {
     ldInstSelectors,
     prefixSelectors,
     lnClassSelectors,
-    lnInstSelectors
+    lnInstSelectors,
   ] = [
     [`[iedName="${iedName}"]`],
     ldInst === '(Client)'
@@ -95,7 +95,7 @@ export function lNodeSelector(tagName: SCLTag, identity: string): string {
       : [`[ldInst="${ldInst}"]`],
     prefix ? [`[prefix="${prefix}"]`] : [':not([prefix])', '[prefix=""]'],
     [`[lnClass="${lnClass}"]`],
-    lnInst ? [`[lnInst="${lnInst}"]`] : [':not([lnInst])', '[lnInst=""]']
+    lnInst ? [`[lnInst="${lnInst}"]`] : [':not([lnInst])', '[lnInst=""]'],
   ];
 
   return crossProduct(
@@ -104,7 +104,7 @@ export function lNodeSelector(tagName: SCLTag, identity: string): string {
     ldInstSelectors,
     prefixSelectors,
     lnClassSelectors,
-    lnInstSelectors
+    lnInstSelectors,
   )
     .map(strings => strings.join(''))
     .join(',');
@@ -115,7 +115,7 @@ export function kDCSelector(tagName: SCLTag, identity: string): string {
   const [iedName, apName] = childIdentity.split(' ');
   return `${selector(
     'IED',
-    parentIdentity
+    parentIdentity,
   )}>${tagName}[iedName="${iedName}"][apName="${apName}"]`;
 }
 
@@ -126,7 +126,7 @@ export function associationSelector(tagName: SCLTag, identity: string): string {
 
   return `${selector(
     'Server',
-    parentIdentity
+    parentIdentity,
   )}>${tagName}[associationID="${associationID}"]`;
 }
 
@@ -150,17 +150,17 @@ export function iEDNameSelector(tagName: SCLTag, identity: string): string {
     ldInstSelectors,
     prefixSelectors,
     lnClassSelectors,
-    lnInstSelectors
+    lnInstSelectors,
   ] = [
     relatives[tagName].parents.flatMap(parentTag =>
-      selector(parentTag, parentIdentity).split(',')
+      selector(parentTag, parentIdentity).split(','),
     ),
     [`${iedName}`],
     apRef ? [`[apRef="${apRef}"]`] : [':not([apRef])', '[apRef=""]'],
     ldInst ? [`[ldInst="${ldInst}"]`] : [':not([ldInst])', '[ldInst=""]'],
     prefix ? [`[prefix="${prefix}"]`] : [':not([prefix])', '[prefix=""]'],
     [`[lnClass="${lnClass}"]`],
-    lnInst ? [`[lnInst="${lnInst}"]`] : [':not([lnInst])', '[lnInst=""]']
+    lnInst ? [`[lnInst="${lnInst}"]`] : [':not([lnInst])', '[lnInst=""]'],
   ];
 
   return crossProduct(
@@ -171,7 +171,7 @@ export function iEDNameSelector(tagName: SCLTag, identity: string): string {
     ldInstSelectors,
     prefixSelectors,
     lnClassSelectors,
-    lnInstSelectors
+    lnInstSelectors,
   )
     .map(strings => strings.join(''))
     .join(',');
@@ -183,7 +183,7 @@ export function fCDASelector(tagName: SCLTag, identity: string): string {
   const [ldInst, prefix, lnClass, lnInst] = childIdentity.split(/[ /.]/);
 
   const matchDoDa = childIdentity.match(
-    /.([A-Z][A-Za-z0-9.]*) ([A-Za-z0-9.]*) \(/
+    /.([A-Z][A-Za-z0-9.]*) ([A-Za-z0-9.]*) \(/,
   );
   const doName = matchDoDa && matchDoDa[1] ? matchDoDa[1] : '';
   const daName = matchDoDa && matchDoDa[2] ? matchDoDa[2] : '';
@@ -203,10 +203,10 @@ export function fCDASelector(tagName: SCLTag, identity: string): string {
     doNameSelectors,
     daNameSelectors,
     fcSelectors,
-    ixSelectors
+    ixSelectors,
   ] = [
     relatives[tagName].parents.flatMap(parentTag =>
-      selector(parentTag, parentIdentity).split(',')
+      selector(parentTag, parentIdentity).split(','),
     ),
     [`[ldInst="${ldInst}"]`],
     prefix ? [`[prefix="${prefix}"]`] : [':not([prefix])', '[prefix=""]'],
@@ -215,7 +215,7 @@ export function fCDASelector(tagName: SCLTag, identity: string): string {
     [`[doName="${doName}"]`],
     daName ? [`[daName="${daName}"]`] : [':not([daName])', '[daName=""]'],
     [`[fc="${fc}"]`],
-    ix ? [`[ix="${ix}"]`] : [':not([ix])', '[ix=""]']
+    ix ? [`[ix="${ix}"]`] : [':not([ix])', '[ix=""]'],
   ];
 
   return crossProduct(
@@ -229,7 +229,7 @@ export function fCDASelector(tagName: SCLTag, identity: string): string {
     doNameSelectors,
     daNameSelectors,
     fcSelectors,
-    ixSelectors
+    ixSelectors,
   )
     .map(strings => strings.join(''))
     .join(',');
@@ -239,7 +239,7 @@ export function extRefSelector(tagName: SCLTag, identity: string): string {
   const [parentIdentity, childIdentity] = pathParts(identity);
 
   const parentSelectors = relatives[tagName].parents.flatMap(parentTag =>
-    selector(parentTag, parentIdentity).split(',')
+    selector(parentTag, parentIdentity).split(','),
   );
 
   if (childIdentity.endsWith(']')) {
@@ -283,7 +283,7 @@ export function extRefSelector(tagName: SCLTag, identity: string): string {
       lnClass,
       lnInst,
       doName,
-      daName
+      daName,
     ] = childIdentity.split(/[ /:]/);
   } else if (!childIdentity.includes(':') && childIdentity.includes('@')) {
     [iedName, ldInst, prefix, lnClass, lnInst, doName, daName, intAddr] =
@@ -303,7 +303,7 @@ export function extRefSelector(tagName: SCLTag, identity: string): string {
       lnInst,
       doName,
       daName,
-      intAddr
+      intAddr,
     ] = childIdentity.split(/[ /:@]/);
   }
 
@@ -321,7 +321,7 @@ export function extRefSelector(tagName: SCLTag, identity: string): string {
     srcPrefixSelectors,
     srcLNClassSelectors,
     srcLNInstSelectors,
-    intAddrSelectors
+    intAddrSelectors,
   ] = [
     iedName ? [`[iedName="${iedName}"]`] : [':not([iedName])'],
     ldInst ? [`[ldInst="${ldInst}"]`] : [':not([ldInst])', '[ldInst=""]'],
@@ -348,7 +348,7 @@ export function extRefSelector(tagName: SCLTag, identity: string): string {
     srcLNInst
       ? [`[srcLNInst="${srcLNInst}"]`]
       : [':not([srcLNInst])', '[srcLNInst=""]'],
-    intAddr ? [`[intAddr="${intAddr}"]`] : [':not([intAddr])', '[intAddr=""]']
+    intAddr ? [`[intAddr="${intAddr}"]`] : [':not([intAddr])', '[intAddr=""]'],
   ];
 
   return crossProduct(
@@ -368,7 +368,7 @@ export function extRefSelector(tagName: SCLTag, identity: string): string {
     srcPrefixSelectors,
     srcLNClassSelectors,
     srcLNInstSelectors,
-    intAddrSelectors
+    intAddrSelectors,
   )
     .map(strings => strings.join(''))
     .join(',');
@@ -378,7 +378,7 @@ export function lNSelector(tagName: SCLTag, identity: string): string {
   const [parentIdentity, childIdentity] = pathParts(identity);
 
   const parentSelectors = relatives[tagName].parents.flatMap(parentTag =>
-    selector(parentTag, parentIdentity).split(',')
+    selector(parentTag, parentIdentity).split(','),
   );
 
   const [prefix, lnClass, inst] = childIdentity.split(' ');
@@ -388,7 +388,7 @@ export function lNSelector(tagName: SCLTag, identity: string): string {
   const [prefixSelectors, lnClassSelectors, instSelectors] = [
     prefix ? [`[prefix="${prefix}"]`] : [':not([prefix])', '[prefix=""]'],
     [`[lnClass="${lnClass}"]`],
-    [`[inst="${inst}"]`]
+    [`[inst="${inst}"]`],
   ];
 
   return crossProduct(
@@ -397,7 +397,7 @@ export function lNSelector(tagName: SCLTag, identity: string): string {
     [tagName],
     prefixSelectors,
     lnClassSelectors,
-    instSelectors
+    instSelectors,
   )
     .map(strings => strings.join(''))
     .join(',');
@@ -407,7 +407,7 @@ export function clientLNSelector(tagName: SCLTag, identity: string): string {
   const [parentIdentity, childIdentity] = pathParts(identity);
 
   const parentSelectors = relatives[tagName].parents.flatMap(parentTag =>
-    selector(parentTag, parentIdentity).split(',')
+    selector(parentTag, parentIdentity).split(','),
   );
 
   const [iedName, apRef, ldInst, prefix, lnClass, lnInst] =
@@ -419,14 +419,14 @@ export function clientLNSelector(tagName: SCLTag, identity: string): string {
     ldInstSelectors,
     prefixSelectors,
     lnClassSelectors,
-    lnInstSelectors
+    lnInstSelectors,
   ] = [
     iedName ? [`[iedName="${iedName}"]`] : [':not([iedName])', '[iedName=""]'],
     apRef ? [`[apRef="${apRef}"]`] : [':not([apRef])', '[apRef=""]'],
     ldInst ? [`[ldInst="${ldInst}"]`] : [':not([ldInst])', '[ldInst=""]'],
     prefix ? [`[prefix="${prefix}"]`] : [':not([prefix])', '[prefix=""]'],
     [`[lnClass="${lnClass}"]`],
-    lnInst ? [`[lnInst="${lnInst}"]`] : [':not([lnInst])', '[lnInst=""]']
+    lnInst ? [`[lnInst="${lnInst}"]`] : [':not([lnInst])', '[lnInst=""]'],
   ];
 
   return crossProduct(
@@ -438,7 +438,7 @@ export function clientLNSelector(tagName: SCLTag, identity: string): string {
     ldInstSelectors,
     prefixSelectors,
     lnClassSelectors,
-    lnInstSelectors
+    lnInstSelectors,
   )
     .map(strings => strings.join(''))
     .join(',');
@@ -447,7 +447,7 @@ export function clientLNSelector(tagName: SCLTag, identity: string): string {
 export function ixNamingSelector(
   tagName: SCLTag,
   identity: string,
-  depth = -1
+  depth = -1,
 ): string {
   // eslint-disable-next-line no-param-reassign
   if (depth === -1) depth = identity.split('>').length;
@@ -466,7 +466,7 @@ export function ixNamingSelector(
     .flatMap(parentTag =>
       parentTag === 'SDI'
         ? ixNamingSelector(parentTag, parentIdentity, depth - 1).split(',')
-        : selector(parentTag, parentIdentity).split(',')
+        : selector(parentTag, parentIdentity).split(','),
     )
     // eslint-disable-next-line no-shadow
     .filter(selector => !selector.startsWith(voidSelector));
@@ -475,7 +475,7 @@ export function ixNamingSelector(
 
   const [nameSelectors, ixSelectors] = [
     [`[name="${name}"]`],
-    ix ? [`[ix="${ix}"]`] : ['[ix=""]', ':not([ix])']
+    ix ? [`[ix="${ix}"]`] : ['[ix=""]', ':not([ix])'],
   ];
 
   return crossProduct(
@@ -483,7 +483,7 @@ export function ixNamingSelector(
     ['>'],
     [tagName],
     nameSelectors,
-    ixSelectors
+    ixSelectors,
   )
     .map(strings => strings.join(''))
     .join(',');
@@ -496,12 +496,12 @@ export function valSelector(tagName: SCLTag, identity: string): string {
   const index = parseFloat(indexText);
 
   const parentSelectors = relatives[tagName].parents.flatMap(parentTag =>
-    selector(parentTag, parentIdentity).split(',')
+    selector(parentTag, parentIdentity).split(','),
   );
 
   const [nameSelectors, ixSelectors] = [
     sGroup ? [`[sGroup="${sGroup}"]`] : [''],
-    index ? [`:nth-child(${index + 1})`] : ['']
+    index ? [`:nth-child(${index + 1})`] : [''],
   ];
 
   return crossProduct(
@@ -509,7 +509,7 @@ export function valSelector(tagName: SCLTag, identity: string): string {
     ['>'],
     [tagName],
     nameSelectors,
-    ixSelectors
+    ixSelectors,
   )
     .map(strings => strings.join(''))
     .join(',');
@@ -523,7 +523,7 @@ export function connectedAPSelector(tagName: SCLTag, identity: string): string {
 
 export function controlBlockSelector(
   tagName: SCLTag,
-  identity: string
+  identity: string,
 ): string {
   const [ldInst, cbName] = identity.split(' ');
 
@@ -537,9 +537,9 @@ export function physConnSelector(tagName: SCLTag, identity: string): string {
 
   const [parentSelectors, typeSelectors] = [
     relatives[tagName].parents.flatMap(parentTag =>
-      selector(parentTag, parentIdentity).split(',')
+      selector(parentTag, parentIdentity).split(','),
     ),
-    pcType ? [`[type="${pcType}"]`] : ['']
+    pcType ? [`[type="${pcType}"]`] : [''],
   ];
 
   return crossProduct(parentSelectors, ['>'], [tagName], typeSelectors)
@@ -560,10 +560,10 @@ export function pSelector(tagName: SCLTag, identity: string): string {
 
   const [parentSelectors, typeSelectors, ixSelectors] = [
     relatives[tagName].parents.flatMap(parentTag =>
-      selector(parentTag, parentIdentity).split(',')
+      selector(parentTag, parentIdentity).split(','),
     ),
     [`[type="${type}"]`],
-    index ? [`:nth-child(${index + 1})`] : ['']
+    index ? [`:nth-child(${index + 1})`] : [''],
   ];
 
   return crossProduct(
@@ -571,7 +571,7 @@ export function pSelector(tagName: SCLTag, identity: string): string {
     ['>'],
     [tagName],
     typeSelectors,
-    ixSelectors
+    ixSelectors,
   )
     .map(strings => strings.join(''))
     .join(',');
@@ -589,8 +589,8 @@ export function protNsSelector(tagName: SCLTag, identity: string): string {
 
   const [parentSelectors] = [
     relatives[tagName].parents.flatMap(parentTag =>
-      selector(parentTag, parentIdentity).split(',')
-    )
+      selector(parentTag, parentIdentity).split(','),
+    ),
   ];
 
   return crossProduct(
@@ -599,7 +599,7 @@ export function protNsSelector(tagName: SCLTag, identity: string): string {
     [tagName],
     [`[type="${type}"]`],
     ['>'],
-    [value]
+    [value],
   )
     .map(strings => strings.join(''))
     .join(',');
@@ -612,7 +612,7 @@ export function sCLSelector(): string {
 export function namingSelector(
   tagName: SCLTag,
   identity: string,
-  depth = -1
+  depth = -1,
 ): string {
   // eslint-disable-next-line no-param-reassign
   if (depth === -1) depth = identity.split('>').length;
@@ -629,7 +629,7 @@ export function namingSelector(
     .flatMap(parentTag =>
       tags[parentTag].selector === tags.Substation.selector
         ? namingSelector(parentTag, parentIdentity, depth - 1).split(',')
-        : selector(parentTag, parentIdentity).split(',')
+        : selector(parentTag, parentIdentity).split(','),
     )
     // eslint-disable-next-line no-shadow
     .filter(selector => !selector.startsWith(voidSelector));

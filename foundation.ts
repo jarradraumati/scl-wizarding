@@ -31,13 +31,13 @@ type CloseWizardEvent = CustomEvent<WizardRequest>;
 export function newEditWizardEvent(
   element: Element,
   subWizard?: boolean,
-  eventInitDict?: CustomEventInit<Partial<EditWizardRequest>>
+  eventInitDict?: CustomEventInit<Partial<EditWizardRequest>>,
 ): EditWizardEvent {
   return new CustomEvent<EditWizardRequest>('oscd-edit-wizard-request', {
     bubbles: true,
     composed: true,
     ...eventInitDict,
-    detail: { element, subWizard, ...eventInitDict?.detail }
+    detail: { element, subWizard, ...eventInitDict?.detail },
   });
 }
 
@@ -45,7 +45,7 @@ export function newCreateWizardEvent(
   parent: Element,
   tagName: string,
   subWizard?: boolean,
-  eventInitDict?: CustomEventInit<Partial<CreateWizardRequest>>
+  eventInitDict?: CustomEventInit<Partial<CreateWizardRequest>>,
 ): CreateWizardEvent {
   return new CustomEvent<CreateWizardRequest>('oscd-create-wizard-request', {
     bubbles: true,
@@ -55,20 +55,20 @@ export function newCreateWizardEvent(
       parent,
       tagName,
       subWizard,
-      ...eventInitDict?.detail
-    }
+      ...eventInitDict?.detail,
+    },
   });
 }
 
 export function newCloseWizardEvent(
   wizard: WizardRequest,
-  eventInitDict?: CustomEventInit<Partial<WizardRequest>>
+  eventInitDict?: CustomEventInit<Partial<WizardRequest>>,
 ): CloseWizardEvent {
   return new CustomEvent<WizardRequest>('oscd-close-wizard', {
     bubbles: true,
     composed: true,
     ...eventInitDict,
-    detail: wizard
+    detail: wizard,
   });
 }
 

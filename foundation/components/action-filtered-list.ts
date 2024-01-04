@@ -6,7 +6,6 @@ import { customElement, property, query, state } from 'lit/decorators.js';
 import '@material/mwc-checkbox';
 import '@material/mwc-formfield';
 // eslint-disable-next-line import/no-duplicates
-import '@material/mwc-list/mwc-list-item-base';
 import '@material/mwc-textfield';
 import { CheckListItem } from '@material/mwc-list/mwc-check-list-item';
 import { List } from '@material/mwc-list';
@@ -16,13 +15,13 @@ import { ListItemBase } from '@material/mwc-list/mwc-list-item-base';
 
 function infoItems(list: List): ListItemBase[] {
   return (list.querySelector('slot')?.assignedElements() ?? []).filter(
-    item => item instanceof ListItemBase
+    item => item instanceof ListItemBase,
   ) as ListItemBase[];
 }
 
 function actionItems(actionList: List): Element[] {
   return (actionList.querySelector('slot')?.assignedElements() ?? []).filter(
-    item => item.tagName !== 'LI'
+    item => item.tagName !== 'LI',
   );
 }
 
@@ -35,7 +34,7 @@ function slotItem(item: Element): Element {
 function hideFiltered(
   infoItem: ListItemBase,
   searchText: string,
-  siblingActionItems: Element[]
+  siblingActionItems: Element[],
 ): void {
   const itemInnerText = `${infoItem.innerText}\n`;
   const childInnerText = Array.from(infoItem.children)
@@ -59,19 +58,19 @@ function hideFiltered(
   const meetsFilter = terms.every(term => {
     const reTerm = new RegExp(
       `*${term}*`.replace(/\*/g, '.*').replace(/\?/g, '.{1}'),
-      'i'
+      'i',
     );
     return reTerm.test(filterTarget);
   });
 
   if (isEmptyFilter || meetsFilter) {
     siblingActionItems.forEach(actionItem =>
-      slotItem(actionItem).classList.remove('hidden')
+      slotItem(actionItem).classList.remove('hidden'),
     );
     slotItem(infoItem).classList.remove('hidden');
   } else {
     siblingActionItems.forEach(actionItem =>
-      slotItem(actionItem).classList.add('hidden')
+      slotItem(actionItem).classList.add('hidden'),
     );
     slotItem(infoItem).classList.add('hidden');
   }

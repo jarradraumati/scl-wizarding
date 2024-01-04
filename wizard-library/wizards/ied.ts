@@ -18,7 +18,7 @@ function render(
   desc: string | null,
   type: string | null,
   manufacturer: string | null,
-  owner: string | null
+  owner: string | null,
 ): TemplateResult[] {
   return [
     html`<scl-textfield
@@ -71,7 +71,7 @@ export function updateAction(element: Element): WizardActor {
 
 export function iEDEditWizard(element: Element): Wizard {
   const iedNames: string[] = Array.from(
-    element.ownerDocument.querySelectorAll(':root > IED')
+    element.ownerDocument.querySelectorAll(':root > IED'),
   ).map(ied => ied.getAttribute('name')!);
 
   return [
@@ -88,7 +88,7 @@ export function iEDEditWizard(element: Element): Wizard {
         element.getAttribute('desc'),
         element.getAttribute('type'),
         element.getAttribute('manufacturer'),
-        element.getAttribute('owner')
+        element.getAttribute('owner'),
       ),
     },
   ];

@@ -22,7 +22,7 @@ function formatXml(xml: string, tab: string = '\t'): string {
 
 function codeEdits(
   oldElement: Element,
-  newElementText: string
+  newElementText: string,
 ): (Remove | Insert)[] {
   const parent = oldElement.parentElement;
   if (!parent) return [];
@@ -32,7 +32,7 @@ function codeEdits(
     parent: oldElement.parentElement,
     node: new DOMParser().parseFromString(newElementText, 'application/xml')
       .documentElement,
-    reference: oldElement.nextSibling
+    reference: oldElement.nextSibling,
   };
 
   return [remove, insert];
@@ -83,7 +83,7 @@ export default class CodeDialog extends LitElement {
         soft-tabs
         theme="ace/theme/solarized_light"
         value="${formatXml(
-          new XMLSerializer().serializeToString(this.element)
+          new XMLSerializer().serializeToString(this.element),
         )}"
       ></ace-editor>
       <mwc-button slot="secondaryAction" dialogAction="close"

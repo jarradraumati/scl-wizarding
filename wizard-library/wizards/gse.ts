@@ -22,7 +22,7 @@ function mxxTimeUpdateAction(
   newTimeValue: string | null,
   option: {
     minOrMax: 'MinTime' | 'MaxTime';
-  }
+  },
 ): Edit[] {
   if (oldMxxTime === null) {
     const newMxxTime = createElement(gse.ownerDocument, option.minOrMax, {
@@ -68,14 +68,14 @@ function updateAction(element: Element): WizardActor {
 
     const addressContent: Record<string, string | null> = {};
     addressContent['MAC-Address'] = getValue(
-      inputs.find(i => i.label === 'MAC-Address')!
+      inputs.find(i => i.label === 'MAC-Address')!,
     );
     addressContent.APPID = getValue(inputs.find(i => i.label === 'APPID')!);
     addressContent['VLAN-ID'] = getValue(
-      inputs.find(i => i.label === 'VLAN-ID')!
+      inputs.find(i => i.label === 'VLAN-ID')!,
     );
     addressContent['VLAN-PRIORITY'] = getValue(
-      inputs.find(i => i.label === 'VLAN-PRIORITY')!
+      inputs.find(i => i.label === 'VLAN-PRIORITY')!,
     );
 
     const addressActions = updateAddress(element, addressContent, instType);
@@ -95,8 +95,8 @@ function updateAction(element: Element): WizardActor {
           element,
           element.querySelector('MinTime'),
           minTime,
-          { minOrMax: 'MinTime' }
-        )
+          { minOrMax: 'MinTime' },
+        ),
       );
     }
     if (
@@ -108,8 +108,8 @@ function updateAction(element: Element): WizardActor {
           element,
           element.querySelector('MaxTime'),
           minTime,
-          { minOrMax: 'MaxTime' }
-        )
+          { minOrMax: 'MaxTime' },
+        ),
       );
     }
 

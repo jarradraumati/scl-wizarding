@@ -65,7 +65,7 @@ export function createProcessWizard(parent: Element): Wizard {
   const type = '';
   const reservedNames: string[] = getChildElementsByTagName(
     parent.parentElement!,
-    'Process'
+    'Process',
   )
     .filter(sibling => sibling !== parent)
     .map(sibling => sibling.getAttribute('name')!);
@@ -112,7 +112,7 @@ export function editProcessWizard(element: Element): Wizard {
   const type = element.getAttribute('type');
   const reservedNames: string[] = getChildElementsByTagName(
     element.parentElement!,
-    'Process'
+    'Process',
   )
     .filter(sibling => sibling !== element)
     .map(sibling => sibling.getAttribute('name')!);

@@ -48,8 +48,8 @@ function renderContent(content: EnumValContent): TemplateResult[] {
 function nextOrd(parent: Element): string {
   const maxOrd = Math.max(
     ...Array.from(parent.children).map(child =>
-      parseInt(child.getAttribute('ord') ?? '-2', 10)
-    )
+      parseInt(child.getAttribute('ord') ?? '-2', 10),
+    ),
   );
   // eslint-disable-next-line no-restricted-globals
   return isFinite(maxOrd) ? (maxOrd + 1).toString(10) : '0';

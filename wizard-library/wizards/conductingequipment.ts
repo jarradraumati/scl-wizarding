@@ -76,10 +76,10 @@ function getLogicalNodeInstance(lNode: Element | null): Element | null {
       lDevicePath,
       [' > '],
       lNSelector,
-      lNPrefixSelector
+      lNPrefixSelector,
     )
       .map(strings => strings.join(''))
-      .join(',')
+      .join(','),
   );
 }
 
@@ -88,13 +88,13 @@ function getSwitchTypeValueFromDTT(lNorlNode: Element): string | undefined {
   const lNodeType = lNorlNode.getAttribute('lnType');
   const lnClass = lNorlNode.getAttribute('lnClass');
   const dObj = rootNode.querySelector(
-    `DataTypeTemplates > LNodeType[id="${lNodeType}"][lnClass="${lnClass}"] > DO[name="SwTyp"]`
+    `DataTypeTemplates > LNodeType[id="${lNodeType}"][lnClass="${lnClass}"] > DO[name="SwTyp"]`,
   );
   if (dObj) {
     const dORef = dObj.getAttribute('type');
     return rootNode
       .querySelector(
-        `DataTypeTemplates > DOType[id="${dORef}"] > DA[name="stVal"] > Val`
+        `DataTypeTemplates > DOType[id="${dORef}"] > DA[name="stVal"] > Val`,
       )
       ?.innerHTML.trim();
   }
@@ -104,7 +104,7 @@ function getSwitchTypeValueFromDTT(lNorlNode: Element): string | undefined {
 
 function getSwitchTypeValue(lN: Element): string | undefined {
   const daInstantiated = lN.querySelector(
-    'DOI[name="SwTyp"] > DAI[name="stVal"]'
+    'DOI[name="SwTyp"] > DAI[name="stVal"]',
   );
 
   if (daInstantiated)
@@ -115,7 +115,7 @@ function getSwitchTypeValue(lN: Element): string | undefined {
 
 function containsGroundedTerminal(condEq: Element): boolean {
   return Array.from(condEq.querySelectorAll('Terminal')).some(
-    t => t.getAttribute('cNodeName') === 'grounded'
+    t => t.getAttribute('cNodeName') === 'grounded',
   );
 }
 
@@ -150,7 +150,7 @@ function typeName(condEq: Element): string {
 
 function renderTypeSelector(
   option: 'edit' | 'create',
-  type: string
+  type: string,
 ): TemplateResult {
   return option === 'create'
     ? html`<mwc-select
@@ -159,7 +159,7 @@ function renderTypeSelector(
         label="type"
       >
         ${Object.keys(types).map(
-          v => html`<mwc-list-item value="${v}">${types[v]}</mwc-list-item>`
+          v => html`<mwc-list-item value="${v}">${types[v]}</mwc-list-item>`,
         )}
       </mwc-select>`
     : html`<mwc-select label="type" disabled>
@@ -176,7 +176,7 @@ type RenderOptions = {
 };
 
 function renderConductingEquipmentWizard(
-  options: RenderOptions
+  options: RenderOptions,
 ): TemplateResult[] {
   return [
     renderTypeSelector(options.option, options.type),
@@ -255,7 +255,7 @@ function createAction(parent: Element): WizardActor {
       {
         name: 'grounded',
         pathName: connectivityNode,
-      }
+      },
     );
 
     const cNodeAction = {

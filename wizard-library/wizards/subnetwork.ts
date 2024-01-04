@@ -122,7 +122,7 @@ function getBitRateAction(
   oldBitRate: Element | null,
   BitRate: string | null,
   multiplier: string | null,
-  SubNetwork: Element
+  SubNetwork: Element,
 ): Edit {
   if (oldBitRate === null) {
     const bitRateElement = createElement(SubNetwork.ownerDocument, 'BitRate', {
@@ -193,7 +193,7 @@ function updateAction(element: Element): WizardActor {
         element.querySelector('SubNetwork > BitRate'),
         BitRate,
         multiplier,
-        subNetworkAction?.element ?? element
+        subNetworkAction?.element ?? element,
       );
     }
 

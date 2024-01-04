@@ -8,7 +8,6 @@ import { customElement, property, queryAll, state } from 'lit/decorators.js';
 
 import 'ace-custom-element';
 import '@material/mwc-button';
-import '@material/mwc-dialog';
 import { Dialog } from '@material/mwc-dialog';
 import type { List } from '@material/mwc-list';
 
@@ -20,12 +19,12 @@ import {
   WizardActor,
   wizardInputSelector,
   checkValidity,
-  reportValidity
+  reportValidity,
 } from '../../wizard-library/foundation.js';
 import {
   CreateWizardRequest,
   EditWizardRequest,
-  newCloseWizardEvent
+  newCloseWizardEvent,
 } from '../../foundation.js';
 
 function renderWizardInput(input: TemplateResult): TemplateResult {
@@ -40,7 +39,7 @@ function dialogValid(dialog?: Dialog): boolean {
   return dialogInputs(dialog).every(checkValidity);
 }
 
-/** A wizard style dialog consisting of several pages commiting some
+/** A wizard style dialog consisting of several pages committing some
  * [[`EditorAction`]] on completion and aborting on dismissal. */
 @customElement('scl-wizard-dialog')
 export class SclWizardDialog extends LitElement {
@@ -142,7 +141,7 @@ export class SclWizardDialog extends LitElement {
     }
     if (this.wizard[this.pageIndex]?.primary?.auto) {
       this.updateComplete.then(() =>
-        this.act(this.wizard[this.pageIndex].primary!.action)
+        this.act(this.wizard[this.pageIndex].primary!.action),
       );
     }
   }

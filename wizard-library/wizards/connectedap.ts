@@ -42,12 +42,12 @@ function initSMVElements(
     macGeneratorSmv: () => string | null;
     appidGeneratorSmv: () => string | null;
     unconnectedSampledValueControl: Set<string>;
-  }
+  },
 ): Edit[] {
   const actions: Edit[] = [];
 
   const ied = doc.querySelector(
-    `IED[name="${connectedAp.getAttribute('iedName')}"]`
+    `IED[name="${connectedAp.getAttribute('iedName')}"]`,
   );
 
   Array.from(ied?.querySelectorAll('SampledValueControl') ?? [])
@@ -134,12 +134,12 @@ function initGSEElements(
     macGeneratorGse: () => string | null;
     appidGeneratorGse: () => string | null;
     unconnectedGseControl: Set<string>;
-  }
+  },
 ): Edit[] {
   const actions: Edit[] = [];
 
   const ied = doc.querySelector(
-    `IED[name="${connectedAp.getAttribute('iedName')}"]`
+    `IED[name="${connectedAp.getAttribute('iedName')}"]`,
   );
 
   Array.from(ied?.querySelectorAll('GSEControl') ?? [])
@@ -252,7 +252,7 @@ function unconnectedGseControls(doc: XMLDocument): Set<string> {
 
       return !doc.querySelector(
         `ConnectedAP[iedName="${iedName}"] ` +
-          `> GSE[ldInst="${ldInst}"][cbName="${cbName}"]`
+          `> GSE[ldInst="${ldInst}"][cbName="${cbName}"]`,
       );
     })
     .map(gseControl => identity(gseControl) as string);
@@ -272,7 +272,7 @@ function unconnectedSampledValueControls(doc: XMLDocument): Set<string> {
 
       return !doc.querySelector(
         `ConnectedAP[iedName="${iedName}"] ` +
-          `> SMV[ldInst="${ldInst}"][cbName="${cbName}"]`
+          `> SMV[ldInst="${ldInst}"][cbName="${cbName}"]`,
       );
     })
     .map(gseControl => identity(gseControl) as string);
@@ -296,7 +296,7 @@ function createConnectedApAction(parent: Element): WizardActor {
     const unconnectedSampledValueControl = unconnectedSampledValueControls(doc);
 
     const list = wizard.shadowRoot?.querySelector(
-      '#apList'
+      '#apList',
     ) as OscdFilteredList;
     if (!list) return [];
 
@@ -320,14 +320,14 @@ function createConnectedApAction(parent: Element): WizardActor {
           macGeneratorSmv,
           appidGeneratorSmv,
           unconnectedSampledValueControl,
-        })
+        }),
       );
       connAPactions.push(
         ...initGSEElements(doc, connectedAp, {
           macGeneratorGse,
           appidGeneratorGse,
           unconnectedGseControl,
-        })
+        }),
       );
 
       return connAPactions;
@@ -340,7 +340,7 @@ function createConnectedApAction(parent: Element): WizardActor {
 /** Sorts connected `AccessPoint`s to the bottom. */
 function compareAccessPointConnection(
   a: AccessPointDescription,
-  b: AccessPointDescription
+  b: AccessPointDescription,
 ): number {
   if (a.connected !== b.connected) return b.connected ? -1 : 1;
   return 0;
@@ -351,7 +351,7 @@ function existConnectedAp(accessPoint: Element): boolean {
   const apName = accessPoint.getAttribute('name');
 
   const connAp = accessPoint.ownerDocument.querySelector(
-    `ConnectedAP[iedName="${iedName}"][apName="${apName}"]`
+    `ConnectedAP[iedName="${iedName}"][apName="${apName}"]`,
   );
 
   return (connAp && isPublic(connAp)) ?? false;
@@ -364,7 +364,7 @@ export function createConnectedApWizard(element: Element): Wizard {
   const accessPoints = Array.from(doc.querySelectorAll(':root > IED'))
     .sort(compareNames)
     .flatMap(ied =>
-      Array.from(ied.querySelectorAll(':root > IED > AccessPoint'))
+      Array.from(ied.querySelectorAll(':root > IED > AccessPoint')),
     )
     .map(accesspoint => ({
       element: accesspoint,

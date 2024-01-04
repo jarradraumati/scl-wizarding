@@ -22,7 +22,7 @@ type RenderOptions = {
 };
 
 export function contentFunctionWizard(
-  options: RenderOptions
+  options: RenderOptions,
 ): TemplateResult[] {
   return [
     html`<scl-textfield
@@ -56,7 +56,7 @@ function createFunctionAction(parent: Element): WizardActor {
     const fUnction = createElement(
       parent.ownerDocument,
       'Function',
-      functionAttrs
+      functionAttrs,
     );
 
     return [

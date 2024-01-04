@@ -49,7 +49,7 @@ function renderContent(content: DoContent): TemplateResult[] {
             value=${dataType.id}
             ?selected=${dataType.id === content.type}
             >${dataType.id}</mwc-list-item
-          >`
+          >`,
       )}</scl-select
     >`,
   ];
@@ -83,7 +83,7 @@ export function createSDoWizard(parent: Element): Wizard {
   const [type, name, desc] = [null, '', null];
 
   const doTypes = Array.from(
-    parent.ownerDocument.querySelectorAll('DOType')
+    parent.ownerDocument.querySelectorAll('DOType'),
   ).filter(doType => doType.getAttribute('id'));
 
   return [
@@ -126,7 +126,7 @@ export function editSDoWizard(element: Element): Wizard {
   ];
 
   const doTypes = Array.from(
-    element.ownerDocument.querySelectorAll('DOType')
+    element.ownerDocument.querySelectorAll('DOType'),
   ).filter(doType => doType.getAttribute('id'));
 
   return [

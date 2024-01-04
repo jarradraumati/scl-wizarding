@@ -24,7 +24,7 @@ type RenderOptions = {
 };
 
 export function contentGeneralEquipmentWizard(
-  options: RenderOptions
+  options: RenderOptions,
 ): TemplateResult[] {
   return [
     html`<scl-textfield
@@ -65,7 +65,7 @@ function createAction(parent: Element): WizardActor {
     const generalEquipment = createElement(
       parent.ownerDocument,
       'GeneralEquipment',
-      attributes
+      attributes,
     );
 
     return [
@@ -115,7 +115,7 @@ function updateAction(element: Element): WizardActor {
 
     if (
       generalEquipmentKeys.some(
-        key => attributes[key] !== element.getAttribute(key)
+        key => attributes[key] !== element.getAttribute(key),
       )
     ) {
       return [{ element, attributes }];
