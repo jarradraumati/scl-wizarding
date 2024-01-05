@@ -62,6 +62,7 @@ import {
 
 type SclElementWizard = (
   element: Element,
+  subWizard?: boolean,
   instanceElement?: Element,
 ) => Wizard | undefined;
 

@@ -284,10 +284,49 @@ function createAction(parent: Element): WizardActor {
 function updateAction(element: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const attributes: Record<string, string | null> = {};
-    const lNodeTypeKeys = ['desc', 'iedName', 'ldInst', 'prefix', 'lnInst'];
+    const lNodeTypeKeys = [
+      'desc',
+      'iedName',
+      'ldInst',
+      'prefix',
+      'lnInst',
+      'lnType',
+    ];
     lNodeTypeKeys.forEach(key => {
       attributes[key] = getValue(inputs.find(i => i.label === key)!);
     });
+
+    if (
+      lNodeTypeKeys.some(key => attributes[key] !== element.getAttribute(key))
+    ) {
+      return [{ element, attributes }];
+    }
+
+    return [];
+  };
+}
+
+function mapAction(element: Element): WizardActor {
+  return (_: WizardInputElement[], wizard: Element): Edit[] => {
+    const list = wizard.shadowRoot?.querySelector(
+      '#lnList',
+    ) as OscdFilteredList;
+
+    const selectedLN = element.ownerDocument.querySelector(
+      selector('LN', (list.selected as ListItemBase).value),
+    ) as Element;
+
+    const { iedName, ldInst, prefix, inst, lnType } =
+      logicalNodeParameters(selectedLN);
+
+    const attributes: Record<string, string | null> = {};
+    const lNodeTypeKeys = ['iedName', 'ldInst', 'prefix', 'lnInst', 'lnType'];
+
+    attributes.iedName = iedName;
+    attributes.ldInst = ldInst;
+    attributes.prefix = prefix;
+    attributes.lnInst = inst;
+    attributes.lnType = lnType;
 
     if (
       lNodeTypeKeys.some(key => attributes[key] !== element.getAttribute(key))
@@ -310,6 +349,19 @@ function filterIED(evt: Event, parent: Element): void {
   selectedIEDs.push(...ieds);
 
   render(renderInstances(parent), lnFilterList(evt.target as HTMLElement));
+}
+
+function filterIEDLN(evt: Event, parent: Element): void {
+  const iedFilterList = evt.target as OscdFilteredList;
+  const ieds = (iedFilterList.selected as ListItemBase[]).map(
+    selection => selection.value,
+  );
+
+  // update global array selectedIEDs
+  selectedIEDs.length = 0;
+  selectedIEDs.push(...ieds);
+
+  render(renderLNodeInstances(parent), lnFilterList(evt.target as HTMLElement));
 }
 
 function renderListItem(value: {
@@ -351,6 +403,21 @@ function renderInstances(parent: Element): TemplateResult[] {
   return allAnyLNs(doc)
     .filter(anyLn =>
       selectedIEDs.includes(anyLn.closest('IED')?.getAttribute('name') ?? ''),
+    )
+    .map(anyLn => anyLnObject(parent, anyLn))
+    .sort(compare)
+    .map(renderListItem);
+}
+
+function renderLNodeInstances(parent: Element): TemplateResult[] {
+  const doc = parent.ownerDocument;
+  const lnClass = parent.getAttribute('lnClass');
+
+  return allAnyLNs(doc)
+    .filter(
+      anyLn =>
+        anyLn.getAttribute('lnClass') === lnClass &&
+        selectedIEDs.includes(anyLn.closest('IED')?.getAttribute('name') ?? ''),
     )
     .map(anyLn => anyLnObject(parent, anyLn))
     .sort(compare)
@@ -429,7 +496,54 @@ export function createLNodeWizard(parent: Element): Wizard {
   ];
 }
 
-export function editLNodeWizard(element: Element): Wizard {
+export function editLNodeWizard(element: Element, subWizard?: boolean): Wizard {
+  if (subWizard) {
+    const lnClass = element.getAttribute('lnClass');
+
+    return [
+      {
+        title: 'Map LN to LNode',
+        primary: {
+          icon: 'save',
+          label: 'save',
+          action: mapAction(element),
+        },
+        content: [
+          html`<div id="createLNodeWizardContent">
+            <style>
+              .hidden {
+                display: none;
+              }
+            </style>
+            <div style="display: flex; flex-direction: row;">
+              <div id="instanceFilter">
+                <mwc-icon-button-toggle
+                  ?on=${!selectedIEDs.length}
+                  style="position:absolute;top:8px;right:60px;"
+                  onicon="filter_list"
+                  officon="filter_list_off"
+                  @click="${showIEdFilterList}"
+                ></mwc-icon-button-toggle>
+                <oscd-filtered-list
+                  class="${classMap({ hidden: selectedIEDs.length })}"
+                  id="iedList"
+                  multi
+                  disableCheckAll
+                  @selected="${(evt: Event) => filterIEDLN(evt, element)}"
+                  >${renderIEDItems(element)}</oscd-filtered-list
+                >
+              </div>
+              <oscd-filtered-list
+                id="lnList"
+                searchField.value="${lnClass}"
+              ></oscd-filtered-list>
+            </div>
+          </div>`,
+        ],
+      },
+    ];
+  }
+
   return [
     {
       title: 'Edit LNode',
