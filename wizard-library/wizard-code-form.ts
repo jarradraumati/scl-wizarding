@@ -4,10 +4,10 @@ import { LitElement, TemplateResult, css, html } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 
 import '@material/mwc-dialog';
-import AceEditor from 'ace-custom-element';
 
 import '../foundation/components/scl-wizard-dialog.js';
 import '../foundation/components/code-dialog.js';
+import AceEditor from 'ace-custom-element';
 import {
   EditWizardRequest,
   CreateWizardRequest,

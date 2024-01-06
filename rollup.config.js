@@ -1,6 +1,7 @@
 import nodeResolve from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
 import { importMetaAssets } from '@web/rollup-plugin-import-meta-assets';
+import copy from 'rollup-plugin-copy';
 
 export default {
   input: './scl-wizarding.ts',
@@ -17,5 +18,19 @@ export default {
     nodeResolve(),
     typescript(),
     importMetaAssets(),
+    copy({
+      targets: [
+        {
+          src: [
+            'node_modules/ace-custom-element/dist/ace/ext-searchbox.js',
+            'node_modules/ace-custom-element/dist/ace/mode-xml.js',
+            'node_modules/ace-custom-element/dist/ace/theme-solarized_dark.js',
+            'node_modules/ace-custom-element/dist/ace/theme-solarized_light.js',
+            'node_modules/ace-custom-element/dist/ace/worker-xml.js',
+          ],
+          dest: 'dist/ace',
+        },
+      ],
+    }),
   ],
 };
