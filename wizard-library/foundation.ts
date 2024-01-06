@@ -172,6 +172,7 @@ export function getChildElementsByTagName(
 ): Element[] {
   if (!element || !tag) return [];
   return Array.from(element.children).filter(
+    // eslint-disable-next-line @typescript-eslint/no-shadow
     element => element.tagName === tag,
   );
 }
