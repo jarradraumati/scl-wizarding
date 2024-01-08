@@ -3,7 +3,7 @@ const nameStartChar =
   '|[\u037F-\u1FFF]|[\u200C-\u200D]|[\u2070-\u218F]|[\u2C00-\u2FEF]' +
   '|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD]';
 const nameChar = `${nameStartChar}|[.0-9\\-]|\u00B7|[\u0300-\u036F]|[\u203F-\u2040]`;
-const name = `${nameStartChar}(${nameChar})*`;
+const name = `(${nameStartChar})(${nameChar})*`;
 const nmToken = `(${nameChar})+`;
 
 export const patterns = {
@@ -13,6 +13,9 @@ export const patterns = {
   normalizedString:
     '([\u0020-\u007E]|[\u0085]|[\u00A0-\uD7FF]|[\uE000-\uFFFD])*',
   name,
+  tName:
+    '([\u0020-\u007E]|[\u0085]|[\u00A0-\uD7FF]|[\uE000-\uFFFD])' +
+    '([\u0020-\u007E]|[\u0085]|[\u00A0-\uD7FF]|[\uE000-\uFFFD])*',
   nmToken,
   names: `${name}( ${name})*`,
   nmTokens: `${nmToken}( ${nmToken})*`,
@@ -33,6 +36,9 @@ export const patterns = {
     '(WYE)|(DEL)|(SEQ)|(HMV)|(HWYE)|(HDEL)|(SPC)|(DPC)|(INC)|(ENC)|(BSC)|(ISC)|(APC)|(BAC)|' +
     '(SPG)|(ING)|(ENG)|(ORG)|(TSG)|(CUG)|(VSG)|(ASG)|(CURVE)|(CSG)|(DPL)|(LPL)|(CSD)|(CST)|' +
     '(BTS)|(UTS)|(LTS)|(GTS)|(MTS)|(NTS)|(STS)|(CTS)|(OTS)|(VSD)',
+  uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
+  id: '\\S{1,255}',
+  path: '.+(/.+)*',
 };
 
 export const maxLength = {

@@ -60,6 +60,117 @@ import {
   voltageLevelEditWizard,
 } from './voltagelevel.js';
 
+import {
+  createProcessResourcesWizard,
+  editProcessResourcesWizard,
+} from './iec61850-6-100/processresources.js';
+
+import {
+  createProcessResourceWizard,
+  editProcessResourceWizard,
+} from './iec61850-6-100/processresource.js';
+
+import {
+  createResourceWizard,
+  editResourceWizard,
+} from './iec61850-6-100/resource.js';
+import {
+  createAllocationRoleWizard,
+  editAllocationRoleWizard,
+} from './iec61850-6-100/allocationrole.js';
+import {
+  createAnalogueWiringParametersWizard,
+  editAnalogueWiringParametersWizard,
+} from './iec61850-6-100/analoguewiringparameters.js';
+import {
+  createApplicationWizard,
+  editApplicationWizard,
+} from './iec61850-6-100/application.js';
+import {
+  createBehaviorDescriptionWizard,
+  editBehaviorDescriptionWizard,
+} from './iec61850-6-100/behaviordescription.js';
+import {
+  createBehaviorDescriptionRefWizard,
+  editBehaviorDescriptionRefWizard,
+} from './iec61850-6-100/behaviordescriptionref.js';
+import {
+  createProcessResourceRefWizard,
+  editProcessResourceRefWizard,
+} from './iec61850-6-100/processresourceref.js';
+import {
+  createFunctionRefWizard,
+  editFunctionRefWizard,
+} from './iec61850-6-100/functionref.js';
+import {
+  createBehaviorReferenceWizard,
+  editBehaviorReferenceWizard,
+} from './iec61850-6-100/behaviorreference.js';
+import {
+  createBinaryWiringParametersWizard,
+  editBinaryWiringParametersWizard,
+} from './iec61850-6-100/binarywiringparameters.js';
+import {
+  createServiceSpecificationsWizard,
+  editServiceSpecificationsWizard,
+} from './iec61850-6-100/servicespecifications.js';
+import {
+  createCommunicationServiceSpecificationsWizard,
+  editCommunicationServiceSpecificationsWizard,
+} from './iec61850-6-100/communicationservicespecifications.js';
+import {
+  createFunctionCatRefWizard,
+  editFunctionCatRefWizard,
+} from './iec61850-6-100/functioncatref.js';
+import {
+  createFunctionCategoryWizard,
+  editFunctionCategoryWizard,
+} from './iec61850-6-100/functioncategory.js';
+import {
+  createFunctionRoleContentWizard,
+  editFunctionRoleContentWizard,
+} from './iec61850-6-100/functionrolecontent.js';
+import {
+  createFunctionRoleWizard,
+  editFunctionRoleWizard,
+} from './iec61850-6-100/functionrole.js';
+import {
+  createGooseParametersWizard,
+  editGooseParametersWizard,
+} from './iec61850-6-100/gooseparameters.js';
+import {
+  createSMVParametersWizard,
+  editSMVParametersWizard,
+} from './iec61850-6-100/smvparameters.js';
+import {
+  createReportParametersWizard,
+  editReportParametersWizard,
+} from './iec61850-6-100/reportparameters.js';
+import {
+  createInputVarWizard,
+  editInputVarWizard,
+} from './iec61850-6-100/inputvar.js';
+import {
+  createOutputVarWizard,
+  editOutputVarWizard,
+} from './iec61850-6-100/outputvar.js';
+import {
+  createPowerSystemRelationsWizard,
+  editPowerSystemRelationsWizard,
+} from './iec61850-6-100/powersystemrelations.js';
+import {
+  createPowerSystemRelationWizard,
+  editPowerSystemRelationWizard,
+} from './iec61850-6-100/powersystemrelation.js';
+import {
+  createVariableWizard,
+  editVariableWizard,
+} from './iec61850-6-100/variable.js';
+import {
+  createVariableApplyToWizard,
+  editVariableApplyToWizard,
+} from './iec61850-6-100/variableapplyto.js';
+
 type SclElementWizard = (
   element: Element,
   subWizard?: boolean,
@@ -540,5 +651,113 @@ export const wizards: Record<
   VoltageLevel: {
     edit: voltageLevelEditWizard,
     create: voltageLevelCreateWizard,
+  },
+  ProcessResources: {
+    edit: editProcessResourcesWizard,
+    create: createProcessResourcesWizard,
+  },
+  ProcessResource: {
+    edit: editProcessResourceWizard,
+    create: createProcessResourceWizard,
+  },
+  Resource: {
+    edit: editResourceWizard,
+    create: createResourceWizard,
+  },
+  AllocationRole: {
+    edit: editAllocationRoleWizard,
+    create: createAllocationRoleWizard,
+  },
+  AnalogueWiringParameters: {
+    edit: editAnalogueWiringParametersWizard,
+    create: createAnalogueWiringParametersWizard,
+  },
+  Application: {
+    edit: editApplicationWizard,
+    create: createApplicationWizard,
+  },
+  BehaviorDescription: {
+    edit: editBehaviorDescriptionWizard,
+    create: createBehaviorDescriptionWizard,
+  },
+  BehaviorDescriptionRef: {
+    edit: editBehaviorDescriptionRefWizard,
+    create: createBehaviorDescriptionRefWizard,
+  },
+  BehaviorReference: {
+    edit: editBehaviorReferenceWizard,
+    create: createBehaviorReferenceWizard,
+  },
+  BinaryWiringParameters: {
+    edit: editBinaryWiringParametersWizard,
+    create: createBinaryWiringParametersWizard,
+  },
+  CommunicationServiceSpecifications: {
+    edit: editCommunicationServiceSpecificationsWizard,
+    create: createCommunicationServiceSpecificationsWizard,
+  },
+  ServiceSpecifications: {
+    edit: editServiceSpecificationsWizard,
+    create: createServiceSpecificationsWizard,
+  },
+  FunctionCatRef: {
+    edit: editFunctionCatRefWizard,
+    create: createFunctionCatRefWizard,
+  },
+  FunctionCategory: {
+    edit: editFunctionCategoryWizard,
+    create: createFunctionCategoryWizard,
+  },
+  FunctionRef: {
+    edit: editFunctionRefWizard,
+    create: createFunctionRefWizard,
+  },
+  FunctionRoleContent: {
+    edit: editFunctionRoleContentWizard,
+    create: createFunctionRoleContentWizard,
+  },
+  FunctionRole: {
+    edit: editFunctionRoleWizard,
+    create: createFunctionRoleWizard,
+  },
+  GooseParameters: {
+    edit: editGooseParametersWizard,
+    create: createGooseParametersWizard,
+  },
+  SMVParameters: {
+    edit: editSMVParametersWizard,
+    create: createSMVParametersWizard,
+  },
+  ReportParameters: {
+    edit: editReportParametersWizard,
+    create: createReportParametersWizard,
+  },
+  InputVar: {
+    edit: editInputVarWizard,
+    create: createInputVarWizard,
+  },
+  OutputVar: {
+    edit: editOutputVarWizard,
+    create: createOutputVarWizard,
+  },
+  PowerSystemRelations: {
+    edit: editPowerSystemRelationsWizard,
+    create: createPowerSystemRelationsWizard,
+  },
+  PowerSystemRelation: {
+    edit: editPowerSystemRelationWizard,
+    create: createPowerSystemRelationWizard,
+  },
+  ProcessResourceRef: {
+    edit: editProcessResourceRefWizard,
+    create: createProcessResourceRefWizard,
+  },
+  Variable: {
+    edit: editVariableWizard,
+    create: createVariableWizard,
+  },
+  VariableApplyTo: {
+    edit: editVariableApplyToWizard,
+    create: createVariableApplyToWizard,
   },
 };

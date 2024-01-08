@@ -52,7 +52,7 @@ export default class WizardCodeForm extends LitElement {
     }
 
     const request = this.wizardRequest as EditWizardRequest;
-    return wizards[request.element.tagName]?.edit(
+    return wizards[request.element.localName]?.edit(
       request.element,
       request.subWizard,
     );

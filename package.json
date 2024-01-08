@@ -38,12 +38,13 @@
     "@material/mwc-menu": "^0.27.0",
     "@material/mwc-select": "^0.27.0",
     "@material/mwc-switch": "^0.27.0",
-    "@material/mwc-textfield": "^0.27.0",
     "@material/mwc-textarea": "^0.27.0",
+    "@material/mwc-textfield": "^0.27.0",
     "@openenergytools/scl-lib": "^0.11.18",
     "@openscd/oscd-filtered-list": "^1.1.1",
     "ace-custom-element": "^1.6.5",
-    "lit": "^2.4.0"
+    "lit": "^2.4.0",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@custom-elements-manifest/analyzer": "^0.6.6",
@@ -54,6 +55,7 @@
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-typescript": "^9.0.2",
     "@types/node": "^18.11.9",
+    "@types/uuid": "^9.0.7",
     "@typescript-eslint/eslint-plugin": "^5.41.0",
     "@typescript-eslint/parser": "^5.41.0",
     "@web/dev-server": "^0.1.35",
@@ -80,6 +82,10 @@
     "tslib": "^2.4.1",
     "typedoc": "^0.23.8",
     "typescript": "^4.8.4"
+  },
+  "browser": {
+    "crypto": false,
+    "stream": false
   },
   "customElements": "custom-elements.json",
   "eslintConfig": {

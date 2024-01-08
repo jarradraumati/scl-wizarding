@@ -158,7 +158,15 @@ export function createElement(
   doc: Document,
   tag: string,
   attrs: Record<string, string | null>,
+  namespace?: string | null,
 ): Element {
+  if (namespace) {
+    const element = doc.createElementNS(namespace, tag);
+    Object.entries(attrs)
+      .filter(([_, value]) => value !== null)
+      .forEach(([name, value]) => element.setAttribute(name, value!));
+    return element;
+  }
   const element = doc.createElementNS(doc.documentElement.namespaceURI, tag);
   Object.entries(attrs)
     .filter(([_, value]) => value !== null)

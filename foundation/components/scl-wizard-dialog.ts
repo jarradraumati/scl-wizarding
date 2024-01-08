@@ -201,6 +201,7 @@ export class SclWizardDialog extends LitElement {
 
   static styles = css`
     mwc-dialog {
+      --mdc-dialog-min-width: 400px;
       --mdc-dialog-max-width: 92vw;
     }
 
