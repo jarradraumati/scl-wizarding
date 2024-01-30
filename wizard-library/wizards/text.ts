@@ -15,26 +15,39 @@ import {
 
 import { getReference } from '../../foundation/utils/scldata.js';
 
-type RenderOptions = { content: string };
+type RenderOptions = {
+  source: string | null;
+  content: string;
+};
 
-function render({ content }: RenderOptions): TemplateResult[] {
+export function contentTextWizard(options: RenderOptions): TemplateResult[] {
   return [
-    html`<mwc-textarea
-      label="content"
-      value="${content}"
-      rows="10"
-      cols="80"
-      dialogInitialFocus
-    ></mwc-textarea>`,
+    html`<scl-textfield
+        label="source"
+        .maybeValue=${options.source}
+        nullable
+      ></scl-textfield
+      ><mwc-textarea
+        label="content"
+        value="${options.content}"
+        rows="10"
+        cols="80"
+        dialogInitialFocus
+      ></mwc-textarea>`,
   ];
 }
 
-export function createAction(parent: Element): WizardActor {
+function createTextAction(parent: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
+    const attributes: Record<string, string | null> = {};
+    const textKeys = ['source'];
+    textKeys.forEach(key => {
+      attributes[key] = getValue(inputs.find(i => i.label === key)!);
+    });
     const content = getValue(inputs.find(i => i.label === 'content')!);
 
     parent.ownerDocument.createElement('Text');
-    const text = createElement(parent.ownerDocument, 'Text', {});
+    const text = createElement(parent.ownerDocument, 'Text', attributes);
     text.textContent = content;
 
     return [
@@ -48,55 +61,65 @@ export function createAction(parent: Element): WizardActor {
 }
 
 export function createTextWizard(parent: Element): Wizard {
+  const source = null;
+
   return [
     {
       title: 'Create Text',
       primary: {
         icon: 'add',
         label: 'add',
-        action: createAction(parent),
+        action: createTextAction(parent),
       },
-      content: render({
-        content: '',
-      }),
+      content: [
+        ...contentTextWizard({
+          source,
+          content: '',
+        }),
+      ],
     },
   ];
 }
 
-export function updateAction(element: Element): WizardActor {
+export function updateText(element: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
+    const attributes: Record<string, string | null> = {};
+    const textKeys = ['source'];
+    textKeys.forEach(key => {
+      attributes[key] = getValue(inputs.find(i => i.label === key)!);
+    });
     const content = inputs.find(i => i.label === 'content')!.value!;
 
-    if (content === element.textContent ?? '') return [];
+    if (
+      textKeys.some(key => attributes[key] !== element.getAttribute(key)) ||
+      content !== element.textContent
+    ) {
+      element.textContent = content;
+      return [{ element, attributes }];
+    }
 
-    const node = element.cloneNode() as Element;
-    node.textContent = content;
-
-    Array.from(element.querySelectorAll('Private')).forEach(priv =>
-      node.prepend(priv.cloneNode(true)),
-    );
-
-    const reference = element.nextElementSibling;
-    const parent = element.parentElement;
-
-    if (!parent) return [];
-
-    return [{ node: element }, { parent, node, reference }];
+    return [];
   };
 }
 
 export function editTextWizard(element: Element): Wizard {
+  const source = element.getAttribute('source');
+  const content = element.textContent || '';
+
   return [
     {
       title: 'Edit Text',
       primary: {
         icon: 'edit',
         label: 'save',
-        action: updateAction(element),
+        action: updateText(element),
       },
-      content: render({
-        content: element.textContent || '',
-      }),
+      content: [
+        ...contentTextWizard({
+          source,
+          content,
+        }),
+      ],
     },
   ];
 }

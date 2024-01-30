@@ -15,6 +15,7 @@ import { getReference } from '../../foundation/utils/scldata.js';
 
 type RenderOptions = {
   type: string | null;
+  source: string | null;
 };
 
 export function contentPrivateWizard(options: RenderOptions): TemplateResult[] {
@@ -23,14 +24,20 @@ export function contentPrivateWizard(options: RenderOptions): TemplateResult[] {
       label="type"
       .maybeValue=${options.type}
       required
-    ></scl-textfield>`,
+      dialogInitialFocus
+    ></scl-textfield>
+    <scl-textfield
+        label="source"
+        .maybeValue=${options.source}
+        nullable
+      ></scl-textfield`,
   ];
 }
 
 function createPrivateAction(parent: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const privateAttrs: Record<string, string | null> = {};
-    const privateKeys = ['type'];
+    const privateKeys = ['type', 'source'];
     privateKeys.forEach(key => {
       privateAttrs[key] = getValue(inputs.find(i => i.label === key)!);
     });
@@ -49,6 +56,7 @@ function createPrivateAction(parent: Element): WizardActor {
 
 export function createPrivateWizard(parent: Element): Wizard {
   const type = null;
+  const source = null;
 
   return [
     {
@@ -61,6 +69,7 @@ export function createPrivateWizard(parent: Element): Wizard {
       content: [
         ...contentPrivateWizard({
           type,
+          source,
         }),
       ],
     },
@@ -70,7 +79,7 @@ export function createPrivateWizard(parent: Element): Wizard {
 function updatePrivate(element: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const attributes: Record<string, string | null> = {};
-    const functionKeys = ['type'];
+    const functionKeys = ['type', 'source'];
     functionKeys.forEach(key => {
       attributes[key] = getValue(inputs.find(i => i.label === key)!);
     });
@@ -87,6 +96,7 @@ function updatePrivate(element: Element): WizardActor {
 
 export function editPrivateWizard(element: Element): Wizard {
   const type = element.getAttribute('type');
+  const source = element.getAttribute('source');
 
   return [
     {
@@ -99,6 +109,7 @@ export function editPrivateWizard(element: Element): Wizard {
       content: [
         ...contentPrivateWizard({
           type,
+          source,
         }),
       ],
     },
