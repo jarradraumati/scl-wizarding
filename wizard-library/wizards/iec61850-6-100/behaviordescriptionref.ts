@@ -15,8 +15,8 @@ import {
 import { get6100Reference } from '../../../foundation/utils/scldata.js';
 
 type RenderOptions = {
-  behaviorDescription: string | null;
   desc: string | null;
+  behaviorDescription: string | null;
   behaviorDescriptionUuid: UUID | null;
 };
 
@@ -25,15 +25,15 @@ export function contentBehaviorDescriptionRefWizard(
 ): TemplateResult[] {
   return [
     html`<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+    html`<scl-textfield
       label="behaviorDescription"
       .maybeValue=${options.behaviorDescription}
       required
       dialogInitialFocus
-    ></scl-textfield>`,
-    html`<scl-textfield
-      label="desc"
-      .maybeValue=${options.desc}
-      nullable
     ></scl-textfield>`,
     html`<scl-textfield
       label="behaviorDescriptionUuid"

@@ -3,6 +3,9 @@ import { html, TemplateResult } from 'lit';
 import { Edit } from '@openscd/open-scd-core';
 
 import '../../../foundation/components/scl-textfield.js';
+import { UUID } from 'crypto';
+import { v4 as uuidv4 } from 'uuid';
+import { patterns } from '../../wizards/patterns.js';
 
 import {
   createElement,
@@ -20,6 +23,9 @@ type RenderOptions = {
   fileReference: string | null;
   isSpecification: string | null;
   isSimulation: string | null;
+  uuid: UUID | null;
+  templateUuid: UUID | null;
+  originUuid: UUID | null;
 };
 
 export function contentBehaviorDescriptionWizard(
@@ -61,6 +67,24 @@ export function contentBehaviorDescriptionWizard(
       .maybeValue=${options.isSimulation}
       nullable
     ></scl-textfield>`,
+    html`<scl-textfield
+      label="uuid"
+      .maybeValue=${options.uuid}
+      disabled
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+    html`<scl-textfield
+      label="templateUuid"
+      .maybeValue=${options.templateUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+    html`<scl-textfield
+      label="originUuid"
+      .maybeValue=${options.originUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
   ];
 }
 
@@ -74,6 +98,9 @@ function createBehaviorDescriptionAction(parent: Element): WizardActor {
       'format',
       'isSimulation',
       'isSpecification',
+      'uuid',
+      'templateUuid',
+      'originUuid',
     ];
     BehaviorDescriptionKeys.forEach(key => {
       BehaviorDescriptionAttrs[key] = getValue(
@@ -105,6 +132,9 @@ export function createBehaviorDescriptionWizard(parent: Element): Wizard {
   const format = null;
   const isSimulation = null;
   const isSpecification = null;
+  const uuid = uuidv4() as UUID;
+  const templateUuid = null;
+  const originUuid = null;
 
   return [
     {
@@ -122,6 +152,9 @@ export function createBehaviorDescriptionWizard(parent: Element): Wizard {
           format,
           isSimulation,
           isSpecification,
+          uuid,
+          templateUuid,
+          originUuid,
         }),
       ],
     },
@@ -138,6 +171,9 @@ function updateBehaviorDescription(element: Element): WizardActor {
       'format',
       'isSimulation',
       'isSpecification',
+      'uuid',
+      'templateUuid',
+      'originUuid',
     ];
     functionKeys.forEach(key => {
       attributes[key] = getValue(inputs.find(i => i.label === key)!);
@@ -160,6 +196,9 @@ export function editBehaviorDescriptionWizard(element: Element): Wizard {
   const format = element.getAttribute('format');
   const isSimulation = element.getAttribute('isSimulation');
   const isSpecification = element.getAttribute('isSpecification');
+  const uuid = element.getAttribute('uuid') as UUID;
+  const templateUuid = element.getAttribute('templateUuid') as UUID;
+  const originUuid = element.getAttribute('originUuid') as UUID;
 
   return [
     {
@@ -177,6 +216,9 @@ export function editBehaviorDescriptionWizard(element: Element): Wizard {
           format,
           isSimulation,
           isSpecification,
+          uuid,
+          templateUuid,
+          originUuid,
         }),
       ],
     },

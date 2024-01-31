@@ -3,6 +3,8 @@ import { html, TemplateResult } from 'lit';
 import { Edit } from '@openscd/open-scd-core';
 
 import '../../../foundation/components/scl-textfield.js';
+import { UUID } from 'crypto';
+import { patterns } from '../../wizards/patterns.js';
 
 import {
   createElement,
@@ -22,6 +24,7 @@ type RenderOptions = {
   sGroup: string | null;
   format: string | null;
   defaultValue: string | null;
+  elementUuid: UUID | null;
 };
 
 export function contentVariableApplyToWizard(
@@ -69,6 +72,12 @@ export function contentVariableApplyToWizard(
       .maybeValue=${options.daName}
       nullable
     ></scl-textfield>`,
+    html`<scl-textfield
+      label="functionUuid"
+      .maybeValue=${options.elementUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
   ];
 }
 
@@ -84,6 +93,7 @@ function createVariableApplyToAction(parent: Element): WizardActor {
       'sGroup',
       'format',
       'defaultValue',
+      'elementUuid',
     ];
     VariableApplyToKeys.forEach(key => {
       VariableApplyToAttrs[key] = getValue(inputs.find(i => i.label === key)!);
@@ -115,6 +125,7 @@ export function createVariableApplyToWizard(parent: Element): Wizard {
   const sGroup = null;
   const format = null;
   const defaultValue = null;
+  const elementUuid = null;
 
   return [
     {
@@ -134,6 +145,7 @@ export function createVariableApplyToWizard(parent: Element): Wizard {
           sGroup,
           format,
           defaultValue,
+          elementUuid,
         }),
       ],
     },
@@ -152,6 +164,7 @@ function updateVariableApplyTo(element: Element): WizardActor {
       'sGroup',
       'format',
       'defaultValue',
+      'elementUuid',
     ];
     functionKeys.forEach(key => {
       attributes[key] = getValue(inputs.find(i => i.label === key)!);
@@ -176,6 +189,7 @@ export function editVariableApplyToWizard(element: Element): Wizard {
   const sGroup = element.getAttribute('sGroup');
   const format = element.getAttribute('format');
   const defaultValue = element.getAttribute('defaultValue');
+  const elementUuid = element.getAttribute('elementUuid') as UUID;
 
   return [
     {
@@ -195,6 +209,7 @@ export function editVariableApplyToWizard(element: Element): Wizard {
           sGroup,
           format,
           defaultValue,
+          elementUuid,
         }),
       ],
     },

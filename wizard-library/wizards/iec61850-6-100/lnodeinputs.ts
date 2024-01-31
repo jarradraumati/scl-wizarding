@@ -14,75 +14,70 @@ import {
 import { get6100Reference } from '../../../foundation/utils/scldata.js';
 
 type RenderOptions = {
-  roleInst: string | null;
+  desc: string | null;
 };
 
-export function contentFunctionRoleContentWizard(
+export function contentLNodeInputsWizard(
   options: RenderOptions,
 ): TemplateResult[] {
   return [
     html`<scl-textfield
-      label="roleInst"
-      .maybeValue=${options.roleInst}
+      label="desc"
+      .maybeValue=${options.desc}
       nullable
-      type="number"
-      min="1"
-      default="1"
     ></scl-textfield>`,
   ];
 }
 
-function createFunctionRoleContentAction(parent: Element): WizardActor {
+function createLNodeInputsAction(parent: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
-    const FunctionRoleContentAttrs: Record<string, string | null> = {};
-    const FunctionRoleContentKeys = ['roleInst'];
-    FunctionRoleContentKeys.forEach(key => {
-      FunctionRoleContentAttrs[key] = getValue(
-        inputs.find(i => i.label === key)!,
-      );
+    const LNodeInputsAttrs: Record<string, string | null> = {};
+    const LNodeInputsKeys = ['desc'];
+    LNodeInputsKeys.forEach(key => {
+      LNodeInputsAttrs[key] = getValue(inputs.find(i => i.label === key)!);
     });
 
-    const FunctionRoleContentNode = createElement(
+    const LNodeInputsNode = createElement(
       parent.ownerDocument,
-      'eIEC61850-6-100:FunctionRoleContent',
-      FunctionRoleContentAttrs,
+      'eIEC61850-6-100:LNodeInputs',
+      LNodeInputsAttrs,
       'http://www.iec.ch/61850/2019/SCL/6-100',
     );
 
     return [
       {
         parent,
-        node: FunctionRoleContentNode,
-        reference: get6100Reference(parent, 'FunctionRoleContent'),
+        node: LNodeInputsNode,
+        reference: get6100Reference(parent, 'LNodeInputs'),
       },
     ];
   };
 }
 
-export function createFunctionRoleContentWizard(parent: Element): Wizard {
-  const roleInst = null;
+export function createLNodeInputsWizard(parent: Element): Wizard {
+  const desc = null;
 
   return [
     {
-      title: 'Add FunctionRoleContent',
+      title: 'Add LNodeInputs',
       primary: {
         icon: 'add',
         label: 'add',
-        action: createFunctionRoleContentAction(parent),
+        action: createLNodeInputsAction(parent),
       },
       content: [
-        ...contentFunctionRoleContentWizard({
-          roleInst,
+        ...contentLNodeInputsWizard({
+          desc,
         }),
       ],
     },
   ];
 }
 
-function updateFunctionRoleContent(element: Element): WizardActor {
+function updateLNodeInputs(element: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const attributes: Record<string, string | null> = {};
-    const functionKeys = ['roleInst'];
+    const functionKeys = ['desc'];
     functionKeys.forEach(key => {
       attributes[key] = getValue(inputs.find(i => i.label === key)!);
     });
@@ -97,20 +92,20 @@ function updateFunctionRoleContent(element: Element): WizardActor {
   };
 }
 
-export function editFunctionRoleContentWizard(element: Element): Wizard {
-  const roleInst = element.getAttribute('roleInst');
+export function editLNodeInputsWizard(element: Element): Wizard {
+  const desc = element.getAttribute('desc');
 
   return [
     {
-      title: 'Edit FunctionRoleContent',
+      title: 'Edit LNodeInputs',
       primary: {
         icon: 'edit',
         label: 'save',
-        action: updateFunctionRoleContent(element),
+        action: updateLNodeInputs(element),
       },
       content: [
-        ...contentFunctionRoleContentWizard({
-          roleInst,
+        ...contentLNodeInputsWizard({
+          desc,
         }),
       ],
     },

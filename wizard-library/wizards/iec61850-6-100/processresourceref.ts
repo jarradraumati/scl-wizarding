@@ -3,6 +3,8 @@ import { html, TemplateResult } from 'lit';
 import { Edit } from '@openscd/open-scd-core';
 
 import '../../../foundation/components/scl-textfield.js';
+import { UUID } from 'crypto';
+import { patterns } from '../../wizards/patterns.js';
 
 import {
   createElement,
@@ -14,8 +16,9 @@ import {
 import { get6100Reference } from '../../../foundation/utils/scldata.js';
 
 type RenderOptions = {
-  processResource: string | null;
   desc: string | null;
+  processResource: string | null;
+  processResourceUuid: UUID | null;
 };
 
 export function contentProcessResourceRefWizard(
@@ -23,15 +26,21 @@ export function contentProcessResourceRefWizard(
 ): TemplateResult[] {
   return [
     html`<scl-textfield
-      label="processResource"
-      .maybeValue=${options.processResource}
-      required
-      dialogInitialFocus
-    ></scl-textfield>`,
-    html`<scl-textfield
       label="desc"
       .maybeValue=${options.desc}
       nullable
+    ></scl-textfield>`,
+    html`<scl-textfield
+      label="processResource"
+      .maybeValue=${options.processResource}
+      nullable
+      dialogInitialFocus
+    ></scl-textfield>`,
+    html`<scl-textfield
+      label="processResourceUuid"
+      .maybeValue=${options.processResourceUuid}
+      nullable
+      pattern="${patterns.uuid}"
     ></scl-textfield>`,
   ];
 }
@@ -39,7 +48,11 @@ export function contentProcessResourceRefWizard(
 function createProcessResourceRefAction(parent: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const ProcessResourceRefAttrs: Record<string, string | null> = {};
-    const ProcessResourceRefKeys = ['processResource', 'desc'];
+    const ProcessResourceRefKeys = [
+      'desc',
+      'processResource',
+      'processResourceUuid',
+    ];
     ProcessResourceRefKeys.forEach(key => {
       ProcessResourceRefAttrs[key] = getValue(
         inputs.find(i => i.label === key)!,
@@ -64,8 +77,9 @@ function createProcessResourceRefAction(parent: Element): WizardActor {
 }
 
 export function createProcessResourceRefWizard(parent: Element): Wizard {
-  const processResource = null;
   const desc = null;
+  const processResource = null;
+  const processResourceUuid = null;
 
   return [
     {
@@ -77,8 +91,9 @@ export function createProcessResourceRefWizard(parent: Element): Wizard {
       },
       content: [
         ...contentProcessResourceRefWizard({
-          processResource,
           desc,
+          processResource,
+          processResourceUuid,
         }),
       ],
     },
@@ -88,7 +103,7 @@ export function createProcessResourceRefWizard(parent: Element): Wizard {
 function updateProcessResourceRef(element: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const attributes: Record<string, string | null> = {};
-    const functionKeys = ['desc'];
+    const functionKeys = ['desc', 'processResource', 'processResourceUuid'];
     functionKeys.forEach(key => {
       attributes[key] = getValue(inputs.find(i => i.label === key)!);
     });
@@ -104,8 +119,11 @@ function updateProcessResourceRef(element: Element): WizardActor {
 }
 
 export function editProcessResourceRefWizard(element: Element): Wizard {
-  const processResource = element.getAttribute('processResource');
   const desc = element.getAttribute('desc');
+  const processResource = element.getAttribute('processResource');
+  const processResourceUuid = element.getAttribute(
+    'processResourceUuid',
+  ) as UUID;
 
   return [
     {
@@ -117,8 +135,9 @@ export function editProcessResourceRefWizard(element: Element): Wizard {
       },
       content: [
         ...contentProcessResourceRefWizard({
-          processResource,
           desc,
+          processResource,
+          processResourceUuid,
         }),
       ],
     },

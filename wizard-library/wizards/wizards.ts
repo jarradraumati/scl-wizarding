@@ -170,6 +170,22 @@ import {
   createVariableApplyToWizard,
   editVariableApplyToWizard,
 } from './iec61850-6-100/variableapplyto.js';
+import {
+  createLNodeInputsWizard,
+  editLNodeInputsWizard,
+} from './iec61850-6-100/lnodeinputs.js';
+import {
+  createLNodeOutputsWizard,
+  editLNodeOutputsWizard,
+} from './iec61850-6-100/lnodeoutputs.js';
+import {
+  createLNodeSpecNamingWizard,
+  editLNodeSpecNamingWizard,
+} from './iec61850-6-100/lnodespecnaming.js';
+import {
+  createSourceRefWizard,
+  editSourceRefWizard,
+} from './iec61850-6-100/sourceref.js';
 
 type SclElementWizard = (
   element: Element,
@@ -759,5 +775,21 @@ export const wizards: Record<
   VariableApplyTo: {
     edit: editVariableApplyToWizard,
     create: createVariableApplyToWizard,
+  },
+  LNodeInputs: {
+    edit: editLNodeInputsWizard,
+    create: createLNodeInputsWizard,
+  },
+  LNodeOutputs: {
+    edit: editLNodeOutputsWizard,
+    create: createLNodeOutputsWizard,
+  },
+  LNodeSpecNaming: {
+    edit: editLNodeSpecNamingWizard,
+    create: createLNodeSpecNamingWizard,
+  },
+  SourceRef: {
+    edit: editSourceRefWizard,
+    create: createSourceRefWizard,
   },
 };

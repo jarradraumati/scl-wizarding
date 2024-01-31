@@ -3,6 +3,8 @@ import { html, TemplateResult } from 'lit';
 import { Edit } from '@openscd/open-scd-core';
 
 import '../../../foundation/components/scl-textfield.js';
+import { UUID } from 'crypto';
+import { patterns } from '../../wizards/patterns.js';
 
 import {
   createElement,
@@ -14,8 +16,9 @@ import {
 import { get6100Reference } from '../../../foundation/utils/scldata.js';
 
 type RenderOptions = {
-  ffunction: string | null;
   desc: string | null;
+  ffunction: string | null;
+  functionUuid: UUID | null;
 };
 
 export function contentFunctionCatRefWizard(
@@ -23,15 +26,21 @@ export function contentFunctionCatRefWizard(
 ): TemplateResult[] {
   return [
     html`<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+    html`<scl-textfield
       label="function"
       .maybeValue=${options.ffunction}
       required
       dialogInitialFocus
     ></scl-textfield>`,
     html`<scl-textfield
-      label="desc"
-      .maybeValue=${options.desc}
+      label="functionUuid"
+      .maybeValue=${options.functionUuid}
       nullable
+      pattern="${patterns.uuid}"
     ></scl-textfield>`,
   ];
 }
@@ -39,7 +48,7 @@ export function contentFunctionCatRefWizard(
 function createFunctionCatRefAction(parent: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const FunctionCatRefAttrs: Record<string, string | null> = {};
-    const FunctionCatRefKeys = ['function', 'desc'];
+    const FunctionCatRefKeys = ['desc', 'function', 'functionUuid'];
     FunctionCatRefKeys.forEach(key => {
       FunctionCatRefAttrs[key] = getValue(inputs.find(i => i.label === key)!);
     });
@@ -62,8 +71,9 @@ function createFunctionCatRefAction(parent: Element): WizardActor {
 }
 
 export function createFunctionCatRefWizard(parent: Element): Wizard {
-  const ffunction = null;
   const desc = null;
+  const ffunction = null;
+  const functionUuid = null;
 
   return [
     {
@@ -75,8 +85,9 @@ export function createFunctionCatRefWizard(parent: Element): Wizard {
       },
       content: [
         ...contentFunctionCatRefWizard({
-          ffunction,
           desc,
+          ffunction,
+          functionUuid,
         }),
       ],
     },
@@ -86,7 +97,7 @@ export function createFunctionCatRefWizard(parent: Element): Wizard {
 function updateFunctionCatRef(element: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const attributes: Record<string, string | null> = {};
-    const functionKeys = ['desc'];
+    const functionKeys = ['desc', 'function', 'functionUuid'];
     functionKeys.forEach(key => {
       attributes[key] = getValue(inputs.find(i => i.label === key)!);
     });
@@ -102,8 +113,9 @@ function updateFunctionCatRef(element: Element): WizardActor {
 }
 
 export function editFunctionCatRefWizard(element: Element): Wizard {
-  const ffunction = element.getAttribute('function');
   const desc = element.getAttribute('desc');
+  const ffunction = element.getAttribute('function');
+  const functionUuid = element.getAttribute('functionUuid') as UUID;
 
   return [
     {
@@ -115,8 +127,9 @@ export function editFunctionCatRefWizard(element: Element): Wizard {
       },
       content: [
         ...contentFunctionCatRefWizard({
-          ffunction,
           desc,
+          ffunction,
+          functionUuid,
         }),
       ],
     },

@@ -3,6 +3,9 @@ import { html, TemplateResult } from 'lit';
 import { Edit } from '@openscd/open-scd-core';
 
 import '../../../foundation/components/scl-textfield.js';
+import { UUID } from 'crypto';
+import { v4 as uuidv4 } from 'uuid';
+import { patterns } from '../../wizards/patterns.js';
 
 import {
   createElement,
@@ -17,6 +20,9 @@ type RenderOptions = {
   name: string | null;
   desc: string | null;
   value: string | null;
+  uuid: UUID | null;
+  templateUuid: UUID | null;
+  originUuid: UUID | null;
 };
 
 export function contentVariableWizard(
@@ -39,13 +45,38 @@ export function contentVariableWizard(
       .maybeValue=${options.value}
       nullable
     ></scl-textfield>`,
+    html`<scl-textfield
+      label="uuid"
+      .maybeValue=${options.uuid}
+      disabled
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+    html`<scl-textfield
+      label="templateUuid"
+      .maybeValue=${options.templateUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+    html`<scl-textfield
+      label="originUuid"
+      .maybeValue=${options.originUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
   ];
 }
 
 function createVariableAction(parent: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const VariableAttrs: Record<string, string | null> = {};
-    const VariableKeys = ['name', 'desc', 'value'];
+    const VariableKeys = [
+      'name',
+      'desc',
+      'value',
+      'uuid',
+      'templateUuid',
+      'originUuid',
+    ];
     VariableKeys.forEach(key => {
       VariableAttrs[key] = getValue(inputs.find(i => i.label === key)!);
     });
@@ -71,6 +102,9 @@ export function createVariableWizard(parent: Element): Wizard {
   const name = null;
   const desc = null;
   const value = null;
+  const uuid = uuidv4() as UUID;
+  const templateUuid = null;
+  const originUuid = null;
 
   return [
     {
@@ -85,6 +119,9 @@ export function createVariableWizard(parent: Element): Wizard {
           name,
           desc,
           value,
+          uuid,
+          templateUuid,
+          originUuid,
         }),
       ],
     },
@@ -94,7 +131,14 @@ export function createVariableWizard(parent: Element): Wizard {
 function updateVariable(element: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const attributes: Record<string, string | null> = {};
-    const functionKeys = ['name', 'desc', 'value'];
+    const functionKeys = [
+      'name',
+      'desc',
+      'value',
+      'uuid',
+      'templateUuid',
+      'originUuid',
+    ];
     functionKeys.forEach(key => {
       attributes[key] = getValue(inputs.find(i => i.label === key)!);
     });
@@ -113,6 +157,9 @@ export function editVariableWizard(element: Element): Wizard {
   const name = element.getAttribute('name');
   const desc = element.getAttribute('desc');
   const value = element.getAttribute('value');
+  const uuid = element.getAttribute('uuid') as UUID;
+  const templateUuid = element.getAttribute('templateUuid') as UUID;
+  const originUuid = element.getAttribute('originUuid') as UUID;
 
   return [
     {
@@ -127,6 +174,9 @@ export function editVariableWizard(element: Element): Wizard {
           name,
           desc,
           value,
+          uuid,
+          templateUuid,
+          originUuid,
         }),
       ],
     },

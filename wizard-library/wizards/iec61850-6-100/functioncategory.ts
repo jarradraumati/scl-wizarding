@@ -3,6 +3,9 @@ import { html, TemplateResult } from 'lit';
 import { Edit } from '@openscd/open-scd-core';
 
 import '../../../foundation/components/scl-textfield.js';
+import { UUID } from 'crypto';
+import { v4 as uuidv4 } from 'uuid';
+import { patterns } from '../../wizards/patterns.js';
 
 import {
   createElement,
@@ -16,6 +19,9 @@ import { get6100Reference } from '../../../foundation/utils/scldata.js';
 type RenderOptions = {
   name: string | null;
   desc: string | null;
+  uuid: UUID | null;
+  templateUuid: UUID | null;
+  originUuid: UUID | null;
 };
 
 export function contentFunctionCategoryWizard(
@@ -33,13 +39,37 @@ export function contentFunctionCategoryWizard(
       .maybeValue=${options.desc}
       nullable
     ></scl-textfield>`,
+    html`<scl-textfield
+      label="uuid"
+      .maybeValue=${options.uuid}
+      disabled
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+    html`<scl-textfield
+      label="templateUuid"
+      .maybeValue=${options.templateUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+    html`<scl-textfield
+      label="originUuid"
+      .maybeValue=${options.originUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
   ];
 }
 
 function createFunctionCategoryAction(parent: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const FunctionCategoryAttrs: Record<string, string | null> = {};
-    const FunctionCategoryKeys = ['name', 'desc'];
+    const FunctionCategoryKeys = [
+      'name',
+      'desc',
+      'uuid',
+      'templateUuid',
+      'originUuid',
+    ];
     FunctionCategoryKeys.forEach(key => {
       FunctionCategoryAttrs[key] = getValue(inputs.find(i => i.label === key)!);
     });
@@ -64,6 +94,9 @@ function createFunctionCategoryAction(parent: Element): WizardActor {
 export function createFunctionCategoryWizard(parent: Element): Wizard {
   const name = null;
   const desc = null;
+  const uuid = uuidv4() as UUID;
+  const templateUuid = null;
+  const originUuid = null;
 
   return [
     {
@@ -77,6 +110,9 @@ export function createFunctionCategoryWizard(parent: Element): Wizard {
         ...contentFunctionCategoryWizard({
           name,
           desc,
+          uuid,
+          templateUuid,
+          originUuid,
         }),
       ],
     },
@@ -86,7 +122,7 @@ export function createFunctionCategoryWizard(parent: Element): Wizard {
 function updateFunctionCategory(element: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const attributes: Record<string, string | null> = {};
-    const functionKeys = ['desc'];
+    const functionKeys = ['desc', 'uuid', 'templateUuid', 'originUuid'];
     functionKeys.forEach(key => {
       attributes[key] = getValue(inputs.find(i => i.label === key)!);
     });
@@ -104,6 +140,9 @@ function updateFunctionCategory(element: Element): WizardActor {
 export function editFunctionCategoryWizard(element: Element): Wizard {
   const name = element.getAttribute('name');
   const desc = element.getAttribute('desc');
+  const uuid = element.getAttribute('uuid') as UUID;
+  const templateUuid = element.getAttribute('templateUuid') as UUID;
+  const originUuid = element.getAttribute('originUuid') as UUID;
 
   return [
     {
@@ -117,6 +156,9 @@ export function editFunctionCategoryWizard(element: Element): Wizard {
         ...contentFunctionCategoryWizard({
           name,
           desc,
+          uuid,
+          templateUuid,
+          originUuid,
         }),
       ],
     },

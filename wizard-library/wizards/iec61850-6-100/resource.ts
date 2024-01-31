@@ -3,6 +3,8 @@ import { html, TemplateResult } from 'lit';
 import { Edit } from '@openscd/open-scd-core';
 
 import '../../../foundation/components/scl-textfield.js';
+import { UUID } from 'crypto';
+import { patterns } from '../../wizards/patterns.js';
 
 import {
   createElement,
@@ -16,6 +18,7 @@ import { get6100Reference } from '../../../foundation/utils/scldata.js';
 type RenderOptions = {
   source: string | null;
   resInst: string | null;
+  sourceUuid: UUID | null;
 };
 
 export function contentResourceWizard(
@@ -33,13 +36,19 @@ export function contentResourceWizard(
       .maybeValue=${options.resInst}
       nullable
     ></scl-textfield>`,
+    html`<scl-textfield
+      label="sourceUuid"
+      .maybeValue=${options.sourceUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
   ];
 }
 
 function createResourceAction(parent: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const ResourceAttrs: Record<string, string | null> = {};
-    const ResourceKeys = ['source', 'resInst'];
+    const ResourceKeys = ['source', 'resInst', 'sourceUuid'];
     ResourceKeys.forEach(key => {
       ResourceAttrs[key] = getValue(inputs.find(i => i.label === key)!);
     });
@@ -64,6 +73,7 @@ function createResourceAction(parent: Element): WizardActor {
 export function createResourceWizard(parent: Element): Wizard {
   const source = null;
   const resInst = null;
+  const sourceUuid = null;
 
   return [
     {
@@ -77,6 +87,7 @@ export function createResourceWizard(parent: Element): Wizard {
         ...contentResourceWizard({
           source,
           resInst,
+          sourceUuid,
         }),
       ],
     },
@@ -86,7 +97,7 @@ export function createResourceWizard(parent: Element): Wizard {
 function updateResource(element: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const attributes: Record<string, string | null> = {};
-    const functionKeys = ['source', 'resInst'];
+    const functionKeys = ['source', 'resInst', 'sourceUuid'];
     functionKeys.forEach(key => {
       attributes[key] = getValue(inputs.find(i => i.label === key)!);
     });
@@ -104,6 +115,7 @@ function updateResource(element: Element): WizardActor {
 export function editResourceWizard(element: Element): Wizard {
   const source = element.getAttribute('source');
   const resInst = element.getAttribute('resInst');
+  const sourceUuid = element.getAttribute('sourceUuid') as UUID;
 
   return [
     {
@@ -117,6 +129,7 @@ export function editResourceWizard(element: Element): Wizard {
         ...contentResourceWizard({
           source,
           resInst,
+          sourceUuid,
         }),
       ],
     },
