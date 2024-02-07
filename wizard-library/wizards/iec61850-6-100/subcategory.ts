@@ -3,10 +3,9 @@ import { html, TemplateResult } from 'lit';
 import { Edit } from '@openscd/open-scd-core';
 
 import '../../../foundation/components/scl-textfield.js';
+
 import { UUID } from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
-import { patterns } from '../../wizards/patterns.js';
-
 import {
   createElement,
   getValue,
@@ -15,54 +14,33 @@ import {
   WizardInputElement,
 } from '../../foundation.js';
 import { get6100Reference } from '../../../foundation/utils/scldata.js';
+import { patterns } from '../../wizards/patterns.js';
 
 type RenderOptions = {
   name: string | null;
   desc: string | null;
-  format: string | null;
-  fileReference: string | null;
-  isSpecification: string | null;
-  isSimulation: string | null;
   uuid: UUID | null;
   templateUuid: UUID | null;
   originUuid: UUID | null;
 };
 
-export function contentBehaviorDescriptionWizard(
+export function contentSubCategoryWizard(
   options: RenderOptions,
 ): TemplateResult[] {
   return [
     html`<scl-textfield
       label="name"
       .maybeValue=${options.name}
+      pattern="${patterns.tName}"
       required
       dialogInitialFocus
     ></scl-textfield>`,
     html`<scl-textfield
       label="desc"
       .maybeValue=${options.desc}
+      pattern="${patterns.normalizedString}"
       nullable
     ></scl-textfield>`,
-    html`<scl-select label="format" .maybeValue=${options.format} nullable
-      >${['IEC 61131', 'Textual', 'Graphic'].map(
-        type => html`<mwc-list-item value="${type}">${type}</mwc-list-item>`,
-      )}</scl-select
-    >`,
-    html`<scl-textfield
-      label="fileReference"
-      .maybeValue=${options.fileReference}
-      nullable
-    ></scl-textfield>`,
-    html`<scl-checkbox
-      label="isSpecification"
-      .maybeValue=${options.isSpecification}
-      nullable
-    ></scl-checkbox>`,
-    html`<scl-checkbox
-      label="isSimulation"
-      .maybeValue=${options.isSimulation}
-      nullable
-    ></scl-checkbox>`,
     html`<scl-textfield
       label="uuid"
       .maybeValue=${options.uuid}
@@ -84,70 +62,56 @@ export function contentBehaviorDescriptionWizard(
   ];
 }
 
-function createBehaviorDescriptionAction(parent: Element): WizardActor {
+function createSubCategoryAction(parent: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
-    const BehaviorDescriptionAttrs: Record<string, string | null> = {};
-    const BehaviorDescriptionKeys = [
+    const SubCategoryAttrs: Record<string, string | null> = {};
+    const SubCategoryKeys = [
       'name',
       'desc',
-      'fileReference',
-      'format',
-      'isSimulation',
-      'isSpecification',
       'uuid',
       'templateUuid',
       'originUuid',
     ];
-    BehaviorDescriptionKeys.forEach(key => {
-      BehaviorDescriptionAttrs[key] = getValue(
-        inputs.find(i => i.label === key)!,
-      );
+    SubCategoryKeys.forEach(key => {
+      SubCategoryAttrs[key] = getValue(inputs.find(i => i.label === key)!);
     });
 
-    const BehaviorDescriptionNode = createElement(
+    const SubCategoryNode = createElement(
       parent.ownerDocument,
-      'eIEC61850-6-100:BehaviorDescription',
-      BehaviorDescriptionAttrs,
+      'eIEC61850-6-100:SubCategory',
+      SubCategoryAttrs,
       'http://www.iec.ch/61850/2019/SCL/6-100',
     );
 
     return [
       {
         parent,
-        node: BehaviorDescriptionNode,
-        reference: get6100Reference(parent, 'BehaviorDescription'),
+        node: SubCategoryNode,
+        reference: get6100Reference(parent, 'SubCategory'),
       },
     ];
   };
 }
 
-export function createBehaviorDescriptionWizard(parent: Element): Wizard {
+export function createSubCategoryWizard(parent: Element): Wizard {
   const name = null;
   const desc = null;
-  const fileReference = null;
-  const format = null;
-  const isSimulation = null;
-  const isSpecification = null;
   const uuid = uuidv4() as UUID;
   const templateUuid = null;
   const originUuid = null;
 
   return [
     {
-      title: 'Add BehaviorDescription',
+      title: 'Add SubCategory',
       primary: {
         icon: 'add',
         label: 'add',
-        action: createBehaviorDescriptionAction(parent),
+        action: createSubCategoryAction(parent),
       },
       content: [
-        ...contentBehaviorDescriptionWizard({
+        ...contentSubCategoryWizard({
           name,
           desc,
-          fileReference,
-          format,
-          isSimulation,
-          isSpecification,
           uuid,
           templateUuid,
           originUuid,
@@ -157,20 +121,10 @@ export function createBehaviorDescriptionWizard(parent: Element): Wizard {
   ];
 }
 
-function updateBehaviorDescription(element: Element): WizardActor {
+function updateSubCategory(element: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const attributes: Record<string, string | null> = {};
-    const functionKeys = [
-      'name',
-      'desc',
-      'fileReference',
-      'format',
-      'isSimulation',
-      'isSpecification',
-      'uuid',
-      'templateUuid',
-      'originUuid',
-    ];
+    const functionKeys = ['name', 'desc', 'uuid', 'templateUuid', 'originUuid'];
     functionKeys.forEach(key => {
       attributes[key] = getValue(inputs.find(i => i.label === key)!);
     });
@@ -185,33 +139,25 @@ function updateBehaviorDescription(element: Element): WizardActor {
   };
 }
 
-export function editBehaviorDescriptionWizard(element: Element): Wizard {
+export function editSubCategoryWizard(element: Element): Wizard {
   const name = element.getAttribute('name');
   const desc = element.getAttribute('desc');
-  const fileReference = element.getAttribute('fileReference');
-  const format = element.getAttribute('format');
-  const isSimulation = element.getAttribute('isSimulation');
-  const isSpecification = element.getAttribute('isSpecification');
   const uuid = element.getAttribute('uuid') as UUID;
   const templateUuid = element.getAttribute('templateUuid') as UUID;
   const originUuid = element.getAttribute('originUuid') as UUID;
 
   return [
     {
-      title: 'Edit BehaviorDescription',
+      title: 'Edit SubCategory',
       primary: {
         icon: 'edit',
         label: 'save',
-        action: updateBehaviorDescription(element),
+        action: updateSubCategory(element),
       },
       content: [
-        ...contentBehaviorDescriptionWizard({
+        ...contentSubCategoryWizard({
           name,
           desc,
-          fileReference,
-          format,
-          isSimulation,
-          isSpecification,
           uuid,
           templateUuid,
           originUuid,

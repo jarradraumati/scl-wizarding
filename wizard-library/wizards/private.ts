@@ -104,15 +104,16 @@ function updatePrivate(element: Element, hasChildren: boolean): WizardActor {
       attributes[key] = getValue(inputs.find(i => i.label === key)!);
     });
     const content = inputs.find(i => i.label === 'content')!.value!;
+    const node = element.cloneNode() as Element;
 
     if (
       privateKeys.some(key => attributes[key] !== element.getAttribute(key)) ||
       content !== element.textContent
     ) {
       if (!hasChildren) {
-        element.textContent = content;
+        node.textContent = content;
       }
-      return [{ element, attributes }];
+      return [{ node, attributes }];
     }
 
     return [];

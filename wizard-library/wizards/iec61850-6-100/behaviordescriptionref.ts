@@ -32,7 +32,7 @@ export function contentBehaviorDescriptionRefWizard(
     html`<scl-textfield
       label="behaviorDescription"
       .maybeValue=${options.behaviorDescription}
-      required
+      nullable
       dialogInitialFocus
     ></scl-textfield>`,
     html`<scl-textfield

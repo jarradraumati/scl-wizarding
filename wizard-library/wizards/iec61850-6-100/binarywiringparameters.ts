@@ -17,8 +17,6 @@ type RenderOptions = {
   id: string | null;
   desc: string | null;
   inpRef: string | null;
-  fctInp: string | null;
-  dsgInp: string | null;
   inpNam: string | null;
   debTm: string | null;
   vInOff: string | null;
@@ -52,18 +50,53 @@ export function contentBinaryWiringParametersWizard(
       nullable
     ></scl-textfield>`,
     html`<scl-textfield
-      label="fctInp"
-      .maybeValue=${options.fctInp}
-      nullable
-    ></scl-textfield>`,
-    html`<scl-textfield
-      label="dsgInp"
-      .maybeValue=${options.dsgInp}
-      nullable
-    ></scl-textfield>`,
-    html`<scl-textfield
       label="inpNam"
       .maybeValue=${options.inpNam}
+      nullable
+    ></scl-textfield>`,
+    html`<scl-textfield
+      label="debTm"
+      .maybeValue=${options.debTm}
+      nullable
+    ></scl-textfield>`,
+    html`<scl-textfield
+      label="vInOff"
+      .maybeValue=${options.vInOff}
+      nullable
+    ></scl-textfield>`,
+    html`<scl-textfield
+      label="vInOn"
+      .maybeValue=${options.vInOn}
+      nullable
+    ></scl-textfield>`,
+    html`<scl-textfield
+      label="outRef"
+      .maybeValue=${options.outRef}
+      nullable
+    ></scl-textfield>`,
+    html`<scl-select label="outTyp" .maybeValue=${options.outTyp} nullable
+      >${['Normally open', 'Normally closed', 'Change over'].map(
+        type => html`<mwc-list-item value="${type}">${type}</mwc-list-item>`,
+      )}</scl-select
+    >`,
+    html`<scl-checkbox
+      label="fastOutput"
+      .maybeValue=${options.fastOutput}
+      nullable
+    ></scl-checkbox>`,
+    html`<scl-textfield
+      label="outOffDl"
+      .maybeValue=${options.outOffDl}
+      nullable
+    ></scl-textfield>`,
+    html`<scl-textfield
+      label="outOnDl"
+      .maybeValue=${options.outOnDl}
+      nullable
+    ></scl-textfield>`,
+    html`<scl-textfield
+      label="outNam"
+      .maybeValue=${options.outNam}
       nullable
     ></scl-textfield>`,
   ];
@@ -76,8 +109,6 @@ function createBinaryWiringParametersAction(parent: Element): WizardActor {
       'id',
       'desc',
       'inpRef',
-      'fctInp',
-      'dsgInp',
       'inpNam',
       'debTm',
       'vInOff',
@@ -116,8 +147,6 @@ export function createBinaryWiringParametersWizard(parent: Element): Wizard {
   const id = null;
   const desc = null;
   const inpRef = null;
-  const fctInp = null;
-  const dsgInp = null;
   const inpNam = null;
   const debTm = null;
   const vInOff = null;
@@ -142,8 +171,6 @@ export function createBinaryWiringParametersWizard(parent: Element): Wizard {
           id,
           desc,
           inpRef,
-          fctInp,
-          dsgInp,
           inpNam,
           debTm,
           vInOff,
@@ -163,7 +190,21 @@ export function createBinaryWiringParametersWizard(parent: Element): Wizard {
 function updateBinaryWiringParameters(element: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const attributes: Record<string, string | null> = {};
-    const functionKeys = ['id', 'desc', 'inpRef', 'fctInp', 'dsgInp', 'inpNam'];
+    const functionKeys = [
+      'id',
+      'desc',
+      'inpRef',
+      'inpNam',
+      'debTm',
+      'vInOff',
+      'vInOn',
+      'outRef',
+      'outTyp',
+      'fastOutput',
+      'outOffDl',
+      'outOnDl',
+      'outNam',
+    ];
     functionKeys.forEach(key => {
       attributes[key] = getValue(inputs.find(i => i.label === key)!);
     });
@@ -182,8 +223,6 @@ export function editBinaryWiringParametersWizard(element: Element): Wizard {
   const id = element.getAttribute('id');
   const desc = element.getAttribute('desc');
   const inpRef = element.getAttribute('inpRef');
-  const fctInp = element.getAttribute('fctInp');
-  const dsgInp = element.getAttribute('dsgInp');
   const inpNam = element.getAttribute('inpNam');
   const debTm = element.getAttribute('debTm');
   const vInOff = element.getAttribute('vInOff');
@@ -208,8 +247,6 @@ export function editBinaryWiringParametersWizard(element: Element): Wizard {
           id,
           desc,
           inpRef,
-          fctInp,
-          dsgInp,
           inpNam,
           debTm,
           vInOff,

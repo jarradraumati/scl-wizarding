@@ -19,16 +19,13 @@ import { get6100Reference } from '../../../foundation/utils/scldata.js';
 type RenderOptions = {
   name: string | null;
   desc: string | null;
-  format: string | null;
-  fileReference: string | null;
-  isSpecification: string | null;
-  isSimulation: string | null;
   uuid: UUID | null;
   templateUuid: UUID | null;
   originUuid: UUID | null;
+  isBaseline: string | null;
 };
 
-export function contentBehaviorDescriptionWizard(
+export function contentFunctionalVariantWizard(
   options: RenderOptions,
 ): TemplateResult[] {
   return [
@@ -43,26 +40,6 @@ export function contentBehaviorDescriptionWizard(
       .maybeValue=${options.desc}
       nullable
     ></scl-textfield>`,
-    html`<scl-select label="format" .maybeValue=${options.format} nullable
-      >${['IEC 61131', 'Textual', 'Graphic'].map(
-        type => html`<mwc-list-item value="${type}">${type}</mwc-list-item>`,
-      )}</scl-select
-    >`,
-    html`<scl-textfield
-      label="fileReference"
-      .maybeValue=${options.fileReference}
-      nullable
-    ></scl-textfield>`,
-    html`<scl-checkbox
-      label="isSpecification"
-      .maybeValue=${options.isSpecification}
-      nullable
-    ></scl-checkbox>`,
-    html`<scl-checkbox
-      label="isSimulation"
-      .maybeValue=${options.isSimulation}
-      nullable
-    ></scl-checkbox>`,
     html`<scl-textfield
       label="uuid"
       .maybeValue=${options.uuid}
@@ -81,95 +58,88 @@ export function contentBehaviorDescriptionWizard(
       nullable
       pattern="${patterns.uuid}"
     ></scl-textfield>`,
+    html`<scl-checkbox
+      label="isBaseline"
+      .maybeValue=${options.isBaseline}
+      nullable
+    ></scl-checkbox>`,
   ];
 }
 
-function createBehaviorDescriptionAction(parent: Element): WizardActor {
+function createFunctionalVariantAction(parent: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
-    const BehaviorDescriptionAttrs: Record<string, string | null> = {};
-    const BehaviorDescriptionKeys = [
+    const FunctionalVariantAttrs: Record<string, string | null> = {};
+    const FunctionalVariantKeys = [
       'name',
       'desc',
-      'fileReference',
-      'format',
-      'isSimulation',
-      'isSpecification',
       'uuid',
       'templateUuid',
       'originUuid',
+      'isBaseline',
     ];
-    BehaviorDescriptionKeys.forEach(key => {
-      BehaviorDescriptionAttrs[key] = getValue(
+    FunctionalVariantKeys.forEach(key => {
+      FunctionalVariantAttrs[key] = getValue(
         inputs.find(i => i.label === key)!,
       );
     });
 
-    const BehaviorDescriptionNode = createElement(
+    const FunctionalVariantNode = createElement(
       parent.ownerDocument,
-      'eIEC61850-6-100:BehaviorDescription',
-      BehaviorDescriptionAttrs,
+      'eIEC61850-6-100:FunctionalVariant',
+      FunctionalVariantAttrs,
       'http://www.iec.ch/61850/2019/SCL/6-100',
     );
 
     return [
       {
         parent,
-        node: BehaviorDescriptionNode,
-        reference: get6100Reference(parent, 'BehaviorDescription'),
+        node: FunctionalVariantNode,
+        reference: get6100Reference(parent, 'FunctionalVariant'),
       },
     ];
   };
 }
 
-export function createBehaviorDescriptionWizard(parent: Element): Wizard {
+export function createFunctionalVariantWizard(parent: Element): Wizard {
   const name = null;
   const desc = null;
-  const fileReference = null;
-  const format = null;
-  const isSimulation = null;
-  const isSpecification = null;
   const uuid = uuidv4() as UUID;
   const templateUuid = null;
   const originUuid = null;
+  const isBaseline = null;
 
   return [
     {
-      title: 'Add BehaviorDescription',
+      title: 'Add FunctionalVariant',
       primary: {
         icon: 'add',
         label: 'add',
-        action: createBehaviorDescriptionAction(parent),
+        action: createFunctionalVariantAction(parent),
       },
       content: [
-        ...contentBehaviorDescriptionWizard({
+        ...contentFunctionalVariantWizard({
           name,
           desc,
-          fileReference,
-          format,
-          isSimulation,
-          isSpecification,
           uuid,
           templateUuid,
           originUuid,
+          isBaseline,
         }),
       ],
     },
   ];
 }
 
-function updateBehaviorDescription(element: Element): WizardActor {
+function updateFunctionalVariant(element: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const attributes: Record<string, string | null> = {};
     const functionKeys = [
       'name',
       'desc',
-      'fileReference',
-      'format',
-      'isSimulation',
-      'isSpecification',
       'uuid',
       'templateUuid',
       'originUuid',
+      'isBaseline',
     ];
     functionKeys.forEach(key => {
       attributes[key] = getValue(inputs.find(i => i.label === key)!);
@@ -185,36 +155,30 @@ function updateBehaviorDescription(element: Element): WizardActor {
   };
 }
 
-export function editBehaviorDescriptionWizard(element: Element): Wizard {
+export function editFunctionalVariantWizard(element: Element): Wizard {
   const name = element.getAttribute('name');
   const desc = element.getAttribute('desc');
-  const fileReference = element.getAttribute('fileReference');
-  const format = element.getAttribute('format');
-  const isSimulation = element.getAttribute('isSimulation');
-  const isSpecification = element.getAttribute('isSpecification');
   const uuid = element.getAttribute('uuid') as UUID;
   const templateUuid = element.getAttribute('templateUuid') as UUID;
   const originUuid = element.getAttribute('originUuid') as UUID;
+  const isBaseline = element.getAttribute('isBaseline');
 
   return [
     {
-      title: 'Edit BehaviorDescription',
+      title: 'Edit FunctionalVariant',
       primary: {
         icon: 'edit',
         label: 'save',
-        action: updateBehaviorDescription(element),
+        action: updateFunctionalVariant(element),
       },
       content: [
-        ...contentBehaviorDescriptionWizard({
+        ...contentFunctionalVariantWizard({
           name,
           desc,
-          fileReference,
-          format,
-          isSimulation,
-          isSpecification,
           uuid,
           templateUuid,
           originUuid,
+          isBaseline,
         }),
       ],
     },

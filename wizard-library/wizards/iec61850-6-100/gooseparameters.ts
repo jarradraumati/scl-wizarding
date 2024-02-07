@@ -44,11 +44,11 @@ export function contentGooseParametersWizard(
       .maybeValue=${options.goId}
       nullable
     ></scl-textfield>`,
-    html`<scl-textfield
+    html`<scl-checkbox
       label="securityEnabled"
       .maybeValue=${options.securityEnabled}
       nullable
-    ></scl-textfield>`,
+    ></scl-checkbox>`,
     html`<scl-textfield
       label="minTime"
       .maybeValue=${options.minTime}

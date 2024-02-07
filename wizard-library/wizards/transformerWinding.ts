@@ -15,6 +15,8 @@ import {
 } from '../foundation.js';
 import { getReference } from '../../foundation/utils/scldata.js';
 
+const defaultTransformerWindingType = 'PTW';
+
 type RenderOptions = {
   name: string | null;
   reservedValues: string[];
@@ -79,8 +81,8 @@ function createAction(parent: Element): WizardActor {
 export function createTransformerWindingWizard(parent: Element): Wizard {
   const name = '';
   const desc = null;
-  const type = null;
   const virtual = null;
+  const type = defaultTransformerWindingType;
 
   return [
     {

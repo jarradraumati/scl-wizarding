@@ -19,16 +19,12 @@ import { get6100Reference } from '../../../foundation/utils/scldata.js';
 type RenderOptions = {
   name: string | null;
   desc: string | null;
-  format: string | null;
-  fileReference: string | null;
-  isSpecification: string | null;
-  isSimulation: string | null;
   uuid: UUID | null;
   templateUuid: UUID | null;
   originUuid: UUID | null;
 };
 
-export function contentBehaviorDescriptionWizard(
+export function contentFunctionalVariantGroupWizard(
   options: RenderOptions,
 ): TemplateResult[] {
   return [
@@ -43,26 +39,6 @@ export function contentBehaviorDescriptionWizard(
       .maybeValue=${options.desc}
       nullable
     ></scl-textfield>`,
-    html`<scl-select label="format" .maybeValue=${options.format} nullable
-      >${['IEC 61131', 'Textual', 'Graphic'].map(
-        type => html`<mwc-list-item value="${type}">${type}</mwc-list-item>`,
-      )}</scl-select
-    >`,
-    html`<scl-textfield
-      label="fileReference"
-      .maybeValue=${options.fileReference}
-      nullable
-    ></scl-textfield>`,
-    html`<scl-checkbox
-      label="isSpecification"
-      .maybeValue=${options.isSpecification}
-      nullable
-    ></scl-checkbox>`,
-    html`<scl-checkbox
-      label="isSimulation"
-      .maybeValue=${options.isSimulation}
-      nullable
-    ></scl-checkbox>`,
     html`<scl-textfield
       label="uuid"
       .maybeValue=${options.uuid}
@@ -84,70 +60,58 @@ export function contentBehaviorDescriptionWizard(
   ];
 }
 
-function createBehaviorDescriptionAction(parent: Element): WizardActor {
+function createFunctionalVariantGroupAction(parent: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
-    const BehaviorDescriptionAttrs: Record<string, string | null> = {};
-    const BehaviorDescriptionKeys = [
+    const FunctionalVariantGroupAttrs: Record<string, string | null> = {};
+    const FunctionalVariantGroupKeys = [
       'name',
       'desc',
-      'fileReference',
-      'format',
-      'isSimulation',
-      'isSpecification',
       'uuid',
       'templateUuid',
       'originUuid',
     ];
-    BehaviorDescriptionKeys.forEach(key => {
-      BehaviorDescriptionAttrs[key] = getValue(
+    FunctionalVariantGroupKeys.forEach(key => {
+      FunctionalVariantGroupAttrs[key] = getValue(
         inputs.find(i => i.label === key)!,
       );
     });
 
-    const BehaviorDescriptionNode = createElement(
+    const FunctionalVariantGroupNode = createElement(
       parent.ownerDocument,
-      'eIEC61850-6-100:BehaviorDescription',
-      BehaviorDescriptionAttrs,
+      'eIEC61850-6-100:FunctionalVariantGroup',
+      FunctionalVariantGroupAttrs,
       'http://www.iec.ch/61850/2019/SCL/6-100',
     );
 
     return [
       {
         parent,
-        node: BehaviorDescriptionNode,
-        reference: get6100Reference(parent, 'BehaviorDescription'),
+        node: FunctionalVariantGroupNode,
+        reference: get6100Reference(parent, 'FunctionalVariantGroup'),
       },
     ];
   };
 }
 
-export function createBehaviorDescriptionWizard(parent: Element): Wizard {
+export function createFunctionalVariantGroupWizard(parent: Element): Wizard {
   const name = null;
   const desc = null;
-  const fileReference = null;
-  const format = null;
-  const isSimulation = null;
-  const isSpecification = null;
   const uuid = uuidv4() as UUID;
   const templateUuid = null;
   const originUuid = null;
 
   return [
     {
-      title: 'Add BehaviorDescription',
+      title: 'Add FunctionalVariantGroup',
       primary: {
         icon: 'add',
         label: 'add',
-        action: createBehaviorDescriptionAction(parent),
+        action: createFunctionalVariantGroupAction(parent),
       },
       content: [
-        ...contentBehaviorDescriptionWizard({
+        ...contentFunctionalVariantGroupWizard({
           name,
           desc,
-          fileReference,
-          format,
-          isSimulation,
-          isSpecification,
           uuid,
           templateUuid,
           originUuid,
@@ -157,20 +121,10 @@ export function createBehaviorDescriptionWizard(parent: Element): Wizard {
   ];
 }
 
-function updateBehaviorDescription(element: Element): WizardActor {
+function updateFunctionalVariantGroup(element: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const attributes: Record<string, string | null> = {};
-    const functionKeys = [
-      'name',
-      'desc',
-      'fileReference',
-      'format',
-      'isSimulation',
-      'isSpecification',
-      'uuid',
-      'templateUuid',
-      'originUuid',
-    ];
+    const functionKeys = ['name', 'desc', 'uuid', 'templateUuid', 'originUuid'];
     functionKeys.forEach(key => {
       attributes[key] = getValue(inputs.find(i => i.label === key)!);
     });
@@ -185,33 +139,25 @@ function updateBehaviorDescription(element: Element): WizardActor {
   };
 }
 
-export function editBehaviorDescriptionWizard(element: Element): Wizard {
+export function editFunctionalVariantGroupWizard(element: Element): Wizard {
   const name = element.getAttribute('name');
   const desc = element.getAttribute('desc');
-  const fileReference = element.getAttribute('fileReference');
-  const format = element.getAttribute('format');
-  const isSimulation = element.getAttribute('isSimulation');
-  const isSpecification = element.getAttribute('isSpecification');
   const uuid = element.getAttribute('uuid') as UUID;
   const templateUuid = element.getAttribute('templateUuid') as UUID;
   const originUuid = element.getAttribute('originUuid') as UUID;
 
   return [
     {
-      title: 'Edit BehaviorDescription',
+      title: 'Edit FunctionalVariantGroup',
       primary: {
         icon: 'edit',
         label: 'save',
-        action: updateBehaviorDescription(element),
+        action: updateFunctionalVariantGroup(element),
       },
       content: [
-        ...contentBehaviorDescriptionWizard({
+        ...contentFunctionalVariantGroupWizard({
           name,
           desc,
-          fileReference,
-          format,
-          isSimulation,
-          isSpecification,
           uuid,
           templateUuid,
           originUuid,

@@ -67,7 +67,7 @@ export function contentOutputVarWizard(
     html`<scl-textfield
       label="varName"
       .maybeValue=${options.varName}
-      nullable
+      required
     ></scl-textfield>`,
   ];
 }

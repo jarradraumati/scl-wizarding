@@ -14,39 +14,25 @@ import {
 import { get6100Reference } from '../../../foundation/utils/scldata.js';
 
 type RenderOptions = {
-  inputName: string | null;
   desc: string | null;
-  value: string | null;
-  dataName: string | null;
+  data: string | null;
   lnodeUuid: string | null;
   doName: string | null;
   daName: string | null;
-  varName: string | null;
 };
 
-export function contentInputVarWizard(
+export function contentLNodeDataRefWizard(
   options: RenderOptions,
 ): TemplateResult[] {
   return [
-    html`<scl-textfield
-      label="inputName"
-      .maybeValue=${options.inputName}
-      required
-      dialogInitialFocus
-    ></scl-textfield>`,
     html`<scl-textfield
       label="desc"
       .maybeValue=${options.desc}
       nullable
     ></scl-textfield>`,
     html`<scl-textfield
-      label="value"
-      .maybeValue=${options.value}
-      nullable
-    ></scl-textfield>`,
-    html`<scl-textfield
-      label="dataName"
-      .maybeValue=${options.dataName}
+      label="data"
+      .maybeValue=${options.data}
       nullable
     ></scl-textfield>`,
     html`<scl-textfield
@@ -64,95 +50,66 @@ export function contentInputVarWizard(
       .maybeValue=${options.daName}
       nullable
     ></scl-textfield>`,
-    html`<scl-textfield
-      label="varName"
-      .maybeValue=${options.varName}
-      required
-    ></scl-textfield>`,
   ];
 }
 
-function createInputVarAction(parent: Element): WizardActor {
+function createLNodeDataRefAction(parent: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
-    const InputVarAttrs: Record<string, string | null> = {};
-    const InputVarKeys = [
-      'inputName',
-      'desc',
-      'value',
-      'dataName',
-      'lnodeUuid',
-      'doName',
-      'daName',
-      'varName',
-    ];
-    InputVarKeys.forEach(key => {
-      InputVarAttrs[key] = getValue(inputs.find(i => i.label === key)!);
+    const LNodeDataRefAttrs: Record<string, string | null> = {};
+    const LNodeDataRefKeys = ['desc', 'data', 'lnodeUuid', 'doName', 'daName'];
+    LNodeDataRefKeys.forEach(key => {
+      LNodeDataRefAttrs[key] = getValue(inputs.find(i => i.label === key)!);
     });
 
-    const InputVarNode = createElement(
+    const LNodeDataRefNode = createElement(
       parent.ownerDocument,
-      'eIEC61850-6-100:InputVar',
-      InputVarAttrs,
+      'eIEC61850-6-100:LNodeDataRef',
+      LNodeDataRefAttrs,
       'http://www.iec.ch/61850/2019/SCL/6-100',
     );
 
     return [
       {
         parent,
-        node: InputVarNode,
-        reference: get6100Reference(parent, 'InputVar'),
+        node: LNodeDataRefNode,
+        reference: get6100Reference(parent, 'LNodeDataRef'),
       },
     ];
   };
 }
 
-export function createInputVarWizard(parent: Element): Wizard {
-  const inputName = null;
+export function createLNodeDataRefWizard(parent: Element): Wizard {
   const desc = null;
-  const value = null;
-  const dataName = null;
+  const data = null;
   const lnodeUuid = null;
   const doName = null;
   const daName = null;
-  const varName = null;
 
   return [
     {
-      title: 'Add InputVar',
+      title: 'Add LNodeDataRef',
       primary: {
         icon: 'add',
         label: 'add',
-        action: createInputVarAction(parent),
+        action: createLNodeDataRefAction(parent),
       },
       content: [
-        ...contentInputVarWizard({
-          inputName,
+        ...contentLNodeDataRefWizard({
           desc,
-          value,
-          dataName,
+          data,
           lnodeUuid,
           doName,
           daName,
-          varName,
         }),
       ],
     },
   ];
 }
 
-function updateInputVar(element: Element): WizardActor {
+function updateLNodeDataRef(element: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const attributes: Record<string, string | null> = {};
-    const functionKeys = [
-      'inputName',
-      'desc',
-      'value',
-      'dataName',
-      'lnodeUuid',
-      'doName',
-      'daName',
-      'varName',
-    ];
+    const functionKeys = ['desc', 'data', 'lnodeUuid', 'doName', 'daName'];
     functionKeys.forEach(key => {
       attributes[key] = getValue(inputs.find(i => i.label === key)!);
     });
@@ -167,34 +124,28 @@ function updateInputVar(element: Element): WizardActor {
   };
 }
 
-export function editInputVarWizard(element: Element): Wizard {
-  const inputName = element.getAttribute('inputName');
+export function editLNodeDataRefWizard(element: Element): Wizard {
   const desc = element.getAttribute('desc');
-  const value = element.getAttribute('value');
-  const dataName = element.getAttribute('dataName');
+  const data = element.getAttribute('data');
   const lnodeUuid = element.getAttribute('lnodeUuid');
   const doName = element.getAttribute('doName');
   const daName = element.getAttribute('daName');
-  const varName = element.getAttribute('varName');
 
   return [
     {
-      title: 'Edit InputVar',
+      title: 'Edit LNodeDataRef',
       primary: {
         icon: 'edit',
         label: 'save',
-        action: updateInputVar(element),
+        action: updateLNodeDataRef(element),
       },
       content: [
-        ...contentInputVarWizard({
-          inputName,
+        ...contentLNodeDataRefWizard({
           desc,
-          value,
-          dataName,
+          data,
           lnodeUuid,
           doName,
           daName,
-          varName,
         }),
       ],
     },

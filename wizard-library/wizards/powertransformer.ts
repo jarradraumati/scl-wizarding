@@ -21,6 +21,7 @@ type RenderOptions = {
   name: string | null;
   desc: string | null;
   type: string | null;
+  virtual: string | null;
   reservedValues: string[];
 };
 
@@ -45,21 +46,26 @@ function renderPowerTransformerWizard(
       .maybeValue=${options.type}
       disabled
     ></scl-textfield>`,
+    html`<scl-checkbox
+      label="virtual"
+      .maybeValue=${options.virtual}
+      nullable
+    ></scl-checkbox>`,
   ];
 }
 
 function createAction(parent: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
-    const name = getValue(inputs.find(i => i.label === 'name')!);
-    const desc = getValue(inputs.find(i => i.label === 'desc')!);
+    const powerTransformerAttrs: Record<string, string | null> = {};
+    const powerTransformerKeys = ['name', 'desc', 'virtual'];
+    powerTransformerKeys.forEach(key => {
+      powerTransformerAttrs[key] = getValue(inputs.find(i => i.label === key)!);
+    });
+
     const powerTransformer = createElement(
       parent.ownerDocument,
       'PowerTransformer',
-      {
-        name,
-        desc,
-        type: defaultPowerTransformerType,
-      },
+      powerTransformerAttrs,
     );
 
     return [
@@ -73,6 +79,11 @@ function createAction(parent: Element): WizardActor {
 }
 
 export function createPowerTransformerWizard(parent: Element): Wizard {
+  const name = '';
+  const desc = null;
+  const virtual = null;
+  const type = defaultPowerTransformerType;
+
   return [
     {
       title: 'Add PowerTransformer',
@@ -81,32 +92,44 @@ export function createPowerTransformerWizard(parent: Element): Wizard {
         label: 'add',
         action: createAction(parent),
       },
-      content: renderPowerTransformerWizard({
-        name: '',
-        reservedValues: reservedNames(parent, 'PowerTransformer'),
-        desc: null,
-        type: defaultPowerTransformerType,
-      }),
+      content: [
+        ...renderPowerTransformerWizard({
+          name,
+          desc,
+          virtual,
+          reservedValues: reservedNames(parent, 'PowerTransformer'),
+          type,
+        }),
+      ],
     },
   ];
 }
 
 function updateAction(element: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
-    const name = inputs.find(i => i.label === 'name')!.value!;
-    const desc = getValue(inputs.find(i => i.label === 'desc')!);
+    const attributes: Record<string, string | null> = {};
+    const powerTransformerKeys = ['name', 'desc', 'virtual'];
+    powerTransformerKeys.forEach(key => {
+      attributes[key] = getValue(inputs.find(i => i.label === key)!);
+    });
 
     if (
-      name === element.getAttribute('name') &&
-      desc === element.getAttribute('desc')
+      powerTransformerKeys.some(
+        key => attributes[key] !== element.getAttribute(key),
+      )
     )
-      return [];
+      return [{ element, attributes }];
 
-    return [{ element, attributes: { name, desc } }];
+    return [];
   };
 }
 
 export function editPowerTransformerWizard(element: Element): Wizard {
+  const name = element.getAttribute('name');
+  const desc = element.getAttribute('desc');
+  const type = element.getAttribute('type');
+  const virtual = element.getAttribute('virtual');
+
   return [
     {
       title: 'Edit PowerTransformer',
@@ -116,10 +139,11 @@ export function editPowerTransformerWizard(element: Element): Wizard {
         action: updateAction(element),
       },
       content: renderPowerTransformerWizard({
-        name: element.getAttribute('name'),
+        name,
+        desc,
+        type,
         reservedValues: reservedNames(element),
-        desc: element.getAttribute('desc'),
-        type: element.getAttribute('type'),
+        virtual,
       }),
     },
   ];

@@ -47,21 +47,16 @@ export function contentSMVParametersWizard(
       .maybeValue=${options.smvId}
       nullable
     ></scl-textfield>`,
-    html`<scl-select
+    html`<scl-checkbox
       label="securityEnabled"
       .maybeValue=${options.securityEnabled}
       nullable
-      required
-      helper="Sampled Value Security Setting"
-      >${['None', 'Signature', 'SignatureAndEncryption'].map(
-        type => html`<mwc-list-item value="${type}">${type}</mwc-list-item>`,
-      )}</scl-select
-    >`,
-    html`<scl-textfield
+    ></scl-checkbox>`,
+    html`<scl-checkbox
       label="multicast"
       .maybeValue=${options.multicast}
       nullable
-    ></scl-textfield>`,
+    ></scl-checkbox>`,
     html`<scl-textfield
       label="smpRate"
       .maybeValue=${options.smpRate}
@@ -72,11 +67,11 @@ export function contentSMVParametersWizard(
       .maybeValue=${options.nofASDU}
       nullable
     ></scl-textfield>`,
-    html`<scl-textfield
-      label="smpMod"
-      .maybeValue=${options.smpMod}
-      nullable
-    ></scl-textfield>`,
+    html`<scl-select label="smpMod" .maybeValue=${options.smpMod} nullable
+      >${['SmpPerPeriod', 'SmpPerSec', 'SecPerSmp'].map(
+        type => html`<mwc-list-item value="${type}">${type}</mwc-list-item>`,
+      )}</scl-select
+    >`,
     html`<scl-textfield
       label="cbName"
       .maybeValue=${options.cbName}

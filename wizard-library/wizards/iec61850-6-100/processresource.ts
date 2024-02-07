@@ -15,7 +15,7 @@ import {
   WizardInputElement,
 } from '../../foundation.js';
 import { get6100Reference } from '../../../foundation/utils/scldata.js';
-import { cardinalities, renderCardinalitySelector } from './cardinality.js';
+import { renderCardinalitySelector } from './cardinality.js';
 
 type RenderOptions = {
   name: string | null;

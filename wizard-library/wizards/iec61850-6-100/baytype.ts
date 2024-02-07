@@ -11,55 +11,59 @@ import {
   Wizard,
   WizardActor,
   WizardInputElement,
-} from '../foundation.js';
+} from '../../foundation.js';
 
-import { getReference } from '../../foundation/utils/scldata.js';
+import { get6100Reference } from '../../../foundation/utils/scldata.js';
 
 type RenderOptions = {
   content: string;
 };
 
-export function contentTextWizard(options: RenderOptions): TemplateResult[] {
+export function contentBayTypeWizard(options: RenderOptions): TemplateResult[] {
   return [
     html`<mwc-textarea
       label="content"
       value="${options.content}"
-      rows="10"
+      rows="1"
       cols="80"
       dialogInitialFocus
     ></mwc-textarea>`,
   ];
 }
 
-function createTextAction(parent: Element): WizardActor {
+function createBayTypeAction(parent: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const content = getValue(inputs.find(i => i.label === 'content')!);
 
-    parent.ownerDocument.createElement('Text');
-    const text = createElement(parent.ownerDocument, 'Text', {});
-    text.textContent = content;
+    const BayType = createElement(
+      parent.ownerDocument,
+      'eIEC61850-6-100:BayType',
+      {},
+      'http://www.iec.ch/61850/2019/SCL/6-100',
+    );
+    BayType.textContent = content;
 
     return [
       {
         parent,
-        node: text,
-        reference: getReference(parent, 'Text'),
+        node: BayType,
+        reference: get6100Reference(parent, 'BayType'),
       },
     ];
   };
 }
 
-export function createTextWizard(parent: Element): Wizard {
+export function createBayTypeWizard(parent: Element): Wizard {
   return [
     {
-      title: 'Create Text',
+      title: 'Create BayType',
       primary: {
         icon: 'add',
         label: 'add',
-        action: createTextAction(parent),
+        action: createBayTypeAction(parent),
       },
       content: [
-        ...contentTextWizard({
+        ...contentBayTypeWizard({
           content: '',
         }),
       ],
@@ -67,7 +71,7 @@ export function createTextWizard(parent: Element): Wizard {
   ];
 }
 
-export function updateText(element: Element): WizardActor {
+export function updateBayType(element: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const content = inputs.find(i => i.label === 'content')!.value!;
 
@@ -89,19 +93,19 @@ export function updateText(element: Element): WizardActor {
   };
 }
 
-export function editTextWizard(element: Element): Wizard {
+export function editBayTypeWizard(element: Element): Wizard {
   const content = element.textContent || '';
 
   return [
     {
-      title: 'Edit Text',
+      title: 'Edit BayType',
       primary: {
         icon: 'edit',
         label: 'save',
-        action: updateText(element),
+        action: updateBayType(element),
       },
       content: [
-        ...contentTextWizard({
+        ...contentBayTypeWizard({
           content,
         }),
       ],

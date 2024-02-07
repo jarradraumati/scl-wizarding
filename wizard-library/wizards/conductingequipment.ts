@@ -172,6 +172,7 @@ type RenderOptions = {
   desc: string | null;
   option: 'edit' | 'create';
   type: string;
+  virtual: string | null;
   reservedValues: string[];
 };
 
@@ -192,21 +193,30 @@ function renderConductingEquipmentWizard(
       .maybeValue=${options.desc}
       nullable
     ></scl-textfield>`,
+    html`<scl-checkbox
+      label="virtual"
+      .maybeValue=${options.virtual}
+      nullable
+    ></scl-checkbox>`,
   ];
 }
 
 function createAction(parent: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
-    const name = getValue(inputs.find(i => i.label === 'name')!);
-    const desc = getValue(inputs.find(i => i.label === 'desc')!);
+    const condEquipmentAttrs: Record<string, string | null> = {};
+    const condEquipmentKeys = ['name', 'desc', 'virtual'];
+    condEquipmentKeys.forEach(key => {
+      condEquipmentAttrs[key] = getValue(inputs.find(i => i.label === key)!);
+    });
     const proxyType = getValue(inputs.find(i => i.label === 'type')!);
     const type = proxyType === 'ERS' ? 'DIS' : proxyType;
+    condEquipmentAttrs.type = type;
 
-    const element = createElement(parent.ownerDocument, 'ConductingEquipment', {
-      name,
-      type,
-      desc,
-    });
+    const element = createElement(
+      parent.ownerDocument,
+      'ConductingEquipment',
+      condEquipmentAttrs,
+    );
     const action = {
       parent,
       node: element,
@@ -268,6 +278,11 @@ function createAction(parent: Element): WizardActor {
 }
 
 export function createConductingEquipmentWizard(parent: Element): Wizard {
+  const name = '';
+  const desc = null;
+  const type = '';
+  const virtual = null;
+
   return [
     {
       title: 'Add ConductingEquipment',
@@ -276,34 +291,42 @@ export function createConductingEquipmentWizard(parent: Element): Wizard {
         label: 'add',
         action: createAction(parent),
       },
-      content: renderConductingEquipmentWizard({
-        name: '',
-        desc: '',
-        option: 'create',
-        type: '',
-        reservedValues: reservedNames(parent, 'ConductingEquipment'),
-      }),
+      content: [
+        ...renderConductingEquipmentWizard({
+          name,
+          desc,
+          option: 'create',
+          type,
+          virtual,
+          reservedValues: reservedNames(parent, 'ConductingEquipment'),
+        }),
+      ],
     },
   ];
 }
 
 function updateAction(element: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
-    const name = getValue(inputs.find(i => i.label === 'name')!)!;
-    const desc = getValue(inputs.find(i => i.label === 'desc')!);
+    const attributes: Record<string, string | null> = {};
+    const subFunctionKeys = ['name', 'desc', 'virtual'];
+    subFunctionKeys.forEach(key => {
+      attributes[key] = getValue(inputs.find(i => i.label === key)!);
+    });
 
     if (
-      name === element.getAttribute('name') &&
-      desc === element.getAttribute('desc')
-    ) {
-      return [];
-    }
+      subFunctionKeys.some(key => attributes[key] !== element.getAttribute(key))
+    )
+      return [{ element, attributes }];
 
-    return [{ element, attributes: { name, desc } }];
+    return [];
   };
 }
 
 export function editConductingEquipmentWizard(element: Element): Wizard {
+  const name = element.getAttribute('name');
+  const desc = element.getAttribute('desc');
+  const virtual = element.getAttribute('virtual');
+
   return [
     {
       title: 'Edit ConductingEquipment',
@@ -313,9 +336,10 @@ export function editConductingEquipmentWizard(element: Element): Wizard {
         action: updateAction(element),
       },
       content: renderConductingEquipmentWizard({
-        name: element.getAttribute('name'),
-        desc: element.getAttribute('desc'),
+        name,
+        desc,
         option: 'edit',
+        virtual,
         type: typeName(element),
         reservedValues: reservedNames(element),
       }),

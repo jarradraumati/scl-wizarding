@@ -39,6 +39,8 @@ export const patterns = {
   uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
   id: '\\S{1,255}',
   path: '.+(/.+)*',
+  mappedDoName:
+    '(([A-Za-z][0-9A-Za-z_]{0,63})/([A-Za-z][0-9A-Za-z_]{0,63})/((LLN0|([A-Za-z][0-9A-Za-z_]{0,10})?[A-Z]{4}[0-9]{1,12})).)?([A-Z][0-9A-Za-z]{0,11}(.[a-z][0-9A-Za-z]*(([0-9]+))?)?)',
 };
 
 export const maxLength = {
@@ -47,6 +49,7 @@ export const maxLength = {
   ldInst: 64,
   prefix: 11,
   lnInst: 12,
+  dosName: 12,
 };
 
 export const predefinedBasicTypeEnum = [

@@ -55,6 +55,8 @@ export function contentVariableApplyToWizard(
       label="sGroup"
       .maybeValue=${options.sGroup}
       nullable
+      type="number"
+      min="0"
     ></scl-textfield>`,
     html`<scl-textfield
       label="element"
@@ -73,7 +75,7 @@ export function contentVariableApplyToWizard(
       nullable
     ></scl-textfield>`,
     html`<scl-textfield
-      label="functionUuid"
+      label="elementUuid"
       .maybeValue=${options.elementUuid}
       nullable
       pattern="${patterns.uuid}"

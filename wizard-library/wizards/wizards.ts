@@ -186,6 +186,87 @@ import {
   createSourceRefWizard,
   editSourceRefWizard,
 } from './iec61850-6-100/sourceref.js';
+import {
+  createBayTypeWizard,
+  editBayTypeWizard,
+} from './iec61850-6-100/baytype.js';
+import { createDOSWizard, editDOSWizard } from './iec61850-6-100/dos.js';
+import {
+  createFunctionTemplateWizard,
+  editFunctionTemplateWizard,
+} from './iec61850-6-100/functiontemplate.js';
+import {
+  createProcessEchoWizard,
+  editProcessEchoWizard,
+} from './iec61850-6-100/processecho.js';
+import {
+  createProjectWizard,
+  editProjectWizard,
+} from './iec61850-6-100/project.js';
+import {
+  createSubCategoryWizard,
+  editSubCategoryWizard,
+} from './iec61850-6-100/subcategory.js';
+import {
+  createProjectProcessReferenceWizard,
+  editProjectProcessReferenceWizard,
+} from './iec61850-6-100/projectprocessreference.js';
+import {
+  createSignalRoleWizard,
+  editSignalRoleWizard,
+} from './iec61850-6-100/signalrole.js';
+import {
+  createFunctionalVariantRefWizard,
+  editFunctionalVariantRefWizard,
+} from './iec61850-6-100/functionalvariantref.js';
+import {
+  createLNodeDataRefWizard,
+  editLNodeDataRefWizard,
+} from './iec61850-6-100/lnodedataref.js';
+import {
+  createLNodeInputRefWizard,
+  editLNodeInputRefWizard,
+} from './iec61850-6-100/lnodeinputref.js';
+import {
+  createLNodeOutputRefWizard,
+  editLNodeOutputRefWizard,
+} from './iec61850-6-100/lnodeoutputref.js';
+import {
+  createFunctionalVariantWizard,
+  editFunctionalVariantWizard,
+} from './iec61850-6-100/functionalvariant.js';
+import {
+  createFunctionalVariantGroupWizard,
+  editFunctionalVariantGroupWizard,
+} from './iec61850-6-100/functionalvariantgroup.js';
+import {
+  createAllocationRoleRefWizard,
+  editAllocationRoleRefWizard,
+} from './iec61850-6-100/allocationsroleref.js';
+import {
+  createVariableRefWizard,
+  editVariableRefWizard,
+} from './iec61850-6-100/variableref.js';
+import {
+  createFunctionCategoryRefWizard,
+  editFunctionCategoryRefWizard,
+} from './iec61850-6-100/functioncategoryref.js';
+import {
+  createPowerSystemRelationRefWizard,
+  editPowerSystemRelationRefWizard,
+} from './iec61850-6-100/powersystemrelationref.js';
+import {
+  createL2CommParametersWizard,
+  editL2CommParametersWizard,
+} from './iec61850-6-100/l2commparameters.js';
+import {
+  createL3IPv4CommParametersWizard,
+  editL3IPv4CommParametersWizard,
+} from './iec61850-6-100/l3ipv4commparameters.js';
+import {
+  createL3IPv6CommParametersWizard,
+  editL3IPv6CommParametersWizard,
+} from './iec61850-6-100/l3ipv6commparameters.js';
 
 type SclElementWizard = (
   element: Element,
@@ -791,5 +872,89 @@ export const wizards: Record<
   SourceRef: {
     edit: editSourceRefWizard,
     create: createSourceRefWizard,
+  },
+  BayType: {
+    edit: editBayTypeWizard,
+    create: createBayTypeWizard,
+  },
+  DOS: {
+    edit: editDOSWizard,
+    create: createDOSWizard,
+  },
+  FunctionTemplate: {
+    edit: editFunctionTemplateWizard,
+    create: createFunctionTemplateWizard,
+  },
+  ProcessEcho: {
+    edit: editProcessEchoWizard,
+    create: createProcessEchoWizard,
+  },
+  Project: {
+    edit: editProjectWizard,
+    create: createProjectWizard,
+  },
+  SubCategory: {
+    edit: editSubCategoryWizard,
+    create: createSubCategoryWizard,
+  },
+  ProjectProcessReference: {
+    edit: editProjectProcessReferenceWizard,
+    create: createProjectProcessReferenceWizard,
+  },
+  SignalRole: {
+    edit: editSignalRoleWizard,
+    create: createSignalRoleWizard,
+  },
+  FunctionalVariantRef: {
+    edit: editFunctionalVariantRefWizard,
+    create: createFunctionalVariantRefWizard,
+  },
+  LNodeDataRef: {
+    edit: editLNodeDataRefWizard,
+    create: createLNodeDataRefWizard,
+  },
+  LNodeInputRef: {
+    edit: editLNodeInputRefWizard,
+    create: createLNodeInputRefWizard,
+  },
+  LNodeOutputRef: {
+    edit: editLNodeOutputRefWizard,
+    create: createLNodeOutputRefWizard,
+  },
+  FunctionalVariant: {
+    edit: editFunctionalVariantWizard,
+    create: createFunctionalVariantWizard,
+  },
+  FunctionalVariantGroup: {
+    edit: editFunctionalVariantGroupWizard,
+    create: createFunctionalVariantGroupWizard,
+  },
+  AllocationRoleRef: {
+    edit: editAllocationRoleRefWizard,
+    create: createAllocationRoleRefWizard,
+  },
+  VariableRef: {
+    edit: editVariableRefWizard,
+    create: createVariableRefWizard,
+  },
+  FunctionCategoryRef: {
+    edit: editFunctionCategoryRefWizard,
+    create: createFunctionCategoryRefWizard,
+  },
+  PowerSystemRelationRef: {
+    edit: editPowerSystemRelationRefWizard,
+    create: createPowerSystemRelationRefWizard,
+  },
+  L2CommParameters: {
+    edit: editL2CommParametersWizard,
+    create: createL2CommParametersWizard,
+  },
+  L3IPv4CommParameters: {
+    edit: editL3IPv4CommParametersWizard,
+    create: createL3IPv4CommParametersWizard,
+  },
+  L3IPv6CommParameters: {
+    edit: editL3IPv6CommParametersWizard,
+    create: createL3IPv6CommParametersWizard,
   },
 };

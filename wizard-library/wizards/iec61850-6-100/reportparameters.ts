@@ -43,11 +43,11 @@ export function contentReportParametersWizard(
       .maybeValue=${options.intgPd}
       nullable
     ></scl-textfield>`,
-    html`<scl-textfield
+    html`<scl-checkbox
       label="buffered"
       .maybeValue=${options.buffered}
       nullable
-    ></scl-textfield>`,
+    ></scl-checkbox>`,
     html`<scl-textfield
       label="bufTime"
       .maybeValue=${options.bufTime}

@@ -9,6 +9,13 @@ export const cardinalities: Partial<Record<string, string>> = {
   mandatoryMulti: '1..n',
 };
 
+function getCardinality(cardinality: string | null): string | null {
+  const cardinal = (Object.keys(cardinalities) as Array<string>).find(
+    key => cardinalities[key] === cardinality,
+  );
+  return cardinal ?? null;
+}
+
 export function renderCardinalitySelector(
   cardinality: string | null,
 ): TemplateResult {
@@ -23,11 +30,4 @@ export function renderCardinalitySelector(
         html`<mwc-list-item value="${v}">${cardinalities[v]}</mwc-list-item>`,
     )}
   </scl-select>`;
-}
-
-function getCardinality(cardinality: string | null): string | null {
-  const key = (Object.keys(cardinalities) as Array<string>).find(
-    key => cardinalities[key] === cardinality,
-  );
-  return key ?? null;
 }
