@@ -264,7 +264,9 @@ export function editControlRefWizard(element: Element): Wizard {
   const resourceName = element.getAttribute('resourceName');
   const resourceUuid = element.getAttribute('resourceUuid') as UUID;
   const controlled = element.getAttribute('controlled');
-  const controlledLNodeUuid = element.getAttribute('controlledLNodeUuid') as UUID;
+  const controlledLNodeUuid = element.getAttribute(
+    'controlledLNodeUuid',
+  ) as UUID;
   const controlledDoName = element.getAttribute('controlledDoName');
   const output = element.getAttribute('output');
   const outputInst = element.getAttribute('outputInst');

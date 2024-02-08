@@ -39,12 +39,11 @@ export function contentGooseParametersRefWizard(
 function createGooseParametersRefAction(parent: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const GooseParametersRefAttrs: Record<string, string | null> = {};
-    const GooseParametersRefKeys = [
-      'desc',
-      'id',
-    ];
+    const GooseParametersRefKeys = ['desc', 'id'];
     GooseParametersRefKeys.forEach(key => {
-      GooseParametersRefAttrs[key] = getValue(inputs.find(i => i.label === key)!);
+      GooseParametersRefAttrs[key] = getValue(
+        inputs.find(i => i.label === key)!,
+      );
     });
 
     const GooseParametersRefNode = createElement(
@@ -89,10 +88,7 @@ export function createGooseParametersRefWizard(parent: Element): Wizard {
 function updateGooseParametersRef(element: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const attributes: Record<string, string | null> = {};
-    const functionKeys = [
-      'desc',
-      'id',
-    ];
+    const functionKeys = ['desc', 'id'];
     functionKeys.forEach(key => {
       attributes[key] = getValue(inputs.find(i => i.label === key)!);
     });

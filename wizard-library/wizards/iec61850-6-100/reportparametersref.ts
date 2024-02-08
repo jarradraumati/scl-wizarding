@@ -39,12 +39,11 @@ export function contentReportParametersRefWizard(
 function createReportParametersRefAction(parent: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const ReportParametersRefAttrs: Record<string, string | null> = {};
-    const ReportParametersRefKeys = [
-      'desc',
-      'id',
-    ];
+    const ReportParametersRefKeys = ['desc', 'id'];
     ReportParametersRefKeys.forEach(key => {
-      ReportParametersRefAttrs[key] = getValue(inputs.find(i => i.label === key)!);
+      ReportParametersRefAttrs[key] = getValue(
+        inputs.find(i => i.label === key)!,
+      );
     });
 
     const ReportParametersRefNode = createElement(
@@ -89,10 +88,7 @@ export function createReportParametersRefWizard(parent: Element): Wizard {
 function updateReportParametersRef(element: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const attributes: Record<string, string | null> = {};
-    const functionKeys = [
-      'desc',
-      'id',
-    ];
+    const functionKeys = ['desc', 'id'];
     functionKeys.forEach(key => {
       attributes[key] = getValue(inputs.find(i => i.label === key)!);
     });

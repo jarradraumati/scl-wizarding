@@ -39,12 +39,11 @@ export function contentAnalogueWiringParametersRefWizard(
 function createAnalogueWiringParametersRefAction(parent: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const AnalogueWiringParametersRefAttrs: Record<string, string | null> = {};
-    const AnalogueWiringParametersRefKeys = [
-      'desc',
-      'id',
-    ];
+    const AnalogueWiringParametersRefKeys = ['desc', 'id'];
     AnalogueWiringParametersRefKeys.forEach(key => {
-      AnalogueWiringParametersRefAttrs[key] = getValue(inputs.find(i => i.label === key)!);
+      AnalogueWiringParametersRefAttrs[key] = getValue(
+        inputs.find(i => i.label === key)!,
+      );
     });
 
     const AnalogueWiringParametersRefNode = createElement(
@@ -64,7 +63,9 @@ function createAnalogueWiringParametersRefAction(parent: Element): WizardActor {
   };
 }
 
-export function createAnalogueWiringParametersRefWizard(parent: Element): Wizard {
+export function createAnalogueWiringParametersRefWizard(
+  parent: Element,
+): Wizard {
   const id = null;
   const desc = null;
 
@@ -89,10 +90,7 @@ export function createAnalogueWiringParametersRefWizard(parent: Element): Wizard
 function updateAnalogueWiringParametersRef(element: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const attributes: Record<string, string | null> = {};
-    const functionKeys = [
-      'desc',
-      'id',
-    ];
+    const functionKeys = ['desc', 'id'];
     functionKeys.forEach(key => {
       attributes[key] = getValue(inputs.find(i => i.label === key)!);
     });
@@ -107,7 +105,9 @@ function updateAnalogueWiringParametersRef(element: Element): WizardActor {
   };
 }
 
-export function editAnalogueWiringParametersRefWizard(element: Element): Wizard {
+export function editAnalogueWiringParametersRefWizard(
+  element: Element,
+): Wizard {
   const id = element.getAttribute('id');
   const desc = element.getAttribute('desc');
 

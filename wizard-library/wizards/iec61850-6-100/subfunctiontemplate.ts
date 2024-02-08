@@ -78,7 +78,9 @@ function createSubFunctionTemplateAction(parent: Element): WizardActor {
       'originUuid',
     ];
     SubFunctionTemplateKeys.forEach(key => {
-      SubFunctionTemplateAttrs[key] = getValue(inputs.find(i => i.label === key)!);
+      SubFunctionTemplateAttrs[key] = getValue(
+        inputs.find(i => i.label === key)!,
+      );
     });
 
     const SubFunctionTemplateNode = createElement(

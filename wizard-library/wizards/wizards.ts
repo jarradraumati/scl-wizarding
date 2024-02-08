@@ -281,16 +281,46 @@ import {
   createControllingLNodeWizard,
   editControllingLNodeWizard,
 } from './iec61850-6-100/controlling-lnode.js';
-import { createLogParametersRefWizard, editLogParametersRefWizard } from './iec61850-6-100/logparametersref.js';
-import { createAnalogueWiringParametersRefWizard, editAnalogueWiringParametersRefWizard } from './iec61850-6-100/analoguewiringparametersref.js';
-import { createBinaryWiringParametersRefWizard, editBinaryWiringParametersRefWizard } from './iec61850-6-100/binarywiringparametersref.js';
-import { editGooseParametersRefWizard, createGooseParametersRefWizard } from './iec61850-6-100/gooseparametersref.js';
-import { editSMVParametersRefWizard, createSMVParametersRefWizard } from './iec61850-6-100/smvparametersref.js';
-import { editReportParametersRefWizard, createReportParametersRefWizard } from './iec61850-6-100/reportparametersref.js';
-import { createSubFunctionTemplateWizard, editSubFunctionTemplateWizard } from './iec61850-6-100/subfunctiontemplate.js';
-import { createInputVarRefWizard, editInputVarRefWizard } from './iec61850-6-100/inputvarref.js';
-import { editOutputVarRefWizard, createOutputVarRefWizard } from './iec61850-6-100/outputvarref.js';
-import { createControlRefWizard, editControlRefWizard } from './iec61850-6-100/controlref.js';
+import {
+  createLogParametersRefWizard,
+  editLogParametersRefWizard,
+} from './iec61850-6-100/logparametersref.js';
+import {
+  createAnalogueWiringParametersRefWizard,
+  editAnalogueWiringParametersRefWizard,
+} from './iec61850-6-100/analoguewiringparametersref.js';
+import {
+  createBinaryWiringParametersRefWizard,
+  editBinaryWiringParametersRefWizard,
+} from './iec61850-6-100/binarywiringparametersref.js';
+import {
+  editGooseParametersRefWizard,
+  createGooseParametersRefWizard,
+} from './iec61850-6-100/gooseparametersref.js';
+import {
+  editSMVParametersRefWizard,
+  createSMVParametersRefWizard,
+} from './iec61850-6-100/smvparametersref.js';
+import {
+  editReportParametersRefWizard,
+  createReportParametersRefWizard,
+} from './iec61850-6-100/reportparametersref.js';
+import {
+  createSubFunctionTemplateWizard,
+  editSubFunctionTemplateWizard,
+} from './iec61850-6-100/subfunctiontemplate.js';
+import {
+  createInputVarRefWizard,
+  editInputVarRefWizard,
+} from './iec61850-6-100/inputvarref.js';
+import {
+  editOutputVarRefWizard,
+  createOutputVarRefWizard,
+} from './iec61850-6-100/outputvarref.js';
+import {
+  createControlRefWizard,
+  editControlRefWizard,
+} from './iec61850-6-100/controlref.js';
 
 type SclElementWizard = (
   element: Element,

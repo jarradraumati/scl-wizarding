@@ -39,10 +39,7 @@ export function contentLogParametersRefWizard(
 function createLogParametersRefAction(parent: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const LogParametersRefAttrs: Record<string, string | null> = {};
-    const LogParametersRefKeys = [
-      'desc',
-      'id',
-    ];
+    const LogParametersRefKeys = ['desc', 'id'];
     LogParametersRefKeys.forEach(key => {
       LogParametersRefAttrs[key] = getValue(inputs.find(i => i.label === key)!);
     });
@@ -89,10 +86,7 @@ export function createLogParametersRefWizard(parent: Element): Wizard {
 function updateLogParametersRef(element: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const attributes: Record<string, string | null> = {};
-    const functionKeys = [
-      'desc',
-      'id',
-    ];
+    const functionKeys = ['desc', 'id'];
     functionKeys.forEach(key => {
       attributes[key] = getValue(inputs.find(i => i.label === key)!);
     });

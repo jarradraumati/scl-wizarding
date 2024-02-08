@@ -39,10 +39,7 @@ export function contentSMVParametersRefWizard(
 function createSMVParametersRefAction(parent: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const SMVParametersRefAttrs: Record<string, string | null> = {};
-    const SMVParametersRefKeys = [
-      'desc',
-      'id',
-    ];
+    const SMVParametersRefKeys = ['desc', 'id'];
     SMVParametersRefKeys.forEach(key => {
       SMVParametersRefAttrs[key] = getValue(inputs.find(i => i.label === key)!);
     });
@@ -89,10 +86,7 @@ export function createSMVParametersRefWizard(parent: Element): Wizard {
 function updateSMVParametersRef(element: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const attributes: Record<string, string | null> = {};
-    const functionKeys = [
-      'desc',
-      'id',
-    ];
+    const functionKeys = ['desc', 'id'];
     functionKeys.forEach(key => {
       attributes[key] = getValue(inputs.find(i => i.label === key)!);
     });

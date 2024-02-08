@@ -39,12 +39,11 @@ export function contentBinaryWiringParametersRefWizard(
 function createBinaryWiringParametersRefAction(parent: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const BinaryWiringParametersRefAttrs: Record<string, string | null> = {};
-    const BinaryWiringParametersRefKeys = [
-      'desc',
-      'id',
-    ];
+    const BinaryWiringParametersRefKeys = ['desc', 'id'];
     BinaryWiringParametersRefKeys.forEach(key => {
-      BinaryWiringParametersRefAttrs[key] = getValue(inputs.find(i => i.label === key)!);
+      BinaryWiringParametersRefAttrs[key] = getValue(
+        inputs.find(i => i.label === key)!,
+      );
     });
 
     const BinaryWiringParametersRefNode = createElement(
@@ -89,10 +88,7 @@ export function createBinaryWiringParametersRefWizard(parent: Element): Wizard {
 function updateBinaryWiringParametersRef(element: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const attributes: Record<string, string | null> = {};
-    const functionKeys = [
-      'desc',
-      'id',
-    ];
+    const functionKeys = ['desc', 'id'];
     functionKeys.forEach(key => {
       attributes[key] = getValue(inputs.find(i => i.label === key)!);
     });
