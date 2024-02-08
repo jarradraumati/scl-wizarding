@@ -110,3 +110,32 @@ export const functionalConstraintEnum = [
   'EX',
   'CO',
 ];
+
+export const attributeNameEnum = [
+  'T',
+  'Test',
+  'Check',
+  'SIUnit',
+  'Oper',
+  'SBO',
+  'SBOw',
+  'Cancel',
+  'Addr',
+  'PRIORITY',
+  'VID',
+  'APPID',
+  'TransportInUse',
+  'IPClassOfTraffic',
+  'IPv6FlowLabel',
+  'IPAddressLength',
+  'IPAddress',
+];
+
+export const tSpecServiceType = [
+  'Poll',
+  'Report',
+  'GOOSE',
+  'SMV',
+  'Wired',
+  'Internal',
+];

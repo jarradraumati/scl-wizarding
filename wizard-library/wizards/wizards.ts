@@ -267,6 +267,30 @@ import {
   createL3IPv6CommParametersWizard,
   editL3IPv6CommParametersWizard,
 } from './iec61850-6-100/l3ipv6commparameters.js';
+import {
+  createFunctionalSubVariantWizard,
+  editFunctionalSubVariantWizard,
+} from './iec61850-6-100/functionalsubvariant.js';
+import { createSDSWizard, editSDSWizard } from './iec61850-6-100/sds.js';
+import { createDASWizard, editDASWizard } from './iec61850-6-100/das.js';
+import {
+  createSubscriberLNodeWizard,
+  editSubscriberLNodeWizard,
+} from './iec61850-6-100/subscriber-lnode.js';
+import {
+  createControllingLNodeWizard,
+  editControllingLNodeWizard,
+} from './iec61850-6-100/controlling-lnode.js';
+import { createLogParametersRefWizard, editLogParametersRefWizard } from './iec61850-6-100/logparametersref.js';
+import { createAnalogueWiringParametersRefWizard, editAnalogueWiringParametersRefWizard } from './iec61850-6-100/analoguewiringparametersref.js';
+import { createBinaryWiringParametersRefWizard, editBinaryWiringParametersRefWizard } from './iec61850-6-100/binarywiringparametersref.js';
+import { editGooseParametersRefWizard, createGooseParametersRefWizard } from './iec61850-6-100/gooseparametersref.js';
+import { editSMVParametersRefWizard, createSMVParametersRefWizard } from './iec61850-6-100/smvparametersref.js';
+import { editReportParametersRefWizard, createReportParametersRefWizard } from './iec61850-6-100/reportparametersref.js';
+import { createSubFunctionTemplateWizard, editSubFunctionTemplateWizard } from './iec61850-6-100/subfunctiontemplate.js';
+import { createInputVarRefWizard, editInputVarRefWizard } from './iec61850-6-100/inputvarref.js';
+import { editOutputVarRefWizard, createOutputVarRefWizard } from './iec61850-6-100/outputvarref.js';
+import { createControlRefWizard, editControlRefWizard } from './iec61850-6-100/controlref.js';
 
 type SclElementWizard = (
   element: Element,
@@ -881,6 +905,14 @@ export const wizards: Record<
     edit: editDOSWizard,
     create: createDOSWizard,
   },
+  SDS: {
+    edit: editSDSWizard,
+    create: createSDSWizard,
+  },
+  DAS: {
+    edit: editDASWizard,
+    create: createDASWizard,
+  },
   FunctionTemplate: {
     edit: editFunctionTemplateWizard,
     create: createFunctionTemplateWizard,
@@ -925,6 +957,10 @@ export const wizards: Record<
     edit: editFunctionalVariantWizard,
     create: createFunctionalVariantWizard,
   },
+  FunctionalSubVariant: {
+    edit: editFunctionalSubVariantWizard,
+    create: createFunctionalSubVariantWizard,
+  },
   FunctionalVariantGroup: {
     edit: editFunctionalVariantGroupWizard,
     create: createFunctionalVariantGroupWizard,
@@ -956,5 +992,53 @@ export const wizards: Record<
   L3IPv6CommParameters: {
     edit: editL3IPv6CommParametersWizard,
     create: createL3IPv6CommParametersWizard,
+  },
+  SubscriberLNode: {
+    edit: editSubscriberLNodeWizard,
+    create: createSubscriberLNodeWizard,
+  },
+  ControllingLNode: {
+    edit: editControllingLNodeWizard,
+    create: createControllingLNodeWizard,
+  },
+  LogParametersRef: {
+    edit: editLogParametersRefWizard,
+    create: createLogParametersRefWizard,
+  },
+  AnalogueWiringParametersRef: {
+    edit: editAnalogueWiringParametersRefWizard,
+    create: createAnalogueWiringParametersRefWizard,
+  },
+  BinaryWiringParametersRef: {
+    edit: editBinaryWiringParametersRefWizard,
+    create: createBinaryWiringParametersRefWizard,
+  },
+  GooseParametersRef: {
+    edit: editGooseParametersRefWizard,
+    create: createGooseParametersRefWizard,
+  },
+  SMVParametersRef: {
+    edit: editSMVParametersRefWizard,
+    create: createSMVParametersRefWizard,
+  },
+  ReportParametersRef: {
+    edit: editReportParametersRefWizard,
+    create: createReportParametersRefWizard,
+  },
+  SubFunctionTemplate: {
+    edit: editSubFunctionTemplateWizard,
+    create: createSubFunctionTemplateWizard,
+  },
+  InputVarRef: {
+    edit: editInputVarRefWizard,
+    create: createInputVarRefWizard,
+  },
+  OutputVarRef: {
+    edit: editOutputVarRefWizard,
+    create: createOutputVarRefWizard,
+  },
+  ControlRef: {
+    edit: editControlRefWizard,
+    create: createControlRefWizard,
   },
 };
