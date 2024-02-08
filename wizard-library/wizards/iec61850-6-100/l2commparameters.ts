@@ -12,6 +12,7 @@ import {
   WizardInputElement,
 } from '../../foundation.js';
 import { get6100Reference } from '../../../foundation/utils/scldata.js';
+import { patterns } from '../patterns.js';
 
 type RenderOptions = {
   desc: string | null;
@@ -34,11 +35,16 @@ export function contentL2CommParametersWizard(
       label="vlanId"
       .maybeValue=${options.vlanId}
       nullable
+      pattern="${patterns.vlanid}"
     ></scl-textfield>`,
     html`<scl-textfield
       label="vlanPriority"
       .maybeValue=${options.vlanPriority}
       nullable
+      pattern="${patterns.vlanPriority}"
+      type="number"
+      minValue="0"
+      maxValue="7"
     ></scl-textfield>`,
     html`<scl-textfield
       label="appId"

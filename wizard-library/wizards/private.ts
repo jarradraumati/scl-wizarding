@@ -19,13 +19,9 @@ import { getReference } from '../../foundation/utils/scldata.js';
 type RenderOptions = {
   type: string | null;
   source: string | null;
-  content: string;
 };
 
-export function contentPrivateWizard(
-  options: RenderOptions,
-  hasChildren: boolean | false,
-): TemplateResult[] {
+export function contentPrivateWizard(options: RenderOptions): TemplateResult[] {
   return [
     html`<scl-textfield
         label="type"
@@ -37,14 +33,7 @@ export function contentPrivateWizard(
         label="source"
         .maybeValue=${options.source}
         nullable
-      ></scl-textfield
-      ><mwc-textarea
-        label="content"
-        value="${options.content}"
-        rows="1"
-        cols="80"
-        ?disabled=${hasChildren}
-      ></mwc-textarea>`,
+      ></scl-textfield>`,
   ];
 }
 
@@ -55,14 +44,12 @@ function createPrivateAction(parent: Element): WizardActor {
     privateKeys.forEach(key => {
       privateAttrs[key] = getValue(inputs.find(i => i.label === key)!);
     });
-    const content = getValue(inputs.find(i => i.label === 'content')!);
 
     const privateNode = createElement(
       parent.ownerDocument,
       'Private',
       privateAttrs,
     );
-    privateNode.textContent = content;
 
     return [
       { parent, node: privateNode, reference: getReference(parent, 'Private') },
@@ -72,7 +59,7 @@ function createPrivateAction(parent: Element): WizardActor {
 
 export function createPrivateWizard(parent: Element): Wizard {
   const type = null;
-  const source = null;
+  const source = 'OpenSCD';
 
   return [
     {
@@ -83,37 +70,27 @@ export function createPrivateWizard(parent: Element): Wizard {
         action: createPrivateAction(parent),
       },
       content: [
-        ...contentPrivateWizard(
-          {
-            type,
-            source,
-            content: '',
-          },
-          false,
-        ),
+        ...contentPrivateWizard({
+          type,
+          source,
+        }),
       ],
     },
   ];
 }
 
-function updatePrivate(element: Element, hasChildren: boolean): WizardActor {
+function updatePrivate(element: Element): WizardActor {
   return (inputs: WizardInputElement[]): Edit[] => {
     const attributes: Record<string, string | null> = {};
     const privateKeys = ['type', 'source'];
     privateKeys.forEach(key => {
       attributes[key] = getValue(inputs.find(i => i.label === key)!);
     });
-    const content = inputs.find(i => i.label === 'content')!.value!;
-    const node = element.cloneNode() as Element;
 
     if (
-      privateKeys.some(key => attributes[key] !== element.getAttribute(key)) ||
-      content !== element.textContent
+      privateKeys.some(key => attributes[key] !== element.getAttribute(key))
     ) {
-      if (!hasChildren) {
-        node.textContent = content;
-      }
-      return [{ node, attributes }];
+      return [{ element, attributes }];
     }
 
     return [];
@@ -123,8 +100,6 @@ function updatePrivate(element: Element, hasChildren: boolean): WizardActor {
 export function editPrivateWizard(element: Element): Wizard {
   const type = element.getAttribute('type');
   const source = element.getAttribute('source');
-  const content = element.textContent || '';
-  const hasChildren = element.children.length > 0;
 
   return [
     {
@@ -132,17 +107,13 @@ export function editPrivateWizard(element: Element): Wizard {
       primary: {
         icon: 'edit',
         label: 'save',
-        action: updatePrivate(element, hasChildren),
+        action: updatePrivate(element),
       },
       content: [
-        ...contentPrivateWizard(
-          {
-            type,
-            source,
-            content,
-          },
-          hasChildren,
-        ),
+        ...contentPrivateWizard({
+          type,
+          source,
+        }),
       ],
     },
   ];

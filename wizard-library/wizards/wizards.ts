@@ -321,6 +321,10 @@ import {
   createControlRefWizard,
   editControlRefWizard,
 } from './iec61850-6-100/controlref.js';
+import {
+  createCheckoutIDWizard,
+  editCheckoutIDWizard,
+} from './iec61850-6-100/checkoutid.js';
 
 type SclElementWizard = (
   element: Element,
@@ -1070,5 +1074,9 @@ export const wizards: Record<
   ControlRef: {
     edit: editControlRefWizard,
     create: createControlRefWizard,
+  },
+  CheckoutID: {
+    edit: editCheckoutIDWizard,
+    create: createCheckoutIDWizard,
   },
 };

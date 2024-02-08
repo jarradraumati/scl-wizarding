@@ -41,6 +41,10 @@ export const patterns = {
   path: '.+(/.+)*',
   mappedDoName:
     '(([A-Za-z][0-9A-Za-z_]{0,63})/([A-Za-z][0-9A-Za-z_]{0,63})/((LLN0|([A-Za-z][0-9A-Za-z_]{0,10})?[A-Z]{4}[0-9]{1,12})).)?([A-Z][0-9A-Za-z]{0,11}(.[a-z][0-9A-Za-z]*(([0-9]+))?)?)',
+  vlanid: '[0-9A-F]{3}',
+  vlanPriority: '[0-7]',
+  ipv4: '([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5]).([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5]).([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5]).([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])',
+  ipv6: '([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}',
 };
 
 export const maxLength = {
@@ -139,3 +143,9 @@ export const tSpecServiceType = [
   'Wired',
   'Internal',
 ];
+
+export const tSCLFileType = ['SED', 'SCC'];
+
+export const tRightEnum = ['full', 'fix', 'dataflow'];
+
+export const tSmpMod = ['SmpPerPeriod', 'SmpPerSec', 'SecPerSmp'];

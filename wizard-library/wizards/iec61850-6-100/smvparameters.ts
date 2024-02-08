@@ -13,6 +13,7 @@ import {
   WizardInputElement,
 } from '../../foundation.js';
 import { get6100Reference } from '../../../foundation/utils/scldata.js';
+import { tSmpMod } from '../patterns.js';
 
 type RenderOptions = {
   id: string | null;
@@ -68,7 +69,7 @@ export function contentSMVParametersWizard(
       nullable
     ></scl-textfield>`,
     html`<scl-select label="smpMod" .maybeValue=${options.smpMod} nullable
-      >${['SmpPerPeriod', 'SmpPerSec', 'SecPerSmp'].map(
+      >${tSmpMod.map(
         type => html`<mwc-list-item value="${type}">${type}</mwc-list-item>`,
       )}</scl-select
     >`,
