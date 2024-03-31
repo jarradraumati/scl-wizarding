@@ -1,9 +1,8 @@
 import { LitElement, TemplateResult } from 'lit';
-import 'ace-custom-element';
 import '@material/mwc-dialog';
-import AceEditor from 'ace-custom-element';
 import '../foundation/components/scl-wizard-dialog.js';
 import '../foundation/components/code-dialog.js';
+import AceEditor from 'ace-custom-element';
 import { EditWizardRequest, CreateWizardRequest } from '../foundation.js';
 import { Wizard } from './foundation.js';
 /**

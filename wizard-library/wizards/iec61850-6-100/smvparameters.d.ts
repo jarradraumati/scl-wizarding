@@ -1,0 +1,20 @@
+import { TemplateResult } from 'lit';
+import '../../../foundation/components/scl-textfield.js';
+import '../../../foundation/components/scl-checkbox.js';
+import { Wizard } from '../../foundation.js';
+type RenderOptions = {
+    id: string | null;
+    desc: string | null;
+    smvId: string | null;
+    securityEnabled: string | null;
+    multicast: string | null;
+    smpRate: string | null;
+    nofASDU: string | null;
+    smpMod: string | null;
+    cbName: string | null;
+    dsName: string | null;
+};
+export declare function contentSMVParametersWizard(options: RenderOptions): TemplateResult[];
+export declare function createSMVParametersWizard(parent: Element): Wizard;
+export declare function editSMVParametersWizard(element: Element): Wizard;
+export {};

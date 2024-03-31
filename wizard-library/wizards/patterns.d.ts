@@ -2,6 +2,7 @@ export declare const patterns: {
     string: string;
     normalizedString: string;
     name: string;
+    tName: string;
     nmToken: string;
     names: string;
     nmTokens: string;
@@ -10,13 +11,23 @@ export declare const patterns: {
     integer: string;
     alphanumericFirstUpperCase: string;
     alphanumericFirstLowerCase: string;
+    alphanumericFirst: string;
+    ldInst: string;
+    prefix: string;
     lnClass: string;
+    lnInst: string;
     abstractDataAttributeName: string;
     cdc: string;
+    uuid: string;
+    id: string;
+    path: string;
 };
 export declare const maxLength: {
     cbName: number;
     abstracDaName: number;
+    ldInst: number;
+    prefix: number;
+    lnInst: number;
 };
 export declare const predefinedBasicTypeEnum: string[];
 export declare const valKindEnum: string[];

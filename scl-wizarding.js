@@ -12,7 +12,7 @@ LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
-/* global Reflect, Promise */
+/* global Reflect, Promise, SuppressedError, Symbol */
 
 var extendStatics = function(d, b) {
     extendStatics = Object.setPrototypeOf ||
@@ -86,31 +86,56 @@ function __spreadArray(to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 }
 
+typeof SuppressedError === "function" ? SuppressedError : function (error, suppressed, message) {
+    var e = new Error(message);
+    return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
+};
+
 /**
  * @license
  * Copyright 2019 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const t$3=window,e$a=t$3.ShadowRoot&&(void 0===t$3.ShadyCSS||t$3.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s$4=Symbol(),n$5=new WeakMap;class o$7{constructor(t,e,n){if(this._$cssResult$=!0,n!==s$4)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e;}get styleSheet(){let t=this.o;const s=this.t;if(e$a&&void 0===t){const e=void 0!==s&&1===s.length;e&&(t=n$5.get(s)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&n$5.set(s,t));}return t}toString(){return this.cssText}}const r$2=t=>new o$7("string"==typeof t?t:t+"",void 0,s$4),i$5=(t,...e)=>{const n=1===t.length?t[0]:e.reduce(((e,s,n)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(s)+t[n+1]),t[0]);return new o$7(n,t,s$4)},S$1=(s,n)=>{e$a?s.adoptedStyleSheets=n.map((t=>t instanceof CSSStyleSheet?t:t.styleSheet)):n.forEach((e=>{const n=document.createElement("style"),o=t$3.litNonce;void 0!==o&&n.setAttribute("nonce",o),n.textContent=e.cssText,s.appendChild(n);}));},c$1=e$a?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const s of t.cssRules)e+=s.cssText;return r$2(e)})(t):t;
+const t$5=window,e$d=t$5.ShadowRoot&&(void 0===t$5.ShadyCSS||t$5.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s$7=Symbol(),n$9=new WeakMap;class o$a{constructor(t,e,n){if(this._$cssResult$=!0,n!==s$7)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e;}get styleSheet(){let t=this.o;const s=this.t;if(e$d&&void 0===t){const e=void 0!==s&&1===s.length;e&&(t=n$9.get(s)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&n$9.set(s,t));}return t}toString(){return this.cssText}}const r$5=t=>new o$a("string"==typeof t?t:t+"",void 0,s$7),S$3=(s,n)=>{e$d?s.adoptedStyleSheets=n.map((t=>t instanceof CSSStyleSheet?t:t.styleSheet)):n.forEach((e=>{const n=document.createElement("style"),o=t$5.litNonce;void 0!==o&&n.setAttribute("nonce",o),n.textContent=e.cssText,s.appendChild(n);}));},c$3=e$d?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const s of t.cssRules)e+=s.cssText;return r$5(e)})(t):t;
 
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */var s$3;const e$9=window,r$1=e$9.trustedTypes,h$1=r$1?r$1.emptyScript:"",o$6=e$9.reactiveElementPolyfillSupport,n$4={toAttribute(t,i){switch(i){case Boolean:t=t?h$1:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t);}return t},fromAttribute(t,i){let s=t;switch(i){case Boolean:s=null!==t;break;case Number:s=null===t?null:Number(t);break;case Object:case Array:try{s=JSON.parse(t);}catch(t){s=null;}}return s}},a$1=(t,i)=>i!==t&&(i==i||t==t),l$5={attribute:!0,type:String,converter:n$4,reflect:!1,hasChanged:a$1};class d$1 extends HTMLElement{constructor(){super(),this._$Ei=new Map,this.isUpdatePending=!1,this.hasUpdated=!1,this._$El=null,this.u();}static addInitializer(t){var i;this.finalize(),(null!==(i=this.h)&&void 0!==i?i:this.h=[]).push(t);}static get observedAttributes(){this.finalize();const t=[];return this.elementProperties.forEach(((i,s)=>{const e=this._$Ep(s,i);void 0!==e&&(this._$Ev.set(e,s),t.push(e));})),t}static createProperty(t,i=l$5){if(i.state&&(i.attribute=!1),this.finalize(),this.elementProperties.set(t,i),!i.noAccessor&&!this.prototype.hasOwnProperty(t)){const s="symbol"==typeof t?Symbol():"__"+t,e=this.getPropertyDescriptor(t,s,i);void 0!==e&&Object.defineProperty(this.prototype,t,e);}}static getPropertyDescriptor(t,i,s){return {get(){return this[i]},set(e){const r=this[t];this[i]=e,this.requestUpdate(t,r,s);},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)||l$5}static finalize(){if(this.hasOwnProperty("finalized"))return !1;this.finalized=!0;const t=Object.getPrototypeOf(this);if(t.finalize(),void 0!==t.h&&(this.h=[...t.h]),this.elementProperties=new Map(t.elementProperties),this._$Ev=new Map,this.hasOwnProperty("properties")){const t=this.properties,i=[...Object.getOwnPropertyNames(t),...Object.getOwnPropertySymbols(t)];for(const s of i)this.createProperty(s,t[s]);}return this.elementStyles=this.finalizeStyles(this.styles),!0}static finalizeStyles(i){const s=[];if(Array.isArray(i)){const e=new Set(i.flat(1/0).reverse());for(const i of e)s.unshift(c$1(i));}else void 0!==i&&s.push(c$1(i));return s}static _$Ep(t,i){const s=i.attribute;return !1===s?void 0:"string"==typeof s?s:"string"==typeof t?t.toLowerCase():void 0}u(){var t;this._$E_=new Promise((t=>this.enableUpdating=t)),this._$AL=new Map,this._$Eg(),this.requestUpdate(),null===(t=this.constructor.h)||void 0===t||t.forEach((t=>t(this)));}addController(t){var i,s;(null!==(i=this._$ES)&&void 0!==i?i:this._$ES=[]).push(t),void 0!==this.renderRoot&&this.isConnected&&(null===(s=t.hostConnected)||void 0===s||s.call(t));}removeController(t){var i;null===(i=this._$ES)||void 0===i||i.splice(this._$ES.indexOf(t)>>>0,1);}_$Eg(){this.constructor.elementProperties.forEach(((t,i)=>{this.hasOwnProperty(i)&&(this._$Ei.set(i,this[i]),delete this[i]);}));}createRenderRoot(){var t;const s=null!==(t=this.shadowRoot)&&void 0!==t?t:this.attachShadow(this.constructor.shadowRootOptions);return S$1(s,this.constructor.elementStyles),s}connectedCallback(){var t;void 0===this.renderRoot&&(this.renderRoot=this.createRenderRoot()),this.enableUpdating(!0),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostConnected)||void 0===i?void 0:i.call(t)}));}enableUpdating(t){}disconnectedCallback(){var t;null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostDisconnected)||void 0===i?void 0:i.call(t)}));}attributeChangedCallback(t,i,s){this._$AK(t,s);}_$EO(t,i,s=l$5){var e;const r=this.constructor._$Ep(t,s);if(void 0!==r&&!0===s.reflect){const h=(void 0!==(null===(e=s.converter)||void 0===e?void 0:e.toAttribute)?s.converter:n$4).toAttribute(i,s.type);this._$El=t,null==h?this.removeAttribute(r):this.setAttribute(r,h),this._$El=null;}}_$AK(t,i){var s;const e=this.constructor,r=e._$Ev.get(t);if(void 0!==r&&this._$El!==r){const t=e.getPropertyOptions(r),h="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==(null===(s=t.converter)||void 0===s?void 0:s.fromAttribute)?t.converter:n$4;this._$El=r,this[r]=h.fromAttribute(i,t.type),this._$El=null;}}requestUpdate(t,i,s){let e=!0;void 0!==t&&(((s=s||this.constructor.getPropertyOptions(t)).hasChanged||a$1)(this[t],i)?(this._$AL.has(t)||this._$AL.set(t,i),!0===s.reflect&&this._$El!==t&&(void 0===this._$EC&&(this._$EC=new Map),this._$EC.set(t,s))):e=!1),!this.isUpdatePending&&e&&(this._$E_=this._$Ej());}async _$Ej(){this.isUpdatePending=!0;try{await this._$E_;}catch(t){Promise.reject(t);}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){var t;if(!this.isUpdatePending)return;this.hasUpdated,this._$Ei&&(this._$Ei.forEach(((t,i)=>this[i]=t)),this._$Ei=void 0);let i=!1;const s=this._$AL;try{i=this.shouldUpdate(s),i?(this.willUpdate(s),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostUpdate)||void 0===i?void 0:i.call(t)})),this.update(s)):this._$Ek();}catch(t){throw i=!1,this._$Ek(),t}i&&this._$AE(s);}willUpdate(t){}_$AE(t){var i;null===(i=this._$ES)||void 0===i||i.forEach((t=>{var i;return null===(i=t.hostUpdated)||void 0===i?void 0:i.call(t)})),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t);}_$Ek(){this._$AL=new Map,this.isUpdatePending=!1;}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$E_}shouldUpdate(t){return !0}update(t){void 0!==this._$EC&&(this._$EC.forEach(((t,i)=>this._$EO(i,this[i],t))),this._$EC=void 0),this._$Ek();}updated(t){}firstUpdated(t){}}d$1.finalized=!0,d$1.elementProperties=new Map,d$1.elementStyles=[],d$1.shadowRootOptions={mode:"open"},null==o$6||o$6({ReactiveElement:d$1}),(null!==(s$3=e$9.reactiveElementVersions)&&void 0!==s$3?s$3:e$9.reactiveElementVersions=[]).push("1.6.1");
+ */var s$6;const e$c=window,r$4=e$c.trustedTypes,h$3=r$4?r$4.emptyScript:"",o$9=e$c.reactiveElementPolyfillSupport,n$8={toAttribute(t,i){switch(i){case Boolean:t=t?h$3:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t);}return t},fromAttribute(t,i){let s=t;switch(i){case Boolean:s=null!==t;break;case Number:s=null===t?null:Number(t);break;case Object:case Array:try{s=JSON.parse(t);}catch(t){s=null;}}return s}},a$4=(t,i)=>i!==t&&(i==i||t==t),l$7={attribute:!0,type:String,converter:n$8,reflect:!1,hasChanged:a$4},d$3="finalized";class u$3 extends HTMLElement{constructor(){super(),this._$Ei=new Map,this.isUpdatePending=!1,this.hasUpdated=!1,this._$El=null,this._$Eu();}static addInitializer(t){var i;this.finalize(),(null!==(i=this.h)&&void 0!==i?i:this.h=[]).push(t);}static get observedAttributes(){this.finalize();const t=[];return this.elementProperties.forEach(((i,s)=>{const e=this._$Ep(s,i);void 0!==e&&(this._$Ev.set(e,s),t.push(e));})),t}static createProperty(t,i=l$7){if(i.state&&(i.attribute=!1),this.finalize(),this.elementProperties.set(t,i),!i.noAccessor&&!this.prototype.hasOwnProperty(t)){const s="symbol"==typeof t?Symbol():"__"+t,e=this.getPropertyDescriptor(t,s,i);void 0!==e&&Object.defineProperty(this.prototype,t,e);}}static getPropertyDescriptor(t,i,s){return {get(){return this[i]},set(e){const r=this[t];this[i]=e,this.requestUpdate(t,r,s);},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)||l$7}static finalize(){if(this.hasOwnProperty(d$3))return !1;this[d$3]=!0;const t=Object.getPrototypeOf(this);if(t.finalize(),void 0!==t.h&&(this.h=[...t.h]),this.elementProperties=new Map(t.elementProperties),this._$Ev=new Map,this.hasOwnProperty("properties")){const t=this.properties,i=[...Object.getOwnPropertyNames(t),...Object.getOwnPropertySymbols(t)];for(const s of i)this.createProperty(s,t[s]);}return this.elementStyles=this.finalizeStyles(this.styles),!0}static finalizeStyles(i){const s=[];if(Array.isArray(i)){const e=new Set(i.flat(1/0).reverse());for(const i of e)s.unshift(c$3(i));}else void 0!==i&&s.push(c$3(i));return s}static _$Ep(t,i){const s=i.attribute;return !1===s?void 0:"string"==typeof s?s:"string"==typeof t?t.toLowerCase():void 0}_$Eu(){var t;this._$E_=new Promise((t=>this.enableUpdating=t)),this._$AL=new Map,this._$Eg(),this.requestUpdate(),null===(t=this.constructor.h)||void 0===t||t.forEach((t=>t(this)));}addController(t){var i,s;(null!==(i=this._$ES)&&void 0!==i?i:this._$ES=[]).push(t),void 0!==this.renderRoot&&this.isConnected&&(null===(s=t.hostConnected)||void 0===s||s.call(t));}removeController(t){var i;null===(i=this._$ES)||void 0===i||i.splice(this._$ES.indexOf(t)>>>0,1);}_$Eg(){this.constructor.elementProperties.forEach(((t,i)=>{this.hasOwnProperty(i)&&(this._$Ei.set(i,this[i]),delete this[i]);}));}createRenderRoot(){var t;const s=null!==(t=this.shadowRoot)&&void 0!==t?t:this.attachShadow(this.constructor.shadowRootOptions);return S$3(s,this.constructor.elementStyles),s}connectedCallback(){var t;void 0===this.renderRoot&&(this.renderRoot=this.createRenderRoot()),this.enableUpdating(!0),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostConnected)||void 0===i?void 0:i.call(t)}));}enableUpdating(t){}disconnectedCallback(){var t;null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostDisconnected)||void 0===i?void 0:i.call(t)}));}attributeChangedCallback(t,i,s){this._$AK(t,s);}_$EO(t,i,s=l$7){var e;const r=this.constructor._$Ep(t,s);if(void 0!==r&&!0===s.reflect){const h=(void 0!==(null===(e=s.converter)||void 0===e?void 0:e.toAttribute)?s.converter:n$8).toAttribute(i,s.type);this._$El=t,null==h?this.removeAttribute(r):this.setAttribute(r,h),this._$El=null;}}_$AK(t,i){var s;const e=this.constructor,r=e._$Ev.get(t);if(void 0!==r&&this._$El!==r){const t=e.getPropertyOptions(r),h="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==(null===(s=t.converter)||void 0===s?void 0:s.fromAttribute)?t.converter:n$8;this._$El=r,this[r]=h.fromAttribute(i,t.type),this._$El=null;}}requestUpdate(t,i,s){let e=!0;void 0!==t&&(((s=s||this.constructor.getPropertyOptions(t)).hasChanged||a$4)(this[t],i)?(this._$AL.has(t)||this._$AL.set(t,i),!0===s.reflect&&this._$El!==t&&(void 0===this._$EC&&(this._$EC=new Map),this._$EC.set(t,s))):e=!1),!this.isUpdatePending&&e&&(this._$E_=this._$Ej());}async _$Ej(){this.isUpdatePending=!0;try{await this._$E_;}catch(t){Promise.reject(t);}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){var t;if(!this.isUpdatePending)return;this.hasUpdated,this._$Ei&&(this._$Ei.forEach(((t,i)=>this[i]=t)),this._$Ei=void 0);let i=!1;const s=this._$AL;try{i=this.shouldUpdate(s),i?(this.willUpdate(s),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostUpdate)||void 0===i?void 0:i.call(t)})),this.update(s)):this._$Ek();}catch(t){throw i=!1,this._$Ek(),t}i&&this._$AE(s);}willUpdate(t){}_$AE(t){var i;null===(i=this._$ES)||void 0===i||i.forEach((t=>{var i;return null===(i=t.hostUpdated)||void 0===i?void 0:i.call(t)})),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t);}_$Ek(){this._$AL=new Map,this.isUpdatePending=!1;}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$E_}shouldUpdate(t){return !0}update(t){void 0!==this._$EC&&(this._$EC.forEach(((t,i)=>this._$EO(i,this[i],t))),this._$EC=void 0),this._$Ek();}updated(t){}firstUpdated(t){}}u$3[d$3]=!0,u$3.elementProperties=new Map,u$3.elementStyles=[],u$3.shadowRootOptions={mode:"open"},null==o$9||o$9({ReactiveElement:u$3}),(null!==(s$6=e$c.reactiveElementVersions)&&void 0!==s$6?s$6:e$c.reactiveElementVersions=[]).push("1.6.3");
 
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-var t$2;const i$4=window,s$2=i$4.trustedTypes,e$8=s$2?s$2.createPolicy("lit-html",{createHTML:t=>t}):void 0,o$5="$lit$",n$3=`lit$${(Math.random()+"").slice(9)}$`,l$4="?"+n$3,h=`<${l$4}>`,r=document,d=()=>r.createComment(""),u=t=>null===t||"object"!=typeof t&&"function"!=typeof t,c=Array.isArray,v=t=>c(t)||"function"==typeof(null==t?void 0:t[Symbol.iterator]),a="[ \t\n\f\r]",f$1=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,_=/-->/g,m=/>/g,p=RegExp(`>|${a}(?:([^\\s"'>=/]+)(${a}*=${a}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),g=/'/g,$=/"/g,y=/^(?:script|style|textarea|title)$/i,w=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),x=w(1),T=Symbol.for("lit-noChange"),A=Symbol.for("lit-nothing"),E=new WeakMap,C=r.createTreeWalker(r,129,null,!1),P=(t,i)=>{const s=t.length-1,l=[];let r,d=2===i?"<svg>":"",u=f$1;for(let i=0;i<s;i++){const s=t[i];let e,c,v=-1,a=0;for(;a<s.length&&(u.lastIndex=a,c=u.exec(s),null!==c);)a=u.lastIndex,u===f$1?"!--"===c[1]?u=_:void 0!==c[1]?u=m:void 0!==c[2]?(y.test(c[2])&&(r=RegExp("</"+c[2],"g")),u=p):void 0!==c[3]&&(u=p):u===p?">"===c[0]?(u=null!=r?r:f$1,v=-1):void 0===c[1]?v=-2:(v=u.lastIndex-c[2].length,e=c[1],u=void 0===c[3]?p:'"'===c[3]?$:g):u===$||u===g?u=p:u===_||u===m?u=f$1:(u=p,r=void 0);const w=u===p&&t[i+1].startsWith("/>")?" ":"";d+=u===f$1?s+h:v>=0?(l.push(e),s.slice(0,v)+o$5+s.slice(v)+n$3+w):s+n$3+(-2===v?(l.push(void 0),i):w);}const c=d+(t[s]||"<?>")+(2===i?"</svg>":"");if(!Array.isArray(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return [void 0!==e$8?e$8.createHTML(c):c,l]};class V{constructor({strings:t,_$litType$:i},e){let h;this.parts=[];let r=0,u=0;const c=t.length-1,v=this.parts,[a,f]=P(t,i);if(this.el=V.createElement(a,e),C.currentNode=this.el.content,2===i){const t=this.el.content,i=t.firstChild;i.remove(),t.append(...i.childNodes);}for(;null!==(h=C.nextNode())&&v.length<c;){if(1===h.nodeType){if(h.hasAttributes()){const t=[];for(const i of h.getAttributeNames())if(i.endsWith(o$5)||i.startsWith(n$3)){const s=f[u++];if(t.push(i),void 0!==s){const t=h.getAttribute(s.toLowerCase()+o$5).split(n$3),i=/([.?@])?(.*)/.exec(s);v.push({type:1,index:r,name:i[2],strings:t,ctor:"."===i[1]?k:"?"===i[1]?I:"@"===i[1]?L:R});}else v.push({type:6,index:r});}for(const i of t)h.removeAttribute(i);}if(y.test(h.tagName)){const t=h.textContent.split(n$3),i=t.length-1;if(i>0){h.textContent=s$2?s$2.emptyScript:"";for(let s=0;s<i;s++)h.append(t[s],d()),C.nextNode(),v.push({type:2,index:++r});h.append(t[i],d());}}}else if(8===h.nodeType)if(h.data===l$4)v.push({type:2,index:r});else {let t=-1;for(;-1!==(t=h.data.indexOf(n$3,t+1));)v.push({type:7,index:r}),t+=n$3.length-1;}r++;}}static createElement(t,i){const s=r.createElement("template");return s.innerHTML=t,s}}function N(t,i,s=t,e){var o,n,l,h;if(i===T)return i;let r=void 0!==e?null===(o=s._$Co)||void 0===o?void 0:o[e]:s._$Cl;const d=u(i)?void 0:i._$litDirective$;return (null==r?void 0:r.constructor)!==d&&(null===(n=null==r?void 0:r._$AO)||void 0===n||n.call(r,!1),void 0===d?r=void 0:(r=new d(t),r._$AT(t,s,e)),void 0!==e?(null!==(l=(h=s)._$Co)&&void 0!==l?l:h._$Co=[])[e]=r:s._$Cl=r),void 0!==r&&(i=N(t,r._$AS(t,i.values),r,e)),i}class S{constructor(t,i){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){var i;const{el:{content:s},parts:e}=this._$AD,o=(null!==(i=null==t?void 0:t.creationScope)&&void 0!==i?i:r).importNode(s,!0);C.currentNode=o;let n=C.nextNode(),l=0,h=0,d=e[0];for(;void 0!==d;){if(l===d.index){let i;2===d.type?i=new M(n,n.nextSibling,this,t):1===d.type?i=new d.ctor(n,d.name,d.strings,this,t):6===d.type&&(i=new z(n,this,t)),this._$AV.push(i),d=e[++h];}l!==(null==d?void 0:d.index)&&(n=C.nextNode(),l++);}return C.currentNode=r,o}v(t){let i=0;for(const s of this._$AV)void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class M{constructor(t,i,s,e){var o;this.type=2,this._$AH=A,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cp=null===(o=null==e?void 0:e.isConnected)||void 0===o||o;}get _$AU(){var t,i;return null!==(i=null===(t=this._$AM)||void 0===t?void 0:t._$AU)&&void 0!==i?i:this._$Cp}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===(null==t?void 0:t.nodeType)&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=N(this,t,i),u(t)?t===A||null==t||""===t?(this._$AH!==A&&this._$AR(),this._$AH=A):t!==this._$AH&&t!==T&&this._(t):void 0!==t._$litType$?this.g(t):void 0!==t.nodeType?this.$(t):v(t)?this.T(t):this._(t);}k(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}$(t){this._$AH!==t&&(this._$AR(),this._$AH=this.k(t));}_(t){this._$AH!==A&&u(this._$AH)?this._$AA.nextSibling.data=t:this.$(r.createTextNode(t)),this._$AH=t;}g(t){var i;const{values:s,_$litType$:e}=t,o="number"==typeof e?this._$AC(t):(void 0===e.el&&(e.el=V.createElement(e.h,this.options)),e);if((null===(i=this._$AH)||void 0===i?void 0:i._$AD)===o)this._$AH.v(s);else {const t=new S(o,this),i=t.u(this.options);t.v(s),this.$(i),this._$AH=t;}}_$AC(t){let i=E.get(t.strings);return void 0===i&&E.set(t.strings,i=new V(t)),i}T(t){c(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const o of t)e===i.length?i.push(s=new M(this.k(d()),this.k(d()),this,this.options)):s=i[e],s._$AI(o),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,i){var s;for(null===(s=this._$AP)||void 0===s||s.call(this,!1,!0,i);t&&t!==this._$AB;){const i=t.nextSibling;t.remove(),t=i;}}setConnected(t){var i;void 0===this._$AM&&(this._$Cp=t,null===(i=this._$AP)||void 0===i||i.call(this,t));}}class R{constructor(t,i,s,e,o){this.type=1,this._$AH=A,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=o,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=A;}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(t,i=this,s,e){const o=this.strings;let n=!1;if(void 0===o)t=N(this,t,i,0),n=!u(t)||t!==this._$AH&&t!==T,n&&(this._$AH=t);else {const e=t;let l,h;for(t=o[0],l=0;l<o.length-1;l++)h=N(this,e[s+l],i,l),h===T&&(h=this._$AH[l]),n||(n=!u(h)||h!==this._$AH[l]),h===A?t=A:t!==A&&(t+=(null!=h?h:"")+o[l+1]),this._$AH[l]=h;}n&&!e&&this.j(t);}j(t){t===A?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,null!=t?t:"");}}class k extends R{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===A?void 0:t;}}const H=s$2?s$2.emptyScript:"";class I extends R{constructor(){super(...arguments),this.type=4;}j(t){t&&t!==A?this.element.setAttribute(this.name,H):this.element.removeAttribute(this.name);}}class L extends R{constructor(t,i,s,e,o){super(t,i,s,e,o),this.type=5;}_$AI(t,i=this){var s;if((t=null!==(s=N(this,t,i,0))&&void 0!==s?s:A)===T)return;const e=this._$AH,o=t===A&&e!==A||t.capture!==e.capture||t.once!==e.once||t.passive!==e.passive,n=t!==A&&(e===A||o);o&&this.element.removeEventListener(this.name,this,e),n&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){var i,s;"function"==typeof this._$AH?this._$AH.call(null!==(s=null===(i=this.options)||void 0===i?void 0:i.host)&&void 0!==s?s:this.element,t):this._$AH.handleEvent(t);}}class z{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){N(this,t);}}const j=i$4.litHtmlPolyfillSupport;null==j||j(V,M),(null!==(t$2=i$4.litHtmlVersions)&&void 0!==t$2?t$2:i$4.litHtmlVersions=[]).push("2.7.4");const B=(t,i,s)=>{var e,o;const n=null!==(e=null==s?void 0:s.renderBefore)&&void 0!==e?e:i;let l=n._$litPart$;if(void 0===l){const t=null!==(o=null==s?void 0:s.renderBefore)&&void 0!==o?o:null;n._$litPart$=l=new M(i.insertBefore(d(),t),t,void 0,null!=s?s:{});}return l._$AI(t),l};
+var t$4;const i$6=window,s$5=i$6.trustedTypes,e$b=s$5?s$5.createPolicy("lit-html",{createHTML:t=>t}):void 0,o$8="$lit$",n$7=`lit$${(Math.random()+"").slice(9)}$`,l$6="?"+n$7,h$2=`<${l$6}>`,r$3=document,u$2=()=>r$3.createComment(""),d$2=t=>null===t||"object"!=typeof t&&"function"!=typeof t,c$2=Array.isArray,v$1=t=>c$2(t)||"function"==typeof(null==t?void 0:t[Symbol.iterator]),a$3="[ \t\n\f\r]",f$1=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,_$1=/-->/g,m$1=/>/g,p$1=RegExp(`>|${a$3}(?:([^\\s"'>=/]+)(${a$3}*=${a$3}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),g$1=/'/g,$$1=/"/g,y$1=/^(?:script|style|textarea|title)$/i,T$1=Symbol.for("lit-noChange"),A$1=Symbol.for("lit-nothing"),E$1=new WeakMap,C$1=r$3.createTreeWalker(r$3,129,null,!1);function P$1(t,i){if(!Array.isArray(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==e$b?e$b.createHTML(i):i}const V$1=(t,i)=>{const s=t.length-1,e=[];let l,r=2===i?"<svg>":"",u=f$1;for(let i=0;i<s;i++){const s=t[i];let d,c,v=-1,a=0;for(;a<s.length&&(u.lastIndex=a,c=u.exec(s),null!==c);)a=u.lastIndex,u===f$1?"!--"===c[1]?u=_$1:void 0!==c[1]?u=m$1:void 0!==c[2]?(y$1.test(c[2])&&(l=RegExp("</"+c[2],"g")),u=p$1):void 0!==c[3]&&(u=p$1):u===p$1?">"===c[0]?(u=null!=l?l:f$1,v=-1):void 0===c[1]?v=-2:(v=u.lastIndex-c[2].length,d=c[1],u=void 0===c[3]?p$1:'"'===c[3]?$$1:g$1):u===$$1||u===g$1?u=p$1:u===_$1||u===m$1?u=f$1:(u=p$1,l=void 0);const w=u===p$1&&t[i+1].startsWith("/>")?" ":"";r+=u===f$1?s+h$2:v>=0?(e.push(d),s.slice(0,v)+o$8+s.slice(v)+n$7+w):s+n$7+(-2===v?(e.push(void 0),i):w);}return [P$1(t,r+(t[s]||"<?>")+(2===i?"</svg>":"")),e]};class N$1{constructor({strings:t,_$litType$:i},e){let h;this.parts=[];let r=0,d=0;const c=t.length-1,v=this.parts,[a,f]=V$1(t,i);if(this.el=N$1.createElement(a,e),C$1.currentNode=this.el.content,2===i){const t=this.el.content,i=t.firstChild;i.remove(),t.append(...i.childNodes);}for(;null!==(h=C$1.nextNode())&&v.length<c;){if(1===h.nodeType){if(h.hasAttributes()){const t=[];for(const i of h.getAttributeNames())if(i.endsWith(o$8)||i.startsWith(n$7)){const s=f[d++];if(t.push(i),void 0!==s){const t=h.getAttribute(s.toLowerCase()+o$8).split(n$7),i=/([.?@])?(.*)/.exec(s);v.push({type:1,index:r,name:i[2],strings:t,ctor:"."===i[1]?H$1:"?"===i[1]?L$1:"@"===i[1]?z$1:k$1});}else v.push({type:6,index:r});}for(const i of t)h.removeAttribute(i);}if(y$1.test(h.tagName)){const t=h.textContent.split(n$7),i=t.length-1;if(i>0){h.textContent=s$5?s$5.emptyScript:"";for(let s=0;s<i;s++)h.append(t[s],u$2()),C$1.nextNode(),v.push({type:2,index:++r});h.append(t[i],u$2());}}}else if(8===h.nodeType)if(h.data===l$6)v.push({type:2,index:r});else {let t=-1;for(;-1!==(t=h.data.indexOf(n$7,t+1));)v.push({type:7,index:r}),t+=n$7.length-1;}r++;}}static createElement(t,i){const s=r$3.createElement("template");return s.innerHTML=t,s}}function S$2(t,i,s=t,e){var o,n,l,h;if(i===T$1)return i;let r=void 0!==e?null===(o=s._$Co)||void 0===o?void 0:o[e]:s._$Cl;const u=d$2(i)?void 0:i._$litDirective$;return (null==r?void 0:r.constructor)!==u&&(null===(n=null==r?void 0:r._$AO)||void 0===n||n.call(r,!1),void 0===u?r=void 0:(r=new u(t),r._$AT(t,s,e)),void 0!==e?(null!==(l=(h=s)._$Co)&&void 0!==l?l:h._$Co=[])[e]=r:s._$Cl=r),void 0!==r&&(i=S$2(t,r._$AS(t,i.values),r,e)),i}class M$1{constructor(t,i){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){var i;const{el:{content:s},parts:e}=this._$AD,o=(null!==(i=null==t?void 0:t.creationScope)&&void 0!==i?i:r$3).importNode(s,!0);C$1.currentNode=o;let n=C$1.nextNode(),l=0,h=0,u=e[0];for(;void 0!==u;){if(l===u.index){let i;2===u.type?i=new R$1(n,n.nextSibling,this,t):1===u.type?i=new u.ctor(n,u.name,u.strings,this,t):6===u.type&&(i=new Z$1(n,this,t)),this._$AV.push(i),u=e[++h];}l!==(null==u?void 0:u.index)&&(n=C$1.nextNode(),l++);}return C$1.currentNode=r$3,o}v(t){let i=0;for(const s of this._$AV)void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class R$1{constructor(t,i,s,e){var o;this.type=2,this._$AH=A$1,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cp=null===(o=null==e?void 0:e.isConnected)||void 0===o||o;}get _$AU(){var t,i;return null!==(i=null===(t=this._$AM)||void 0===t?void 0:t._$AU)&&void 0!==i?i:this._$Cp}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===(null==t?void 0:t.nodeType)&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=S$2(this,t,i),d$2(t)?t===A$1||null==t||""===t?(this._$AH!==A$1&&this._$AR(),this._$AH=A$1):t!==this._$AH&&t!==T$1&&this._(t):void 0!==t._$litType$?this.g(t):void 0!==t.nodeType?this.$(t):v$1(t)?this.T(t):this._(t);}k(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}$(t){this._$AH!==t&&(this._$AR(),this._$AH=this.k(t));}_(t){this._$AH!==A$1&&d$2(this._$AH)?this._$AA.nextSibling.data=t:this.$(r$3.createTextNode(t)),this._$AH=t;}g(t){var i;const{values:s,_$litType$:e}=t,o="number"==typeof e?this._$AC(t):(void 0===e.el&&(e.el=N$1.createElement(P$1(e.h,e.h[0]),this.options)),e);if((null===(i=this._$AH)||void 0===i?void 0:i._$AD)===o)this._$AH.v(s);else {const t=new M$1(o,this),i=t.u(this.options);t.v(s),this.$(i),this._$AH=t;}}_$AC(t){let i=E$1.get(t.strings);return void 0===i&&E$1.set(t.strings,i=new N$1(t)),i}T(t){c$2(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const o of t)e===i.length?i.push(s=new R$1(this.k(u$2()),this.k(u$2()),this,this.options)):s=i[e],s._$AI(o),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,i){var s;for(null===(s=this._$AP)||void 0===s||s.call(this,!1,!0,i);t&&t!==this._$AB;){const i=t.nextSibling;t.remove(),t=i;}}setConnected(t){var i;void 0===this._$AM&&(this._$Cp=t,null===(i=this._$AP)||void 0===i||i.call(this,t));}}class k$1{constructor(t,i,s,e,o){this.type=1,this._$AH=A$1,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=o,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=A$1;}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(t,i=this,s,e){const o=this.strings;let n=!1;if(void 0===o)t=S$2(this,t,i,0),n=!d$2(t)||t!==this._$AH&&t!==T$1,n&&(this._$AH=t);else {const e=t;let l,h;for(t=o[0],l=0;l<o.length-1;l++)h=S$2(this,e[s+l],i,l),h===T$1&&(h=this._$AH[l]),n||(n=!d$2(h)||h!==this._$AH[l]),h===A$1?t=A$1:t!==A$1&&(t+=(null!=h?h:"")+o[l+1]),this._$AH[l]=h;}n&&!e&&this.j(t);}j(t){t===A$1?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,null!=t?t:"");}}class H$1 extends k$1{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===A$1?void 0:t;}}const I$1=s$5?s$5.emptyScript:"";class L$1 extends k$1{constructor(){super(...arguments),this.type=4;}j(t){t&&t!==A$1?this.element.setAttribute(this.name,I$1):this.element.removeAttribute(this.name);}}class z$1 extends k$1{constructor(t,i,s,e,o){super(t,i,s,e,o),this.type=5;}_$AI(t,i=this){var s;if((t=null!==(s=S$2(this,t,i,0))&&void 0!==s?s:A$1)===T$1)return;const e=this._$AH,o=t===A$1&&e!==A$1||t.capture!==e.capture||t.once!==e.once||t.passive!==e.passive,n=t!==A$1&&(e===A$1||o);o&&this.element.removeEventListener(this.name,this,e),n&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){var i,s;"function"==typeof this._$AH?this._$AH.call(null!==(s=null===(i=this.options)||void 0===i?void 0:i.host)&&void 0!==s?s:this.element,t):this._$AH.handleEvent(t);}}class Z$1{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){S$2(this,t);}}const B$1=i$6.litHtmlPolyfillSupport;null==B$1||B$1(N$1,R$1),(null!==(t$4=i$6.litHtmlVersions)&&void 0!==t$4?t$4:i$6.litHtmlVersions=[]).push("2.8.0");
+
+/**
+ * @license
+ * Copyright 2019 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+const t$3=window,e$a=t$3.ShadowRoot&&(void 0===t$3.ShadyCSS||t$3.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s$4=Symbol(),n$6=new WeakMap;class o$7{constructor(t,e,n){if(this._$cssResult$=!0,n!==s$4)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e;}get styleSheet(){let t=this.o;const s=this.t;if(e$a&&void 0===t){const e=void 0!==s&&1===s.length;e&&(t=n$6.get(s)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&n$6.set(s,t));}return t}toString(){return this.cssText}}const r$2=t=>new o$7("string"==typeof t?t:t+"",void 0,s$4),i$5=(t,...e)=>{const n=1===t.length?t[0]:e.reduce(((e,s,n)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(s)+t[n+1]),t[0]);return new o$7(n,t,s$4)},S$1=(s,n)=>{e$a?s.adoptedStyleSheets=n.map((t=>t instanceof CSSStyleSheet?t:t.styleSheet)):n.forEach((e=>{const n=document.createElement("style"),o=t$3.litNonce;void 0!==o&&n.setAttribute("nonce",o),n.textContent=e.cssText,s.appendChild(n);}));},c$1=e$a?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const s of t.cssRules)e+=s.cssText;return r$2(e)})(t):t;
 
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */var l$3,o$4;class s$1 extends d$1{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0;}createRenderRoot(){var t,e;const i=super.createRenderRoot();return null!==(t=(e=this.renderOptions).renderBefore)&&void 0!==t||(e.renderBefore=i.firstChild),i}update(t){const i=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=B(i,this.renderRoot,this.renderOptions);}connectedCallback(){var t;super.connectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!0);}disconnectedCallback(){var t;super.disconnectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!1);}render(){return T}}s$1.finalized=!0,s$1._$litElement$=!0,null===(l$3=globalThis.litElementHydrateSupport)||void 0===l$3||l$3.call(globalThis,{LitElement:s$1});const n$2=globalThis.litElementPolyfillSupport;null==n$2||n$2({LitElement:s$1});(null!==(o$4=globalThis.litElementVersions)&&void 0!==o$4?o$4:globalThis.litElementVersions=[]).push("3.3.2");
+ */var s$3;const e$9=window,r$1=e$9.trustedTypes,h$1=r$1?r$1.emptyScript:"",o$6=e$9.reactiveElementPolyfillSupport,n$5={toAttribute(t,i){switch(i){case Boolean:t=t?h$1:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t);}return t},fromAttribute(t,i){let s=t;switch(i){case Boolean:s=null!==t;break;case Number:s=null===t?null:Number(t);break;case Object:case Array:try{s=JSON.parse(t);}catch(t){s=null;}}return s}},a$2=(t,i)=>i!==t&&(i==i||t==t),l$5={attribute:!0,type:String,converter:n$5,reflect:!1,hasChanged:a$2},d$1="finalized";class u$1 extends HTMLElement{constructor(){super(),this._$Ei=new Map,this.isUpdatePending=!1,this.hasUpdated=!1,this._$El=null,this._$Eu();}static addInitializer(t){var i;this.finalize(),(null!==(i=this.h)&&void 0!==i?i:this.h=[]).push(t);}static get observedAttributes(){this.finalize();const t=[];return this.elementProperties.forEach(((i,s)=>{const e=this._$Ep(s,i);void 0!==e&&(this._$Ev.set(e,s),t.push(e));})),t}static createProperty(t,i=l$5){if(i.state&&(i.attribute=!1),this.finalize(),this.elementProperties.set(t,i),!i.noAccessor&&!this.prototype.hasOwnProperty(t)){const s="symbol"==typeof t?Symbol():"__"+t,e=this.getPropertyDescriptor(t,s,i);void 0!==e&&Object.defineProperty(this.prototype,t,e);}}static getPropertyDescriptor(t,i,s){return {get(){return this[i]},set(e){const r=this[t];this[i]=e,this.requestUpdate(t,r,s);},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)||l$5}static finalize(){if(this.hasOwnProperty(d$1))return !1;this[d$1]=!0;const t=Object.getPrototypeOf(this);if(t.finalize(),void 0!==t.h&&(this.h=[...t.h]),this.elementProperties=new Map(t.elementProperties),this._$Ev=new Map,this.hasOwnProperty("properties")){const t=this.properties,i=[...Object.getOwnPropertyNames(t),...Object.getOwnPropertySymbols(t)];for(const s of i)this.createProperty(s,t[s]);}return this.elementStyles=this.finalizeStyles(this.styles),!0}static finalizeStyles(i){const s=[];if(Array.isArray(i)){const e=new Set(i.flat(1/0).reverse());for(const i of e)s.unshift(c$1(i));}else void 0!==i&&s.push(c$1(i));return s}static _$Ep(t,i){const s=i.attribute;return !1===s?void 0:"string"==typeof s?s:"string"==typeof t?t.toLowerCase():void 0}_$Eu(){var t;this._$E_=new Promise((t=>this.enableUpdating=t)),this._$AL=new Map,this._$Eg(),this.requestUpdate(),null===(t=this.constructor.h)||void 0===t||t.forEach((t=>t(this)));}addController(t){var i,s;(null!==(i=this._$ES)&&void 0!==i?i:this._$ES=[]).push(t),void 0!==this.renderRoot&&this.isConnected&&(null===(s=t.hostConnected)||void 0===s||s.call(t));}removeController(t){var i;null===(i=this._$ES)||void 0===i||i.splice(this._$ES.indexOf(t)>>>0,1);}_$Eg(){this.constructor.elementProperties.forEach(((t,i)=>{this.hasOwnProperty(i)&&(this._$Ei.set(i,this[i]),delete this[i]);}));}createRenderRoot(){var t;const s=null!==(t=this.shadowRoot)&&void 0!==t?t:this.attachShadow(this.constructor.shadowRootOptions);return S$1(s,this.constructor.elementStyles),s}connectedCallback(){var t;void 0===this.renderRoot&&(this.renderRoot=this.createRenderRoot()),this.enableUpdating(!0),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostConnected)||void 0===i?void 0:i.call(t)}));}enableUpdating(t){}disconnectedCallback(){var t;null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostDisconnected)||void 0===i?void 0:i.call(t)}));}attributeChangedCallback(t,i,s){this._$AK(t,s);}_$EO(t,i,s=l$5){var e;const r=this.constructor._$Ep(t,s);if(void 0!==r&&!0===s.reflect){const h=(void 0!==(null===(e=s.converter)||void 0===e?void 0:e.toAttribute)?s.converter:n$5).toAttribute(i,s.type);this._$El=t,null==h?this.removeAttribute(r):this.setAttribute(r,h),this._$El=null;}}_$AK(t,i){var s;const e=this.constructor,r=e._$Ev.get(t);if(void 0!==r&&this._$El!==r){const t=e.getPropertyOptions(r),h="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==(null===(s=t.converter)||void 0===s?void 0:s.fromAttribute)?t.converter:n$5;this._$El=r,this[r]=h.fromAttribute(i,t.type),this._$El=null;}}requestUpdate(t,i,s){let e=!0;void 0!==t&&(((s=s||this.constructor.getPropertyOptions(t)).hasChanged||a$2)(this[t],i)?(this._$AL.has(t)||this._$AL.set(t,i),!0===s.reflect&&this._$El!==t&&(void 0===this._$EC&&(this._$EC=new Map),this._$EC.set(t,s))):e=!1),!this.isUpdatePending&&e&&(this._$E_=this._$Ej());}async _$Ej(){this.isUpdatePending=!0;try{await this._$E_;}catch(t){Promise.reject(t);}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){var t;if(!this.isUpdatePending)return;this.hasUpdated,this._$Ei&&(this._$Ei.forEach(((t,i)=>this[i]=t)),this._$Ei=void 0);let i=!1;const s=this._$AL;try{i=this.shouldUpdate(s),i?(this.willUpdate(s),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostUpdate)||void 0===i?void 0:i.call(t)})),this.update(s)):this._$Ek();}catch(t){throw i=!1,this._$Ek(),t}i&&this._$AE(s);}willUpdate(t){}_$AE(t){var i;null===(i=this._$ES)||void 0===i||i.forEach((t=>{var i;return null===(i=t.hostUpdated)||void 0===i?void 0:i.call(t)})),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t);}_$Ek(){this._$AL=new Map,this.isUpdatePending=!1;}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$E_}shouldUpdate(t){return !0}update(t){void 0!==this._$EC&&(this._$EC.forEach(((t,i)=>this._$EO(i,this[i],t))),this._$EC=void 0),this._$Ek();}updated(t){}firstUpdated(t){}}u$1[d$1]=!0,u$1.elementProperties=new Map,u$1.elementStyles=[],u$1.shadowRootOptions={mode:"open"},null==o$6||o$6({ReactiveElement:u$1}),(null!==(s$3=e$9.reactiveElementVersions)&&void 0!==s$3?s$3:e$9.reactiveElementVersions=[]).push("1.6.3");
+
+/**
+ * @license
+ * Copyright 2017 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+var t$2;const i$4=window,s$2=i$4.trustedTypes,e$8=s$2?s$2.createPolicy("lit-html",{createHTML:t=>t}):void 0,o$5="$lit$",n$4=`lit$${(Math.random()+"").slice(9)}$`,l$4="?"+n$4,h=`<${l$4}>`,r=document,u=()=>r.createComment(""),d=t=>null===t||"object"!=typeof t&&"function"!=typeof t,c=Array.isArray,v=t=>c(t)||"function"==typeof(null==t?void 0:t[Symbol.iterator]),a$1="[ \t\n\f\r]",f=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,_=/-->/g,m=/>/g,p=RegExp(`>|${a$1}(?:([^\\s"'>=/]+)(${a$1}*=${a$1}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),g=/'/g,$=/"/g,y=/^(?:script|style|textarea|title)$/i,w=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),x=w(1),T=Symbol.for("lit-noChange"),A=Symbol.for("lit-nothing"),E=new WeakMap,C=r.createTreeWalker(r,129,null,!1);function P(t,i){if(!Array.isArray(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==e$8?e$8.createHTML(i):i}const V=(t,i)=>{const s=t.length-1,e=[];let l,r=2===i?"<svg>":"",u=f;for(let i=0;i<s;i++){const s=t[i];let d,c,v=-1,a=0;for(;a<s.length&&(u.lastIndex=a,c=u.exec(s),null!==c);)a=u.lastIndex,u===f?"!--"===c[1]?u=_:void 0!==c[1]?u=m:void 0!==c[2]?(y.test(c[2])&&(l=RegExp("</"+c[2],"g")),u=p):void 0!==c[3]&&(u=p):u===p?">"===c[0]?(u=null!=l?l:f,v=-1):void 0===c[1]?v=-2:(v=u.lastIndex-c[2].length,d=c[1],u=void 0===c[3]?p:'"'===c[3]?$:g):u===$||u===g?u=p:u===_||u===m?u=f:(u=p,l=void 0);const w=u===p&&t[i+1].startsWith("/>")?" ":"";r+=u===f?s+h:v>=0?(e.push(d),s.slice(0,v)+o$5+s.slice(v)+n$4+w):s+n$4+(-2===v?(e.push(void 0),i):w);}return [P(t,r+(t[s]||"<?>")+(2===i?"</svg>":"")),e]};class N{constructor({strings:t,_$litType$:i},e){let h;this.parts=[];let r=0,d=0;const c=t.length-1,v=this.parts,[a,f]=V(t,i);if(this.el=N.createElement(a,e),C.currentNode=this.el.content,2===i){const t=this.el.content,i=t.firstChild;i.remove(),t.append(...i.childNodes);}for(;null!==(h=C.nextNode())&&v.length<c;){if(1===h.nodeType){if(h.hasAttributes()){const t=[];for(const i of h.getAttributeNames())if(i.endsWith(o$5)||i.startsWith(n$4)){const s=f[d++];if(t.push(i),void 0!==s){const t=h.getAttribute(s.toLowerCase()+o$5).split(n$4),i=/([.?@])?(.*)/.exec(s);v.push({type:1,index:r,name:i[2],strings:t,ctor:"."===i[1]?H:"?"===i[1]?L:"@"===i[1]?z:k});}else v.push({type:6,index:r});}for(const i of t)h.removeAttribute(i);}if(y.test(h.tagName)){const t=h.textContent.split(n$4),i=t.length-1;if(i>0){h.textContent=s$2?s$2.emptyScript:"";for(let s=0;s<i;s++)h.append(t[s],u()),C.nextNode(),v.push({type:2,index:++r});h.append(t[i],u());}}}else if(8===h.nodeType)if(h.data===l$4)v.push({type:2,index:r});else {let t=-1;for(;-1!==(t=h.data.indexOf(n$4,t+1));)v.push({type:7,index:r}),t+=n$4.length-1;}r++;}}static createElement(t,i){const s=r.createElement("template");return s.innerHTML=t,s}}function S(t,i,s=t,e){var o,n,l,h;if(i===T)return i;let r=void 0!==e?null===(o=s._$Co)||void 0===o?void 0:o[e]:s._$Cl;const u=d(i)?void 0:i._$litDirective$;return (null==r?void 0:r.constructor)!==u&&(null===(n=null==r?void 0:r._$AO)||void 0===n||n.call(r,!1),void 0===u?r=void 0:(r=new u(t),r._$AT(t,s,e)),void 0!==e?(null!==(l=(h=s)._$Co)&&void 0!==l?l:h._$Co=[])[e]=r:s._$Cl=r),void 0!==r&&(i=S(t,r._$AS(t,i.values),r,e)),i}class M{constructor(t,i){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){var i;const{el:{content:s},parts:e}=this._$AD,o=(null!==(i=null==t?void 0:t.creationScope)&&void 0!==i?i:r).importNode(s,!0);C.currentNode=o;let n=C.nextNode(),l=0,h=0,u=e[0];for(;void 0!==u;){if(l===u.index){let i;2===u.type?i=new R(n,n.nextSibling,this,t):1===u.type?i=new u.ctor(n,u.name,u.strings,this,t):6===u.type&&(i=new Z(n,this,t)),this._$AV.push(i),u=e[++h];}l!==(null==u?void 0:u.index)&&(n=C.nextNode(),l++);}return C.currentNode=r,o}v(t){let i=0;for(const s of this._$AV)void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class R{constructor(t,i,s,e){var o;this.type=2,this._$AH=A,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cp=null===(o=null==e?void 0:e.isConnected)||void 0===o||o;}get _$AU(){var t,i;return null!==(i=null===(t=this._$AM)||void 0===t?void 0:t._$AU)&&void 0!==i?i:this._$Cp}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===(null==t?void 0:t.nodeType)&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=S(this,t,i),d(t)?t===A||null==t||""===t?(this._$AH!==A&&this._$AR(),this._$AH=A):t!==this._$AH&&t!==T&&this._(t):void 0!==t._$litType$?this.g(t):void 0!==t.nodeType?this.$(t):v(t)?this.T(t):this._(t);}k(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}$(t){this._$AH!==t&&(this._$AR(),this._$AH=this.k(t));}_(t){this._$AH!==A&&d(this._$AH)?this._$AA.nextSibling.data=t:this.$(r.createTextNode(t)),this._$AH=t;}g(t){var i;const{values:s,_$litType$:e}=t,o="number"==typeof e?this._$AC(t):(void 0===e.el&&(e.el=N.createElement(P(e.h,e.h[0]),this.options)),e);if((null===(i=this._$AH)||void 0===i?void 0:i._$AD)===o)this._$AH.v(s);else {const t=new M(o,this),i=t.u(this.options);t.v(s),this.$(i),this._$AH=t;}}_$AC(t){let i=E.get(t.strings);return void 0===i&&E.set(t.strings,i=new N(t)),i}T(t){c(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const o of t)e===i.length?i.push(s=new R(this.k(u()),this.k(u()),this,this.options)):s=i[e],s._$AI(o),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,i){var s;for(null===(s=this._$AP)||void 0===s||s.call(this,!1,!0,i);t&&t!==this._$AB;){const i=t.nextSibling;t.remove(),t=i;}}setConnected(t){var i;void 0===this._$AM&&(this._$Cp=t,null===(i=this._$AP)||void 0===i||i.call(this,t));}}class k{constructor(t,i,s,e,o){this.type=1,this._$AH=A,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=o,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=A;}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(t,i=this,s,e){const o=this.strings;let n=!1;if(void 0===o)t=S(this,t,i,0),n=!d(t)||t!==this._$AH&&t!==T,n&&(this._$AH=t);else {const e=t;let l,h;for(t=o[0],l=0;l<o.length-1;l++)h=S(this,e[s+l],i,l),h===T&&(h=this._$AH[l]),n||(n=!d(h)||h!==this._$AH[l]),h===A?t=A:t!==A&&(t+=(null!=h?h:"")+o[l+1]),this._$AH[l]=h;}n&&!e&&this.j(t);}j(t){t===A?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,null!=t?t:"");}}class H extends k{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===A?void 0:t;}}const I=s$2?s$2.emptyScript:"";class L extends k{constructor(){super(...arguments),this.type=4;}j(t){t&&t!==A?this.element.setAttribute(this.name,I):this.element.removeAttribute(this.name);}}class z extends k{constructor(t,i,s,e,o){super(t,i,s,e,o),this.type=5;}_$AI(t,i=this){var s;if((t=null!==(s=S(this,t,i,0))&&void 0!==s?s:A)===T)return;const e=this._$AH,o=t===A&&e!==A||t.capture!==e.capture||t.once!==e.once||t.passive!==e.passive,n=t!==A&&(e===A||o);o&&this.element.removeEventListener(this.name,this,e),n&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){var i,s;"function"==typeof this._$AH?this._$AH.call(null!==(s=null===(i=this.options)||void 0===i?void 0:i.host)&&void 0!==s?s:this.element,t):this._$AH.handleEvent(t);}}class Z{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){S(this,t);}}const B=i$4.litHtmlPolyfillSupport;null==B||B(N,R),(null!==(t$2=i$4.litHtmlVersions)&&void 0!==t$2?t$2:i$4.litHtmlVersions=[]).push("2.8.0");const D=(t,i,s)=>{var e,o;const n=null!==(e=null==s?void 0:s.renderBefore)&&void 0!==e?e:i;let l=n._$litPart$;if(void 0===l){const t=null!==(o=null==s?void 0:s.renderBefore)&&void 0!==o?o:null;n._$litPart$=l=new R(i.insertBefore(u(),t),t,void 0,null!=s?s:{});}return l._$AI(t),l};
+
+/**
+ * @license
+ * Copyright 2017 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */var l$3,o$4;class s$1 extends u$1{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0;}createRenderRoot(){var t,e;const i=super.createRenderRoot();return null!==(t=(e=this.renderOptions).renderBefore)&&void 0!==t||(e.renderBefore=i.firstChild),i}update(t){const i=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=D(i,this.renderRoot,this.renderOptions);}connectedCallback(){var t;super.connectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!0);}disconnectedCallback(){var t;super.disconnectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!1);}render(){return T}}s$1.finalized=!0,s$1._$litElement$=!0,null===(l$3=globalThis.litElementHydrateSupport)||void 0===l$3||l$3.call(globalThis,{LitElement:s$1});const n$3=globalThis.litElementPolyfillSupport;null==n$3||n$3({LitElement:s$1});(null!==(o$4=globalThis.litElementVersions)&&void 0!==o$4?o$4:globalThis.litElementVersions=[]).push("3.3.3");
 
 /**
  * @license
@@ -124,13 +149,13 @@ const e$7=e=>n=>"function"==typeof n?((e,n)=>(customElements.define(e,n),n))(e,n
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const i$3=(i,e)=>"method"===e.kind&&e.descriptor&&!("value"in e.descriptor)?{...e,finisher(n){n.createProperty(e.key,i);}}:{kind:"field",key:Symbol(),placement:"own",descriptor:{},originalKey:e.key,initializer(){"function"==typeof e.initializer&&(this[e.key]=e.initializer.call(this));},finisher(n){n.createProperty(e.key,i);}};function e$6(e){return (n,t)=>void 0!==t?((i,e,n)=>{e.constructor.createProperty(n,i);})(e,n,t):i$3(e,n)}
+const i$3=(i,e)=>"method"===e.kind&&e.descriptor&&!("value"in e.descriptor)?{...e,finisher(n){n.createProperty(e.key,i);}}:{kind:"field",key:Symbol(),placement:"own",descriptor:{},originalKey:e.key,initializer(){"function"==typeof e.initializer&&(this[e.key]=e.initializer.call(this));},finisher(n){n.createProperty(e.key,i);}},e$6=(i,e,n)=>{e.constructor.createProperty(n,i);};function n$2(n){return (t,o)=>void 0!==o?e$6(n,t,o):i$3(n,t)}
 
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */function t$1(t){return e$6({...t,state:!0})}
+ */function t$1(t){return n$2({...t,state:!0})}
 
 /**
  * @license
@@ -1000,13 +1025,13 @@ const t={ATTRIBUTE:1,CHILD:2,PROPERTY:3,BOOLEAN_ATTRIBUTE:4,EVENT:5,ELEMENT:6},e
  * @license
  * Copyright 2018 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */const o$1=e$1(class extends i$1{constructor(t$1){var i;if(super(t$1),t$1.type!==t.ATTRIBUTE||"class"!==t$1.name||(null===(i=t$1.strings)||void 0===i?void 0:i.length)>2)throw Error("`classMap()` can only be used in the `class` attribute and must be the only part in the attribute.")}render(t){return " "+Object.keys(t).filter((i=>t[i])).join(" ")+" "}update(i,[s]){var r,o;if(void 0===this.it){this.it=new Set,void 0!==i.strings&&(this.nt=new Set(i.strings.join(" ").split(/\s/).filter((t=>""!==t))));for(const t in s)s[t]&&!(null===(r=this.nt)||void 0===r?void 0:r.has(t))&&this.it.add(t);return this.render(s)}const e=i.element.classList;this.it.forEach((t=>{t in s||(e.remove(t),this.it.delete(t));}));for(const t in s){const i=!!s[t];i===this.it.has(t)||(null===(o=this.nt)||void 0===o?void 0:o.has(t))||(i?(e.add(t),this.it.add(t)):(e.remove(t),this.it.delete(t)));}return T}});
+ */const o$1=e$1(class extends i$1{constructor(t$1){var i;if(super(t$1),t$1.type!==t.ATTRIBUTE||"class"!==t$1.name||(null===(i=t$1.strings)||void 0===i?void 0:i.length)>2)throw Error("`classMap()` can only be used in the `class` attribute and must be the only part in the attribute.")}render(t){return " "+Object.keys(t).filter((i=>t[i])).join(" ")+" "}update(i,[s]){var r,o;if(void 0===this.it){this.it=new Set,void 0!==i.strings&&(this.nt=new Set(i.strings.join(" ").split(/\s/).filter((t=>""!==t))));for(const t in s)s[t]&&!(null===(r=this.nt)||void 0===r?void 0:r.has(t))&&this.it.add(t);return this.render(s)}const e=i.element.classList;this.it.forEach((t=>{t in s||(e.remove(t),this.it.delete(t));}));for(const t in s){const i=!!s[t];i===this.it.has(t)||(null===(o=this.nt)||void 0===o?void 0:o.has(t))||(i?(e.add(t),this.it.add(t)):(e.remove(t),this.it.delete(t)));}return T$1}});
 
 /**
  * @license
  * Copyright 2018 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */const i="important",n=" !"+i,o=e$1(class extends i$1{constructor(t$1){var e;if(super(t$1),t$1.type!==t.ATTRIBUTE||"style"!==t$1.name||(null===(e=t$1.strings)||void 0===e?void 0:e.length)>2)throw Error("The `styleMap` directive must be used in the `style` attribute and must be the only part in the attribute.")}render(t){return Object.keys(t).reduce(((e,r)=>{const s=t[r];return null==s?e:e+`${r=r.includes("-")?r:r.replace(/(?:^(webkit|moz|ms|o)|)(?=[A-Z])/g,"-$&").toLowerCase()}:${s};`}),"")}update(e,[r]){const{style:s}=e.element;if(void 0===this.ut){this.ut=new Set;for(const t in r)this.ut.add(t);return this.render(r)}this.ut.forEach((t=>{null==r[t]&&(this.ut.delete(t),t.includes("-")?s.removeProperty(t):s[t]="");}));for(const t in r){const e=r[t];if(null!=e){this.ut.add(t);const r="string"==typeof e&&e.endsWith(n);t.includes("-")||r?s.setProperty(t,r?e.slice(0,-11):e,r?i:""):s[t]=e;}}return T}});
+ */const i="important",n=" !"+i,o=e$1(class extends i$1{constructor(t$1){var e;if(super(t$1),t$1.type!==t.ATTRIBUTE||"style"!==t$1.name||(null===(e=t$1.strings)||void 0===e?void 0:e.length)>2)throw Error("The `styleMap` directive must be used in the `style` attribute and must be the only part in the attribute.")}render(t){return Object.keys(t).reduce(((e,r)=>{const s=t[r];return null==s?e:e+`${r=r.includes("-")?r:r.replace(/(?:^(webkit|moz|ms|o)|)(?=[A-Z])/g,"-$&").toLowerCase()}:${s};`}),"")}update(e,[r]){const{style:s}=e.element;if(void 0===this.ht){this.ht=new Set;for(const t in r)this.ht.add(t);return this.render(r)}this.ht.forEach((t=>{null==r[t]&&(this.ht.delete(t),t.includes("-")?s.removeProperty(t):s[t]="");}));for(const t in r){const e=r[t];if(null!=e){this.ht.add(t);const r="string"==typeof e&&e.endsWith(n);t.includes("-")||r?s.setProperty(t,r?e.slice(0,-11):e,r?i:""):s[t]=e;}}return T$1}});
 
 /**
  * @license
@@ -1189,25 +1214,25 @@ __decorate$1([
     i$2('.mdc-ripple-surface')
 ], RippleBase.prototype, "mdcRoot", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], RippleBase.prototype, "primary", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], RippleBase.prototype, "accent", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], RippleBase.prototype, "unbounded", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], RippleBase.prototype, "disabled", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], RippleBase.prototype, "activated", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], RippleBase.prototype, "selected", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], RippleBase.prototype, "internalUseStateLayerCustomProperties", void 0);
 __decorate$1([
     t$1()
@@ -1422,7 +1447,7 @@ class RippleHandlers {
  * @license
  * Copyright 2018 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */const l$1=l=>null!=l?l:A;
+ */const l$1=l=>null!=l?l:A$1;
 
 /**
  * @license
@@ -1514,18 +1539,18 @@ class IconButtonBase extends s$1 {
     }
 }
 __decorate$1([
-    e$6({ type: Boolean, reflect: true })
+    n$2({ type: Boolean, reflect: true })
 ], IconButtonBase.prototype, "disabled", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], IconButtonBase.prototype, "icon", void 0);
 __decorate$1([
     ariaProperty,
-    e$6({ type: String, attribute: 'aria-label' })
+    n$2({ type: String, attribute: 'aria-label' })
 ], IconButtonBase.prototype, "ariaLabel", void 0);
 __decorate$1([
     ariaProperty,
-    e$6({ type: String, attribute: 'aria-haspopup' })
+    n$2({ type: String, attribute: 'aria-haspopup' })
 ], IconButtonBase.prototype, "ariaHasPopup", void 0);
 __decorate$1([
     i$2('button')
@@ -1562,6 +1587,2227 @@ IconButton.styles = [styles$g];
 IconButton = __decorate$1([
     e$7('mwc-icon-button')
 ], IconButton);
+
+/**
+ * @license
+ * Copyright 2016 Google Inc. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+(() => {
+    var _a, _b, _c;
+    /* Symbols for private properties */
+    const _blockingElements = Symbol();
+    const _alreadyInertElements = Symbol();
+    const _topElParents = Symbol();
+    const _siblingsToRestore = Symbol();
+    const _parentMO = Symbol();
+    /* Symbols for private static methods */
+    const _topChanged = Symbol();
+    const _swapInertedSibling = Symbol();
+    const _inertSiblings = Symbol();
+    const _restoreInertedSiblings = Symbol();
+    const _getParents = Symbol();
+    const _getDistributedChildren = Symbol();
+    const _isInertable = Symbol();
+    const _handleMutations = Symbol();
+    class BlockingElementsImpl {
+        constructor() {
+            /**
+             * The blocking elements.
+             */
+            this[_a] = [];
+            /**
+             * Used to keep track of the parents of the top element, from the element
+             * itself up to body. When top changes, the old top might have been removed
+             * from the document, so we need to memoize the inerted parents' siblings
+             * in order to restore their inerteness when top changes.
+             */
+            this[_b] = [];
+            /**
+             * Elements that are already inert before the first blocking element is
+             * pushed.
+             */
+            this[_c] = new Set();
+        }
+        destructor() {
+            // Restore original inertness.
+            this[_restoreInertedSiblings](this[_topElParents]);
+            // Note we don't want to make these properties nullable on the class,
+            // since then we'd need non-null casts in many places. Calling a method on
+            // a BlockingElements instance after calling destructor will result in an
+            // exception.
+            const nullable = this;
+            nullable[_blockingElements] = null;
+            nullable[_topElParents] = null;
+            nullable[_alreadyInertElements] = null;
+        }
+        get top() {
+            const elems = this[_blockingElements];
+            return elems[elems.length - 1] || null;
+        }
+        push(element) {
+            if (!element || element === this.top) {
+                return;
+            }
+            // Remove it from the stack, we'll bring it to the top.
+            this.remove(element);
+            this[_topChanged](element);
+            this[_blockingElements].push(element);
+        }
+        remove(element) {
+            const i = this[_blockingElements].indexOf(element);
+            if (i === -1) {
+                return false;
+            }
+            this[_blockingElements].splice(i, 1);
+            // Top changed only if the removed element was the top element.
+            if (i === this[_blockingElements].length) {
+                this[_topChanged](this.top);
+            }
+            return true;
+        }
+        pop() {
+            const top = this.top;
+            top && this.remove(top);
+            return top;
+        }
+        has(element) {
+            return this[_blockingElements].indexOf(element) !== -1;
+        }
+        /**
+         * Sets `inert` to all document elements except the new top element, its
+         * parents, and its distributed content.
+         */
+        [(_a = _blockingElements, _b = _topElParents, _c = _alreadyInertElements, _topChanged)](newTop) {
+            const toKeepInert = this[_alreadyInertElements];
+            const oldParents = this[_topElParents];
+            // No new top, reset old top if any.
+            if (!newTop) {
+                this[_restoreInertedSiblings](oldParents);
+                toKeepInert.clear();
+                this[_topElParents] = [];
+                return;
+            }
+            const newParents = this[_getParents](newTop);
+            // New top is not contained in the main document!
+            if (newParents[newParents.length - 1].parentNode !== document.body) {
+                throw Error('Non-connected element cannot be a blocking element');
+            }
+            // Cast here because we know we'll call _inertSiblings on newParents
+            // below.
+            this[_topElParents] = newParents;
+            const toSkip = this[_getDistributedChildren](newTop);
+            // No previous top element.
+            if (!oldParents.length) {
+                this[_inertSiblings](newParents, toSkip, toKeepInert);
+                return;
+            }
+            let i = oldParents.length - 1;
+            let j = newParents.length - 1;
+            // Find common parent. Index 0 is the element itself (so stop before it).
+            while (i > 0 && j > 0 && oldParents[i] === newParents[j]) {
+                i--;
+                j--;
+            }
+            // If up the parents tree there are 2 elements that are siblings, swap
+            // the inerted sibling.
+            if (oldParents[i] !== newParents[j]) {
+                this[_swapInertedSibling](oldParents[i], newParents[j]);
+            }
+            // Restore old parents siblings inertness.
+            i > 0 && this[_restoreInertedSiblings](oldParents.slice(0, i));
+            // Make new parents siblings inert.
+            j > 0 && this[_inertSiblings](newParents.slice(0, j), toSkip, null);
+        }
+        /**
+         * Swaps inertness between two sibling elements.
+         * Sets the property `inert` over the attribute since the inert spec
+         * doesn't specify if it should be reflected.
+         * https://html.spec.whatwg.org/multipage/interaction.html#inert
+         */
+        [_swapInertedSibling](oldInert, newInert) {
+            const siblingsToRestore = oldInert[_siblingsToRestore];
+            // oldInert is not contained in siblings to restore, so we have to check
+            // if it's inertable and if already inert.
+            if (this[_isInertable](oldInert) && !oldInert.inert) {
+                oldInert.inert = true;
+                siblingsToRestore.add(oldInert);
+            }
+            // If newInert was already between the siblings to restore, it means it is
+            // inertable and must be restored.
+            if (siblingsToRestore.has(newInert)) {
+                newInert.inert = false;
+                siblingsToRestore.delete(newInert);
+            }
+            newInert[_parentMO] = oldInert[_parentMO];
+            newInert[_siblingsToRestore] = siblingsToRestore;
+            oldInert[_parentMO] = undefined;
+            oldInert[_siblingsToRestore] = undefined;
+        }
+        /**
+         * Restores original inertness to the siblings of the elements.
+         * Sets the property `inert` over the attribute since the inert spec
+         * doesn't specify if it should be reflected.
+         * https://html.spec.whatwg.org/multipage/interaction.html#inert
+         */
+        [_restoreInertedSiblings](elements) {
+            for (const element of elements) {
+                const mo = element[_parentMO];
+                mo.disconnect();
+                element[_parentMO] = undefined;
+                const siblings = element[_siblingsToRestore];
+                for (const sibling of siblings) {
+                    sibling.inert = false;
+                }
+                element[_siblingsToRestore] = undefined;
+            }
+        }
+        /**
+         * Inerts the siblings of the elements except the elements to skip. Stores
+         * the inerted siblings into the element's symbol `_siblingsToRestore`.
+         * Pass `toKeepInert` to collect the already inert elements.
+         * Sets the property `inert` over the attribute since the inert spec
+         * doesn't specify if it should be reflected.
+         * https://html.spec.whatwg.org/multipage/interaction.html#inert
+         */
+        [_inertSiblings](elements, toSkip, toKeepInert) {
+            for (const element of elements) {
+                // Assume element is not a Document, so it must have a parentNode.
+                const parent = element.parentNode;
+                const children = parent.children;
+                const inertedSiblings = new Set();
+                for (let j = 0; j < children.length; j++) {
+                    const sibling = children[j];
+                    // Skip the input element, if not inertable or to be skipped.
+                    if (sibling === element || !this[_isInertable](sibling) ||
+                        (toSkip && toSkip.has(sibling))) {
+                        continue;
+                    }
+                    // Should be collected since already inerted.
+                    if (toKeepInert && sibling.inert) {
+                        toKeepInert.add(sibling);
+                    }
+                    else {
+                        sibling.inert = true;
+                        inertedSiblings.add(sibling);
+                    }
+                }
+                // Store the siblings that were inerted.
+                element[_siblingsToRestore] = inertedSiblings;
+                // Observe only immediate children mutations on the parent.
+                const mo = new MutationObserver(this[_handleMutations].bind(this));
+                element[_parentMO] = mo;
+                let parentToObserve = parent;
+                // If we're using the ShadyDOM polyfill, then our parent could be a
+                // shady root, which is an object that acts like a ShadowRoot, but isn't
+                // actually a node in the real DOM. Observe the real DOM parent instead.
+                const maybeShadyRoot = parentToObserve;
+                if (maybeShadyRoot.__shady && maybeShadyRoot.host) {
+                    parentToObserve = maybeShadyRoot.host;
+                }
+                mo.observe(parentToObserve, {
+                    childList: true,
+                });
+            }
+        }
+        /**
+         * Handles newly added/removed nodes by toggling their inertness.
+         * It also checks if the current top Blocking Element has been removed,
+         * notifying and removing it.
+         */
+        [_handleMutations](mutations) {
+            const parents = this[_topElParents];
+            const toKeepInert = this[_alreadyInertElements];
+            for (const mutation of mutations) {
+                // If the target is a shadowRoot, get its host as we skip shadowRoots when
+                // computing _topElParents.
+                const target = mutation.target.host || mutation.target;
+                const idx = target === document.body ?
+                    parents.length :
+                    parents.indexOf(target);
+                const inertedChild = parents[idx - 1];
+                const inertedSiblings = inertedChild[_siblingsToRestore];
+                // To restore.
+                for (let i = 0; i < mutation.removedNodes.length; i++) {
+                    const sibling = mutation.removedNodes[i];
+                    if (sibling === inertedChild) {
+                        console.info('Detected removal of the top Blocking Element.');
+                        this.pop();
+                        return;
+                    }
+                    if (inertedSiblings.has(sibling)) {
+                        sibling.inert = false;
+                        inertedSiblings.delete(sibling);
+                    }
+                }
+                // To inert.
+                for (let i = 0; i < mutation.addedNodes.length; i++) {
+                    const sibling = mutation.addedNodes[i];
+                    if (!this[_isInertable](sibling)) {
+                        continue;
+                    }
+                    if (toKeepInert && sibling.inert) {
+                        toKeepInert.add(sibling);
+                    }
+                    else {
+                        sibling.inert = true;
+                        inertedSiblings.add(sibling);
+                    }
+                }
+            }
+        }
+        /**
+         * Returns if the element is inertable.
+         */
+        [_isInertable](element) {
+            return false === /^(style|template|script)$/.test(element.localName);
+        }
+        /**
+         * Returns the list of newParents of an element, starting from element
+         * (included) up to `document.body` (excluded).
+         */
+        [_getParents](element) {
+            const parents = [];
+            let current = element;
+            // Stop to body.
+            while (current && current !== document.body) {
+                // Skip shadow roots.
+                if (current.nodeType === Node.ELEMENT_NODE) {
+                    parents.push(current);
+                }
+                // ShadowDom v1
+                if (current.assignedSlot) {
+                    // Collect slots from deepest slot to top.
+                    while (current = current.assignedSlot) {
+                        parents.push(current);
+                    }
+                    // Continue the search on the top slot.
+                    current = parents.pop();
+                    continue;
+                }
+                current = current.parentNode ||
+                    current.host;
+            }
+            return parents;
+        }
+        /**
+         * Returns the distributed children of the element's shadow root.
+         * Returns null if the element doesn't have a shadow root.
+         */
+        [_getDistributedChildren](element) {
+            const shadowRoot = element.shadowRoot;
+            if (!shadowRoot) {
+                return null;
+            }
+            const result = new Set();
+            let i;
+            let j;
+            let nodes;
+            const slots = shadowRoot.querySelectorAll('slot');
+            if (slots.length && slots[0].assignedNodes) {
+                for (i = 0; i < slots.length; i++) {
+                    nodes = slots[i].assignedNodes({
+                        flatten: true,
+                    });
+                    for (j = 0; j < nodes.length; j++) {
+                        if (nodes[j].nodeType === Node.ELEMENT_NODE) {
+                            result.add(nodes[j]);
+                        }
+                    }
+                }
+                // No need to search for <content>.
+            }
+            return result;
+        }
+    }
+    document.$blockingElements =
+        new BlockingElementsImpl();
+})();
+
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory() :
+  typeof define === 'function' && define.amd ? define('inert', factory) :
+  (factory());
+}(undefined, (function () {
+  var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+  /**
+   * This work is licensed under the W3C Software and Document License
+   * (http://www.w3.org/Consortium/Legal/2015/copyright-software-and-document).
+   */
+
+  (function () {
+    // Return early if we're not running inside of the browser.
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    // Convenience function for converting NodeLists.
+    /** @type {typeof Array.prototype.slice} */
+    var slice = Array.prototype.slice;
+
+    /**
+     * IE has a non-standard name for "matches".
+     * @type {typeof Element.prototype.matches}
+     */
+    var matches = Element.prototype.matches || Element.prototype.msMatchesSelector;
+
+    /** @type {string} */
+    var _focusableElementsString = ['a[href]', 'area[href]', 'input:not([disabled])', 'select:not([disabled])', 'textarea:not([disabled])', 'button:not([disabled])', 'details', 'summary', 'iframe', 'object', 'embed', '[contenteditable]'].join(',');
+
+    /**
+     * `InertRoot` manages a single inert subtree, i.e. a DOM subtree whose root element has an `inert`
+     * attribute.
+     *
+     * Its main functions are:
+     *
+     * - to create and maintain a set of managed `InertNode`s, including when mutations occur in the
+     *   subtree. The `makeSubtreeUnfocusable()` method handles collecting `InertNode`s via registering
+     *   each focusable node in the subtree with the singleton `InertManager` which manages all known
+     *   focusable nodes within inert subtrees. `InertManager` ensures that a single `InertNode`
+     *   instance exists for each focusable node which has at least one inert root as an ancestor.
+     *
+     * - to notify all managed `InertNode`s when this subtree stops being inert (i.e. when the `inert`
+     *   attribute is removed from the root node). This is handled in the destructor, which calls the
+     *   `deregister` method on `InertManager` for each managed inert node.
+     */
+
+    var InertRoot = function () {
+      /**
+       * @param {!HTMLElement} rootElement The HTMLElement at the root of the inert subtree.
+       * @param {!InertManager} inertManager The global singleton InertManager object.
+       */
+      function InertRoot(rootElement, inertManager) {
+        _classCallCheck(this, InertRoot);
+
+        /** @type {!InertManager} */
+        this._inertManager = inertManager;
+
+        /** @type {!HTMLElement} */
+        this._rootElement = rootElement;
+
+        /**
+         * @type {!Set<!InertNode>}
+         * All managed focusable nodes in this InertRoot's subtree.
+         */
+        this._managedNodes = new Set();
+
+        // Make the subtree hidden from assistive technology
+        if (this._rootElement.hasAttribute('aria-hidden')) {
+          /** @type {?string} */
+          this._savedAriaHidden = this._rootElement.getAttribute('aria-hidden');
+        } else {
+          this._savedAriaHidden = null;
+        }
+        this._rootElement.setAttribute('aria-hidden', 'true');
+
+        // Make all focusable elements in the subtree unfocusable and add them to _managedNodes
+        this._makeSubtreeUnfocusable(this._rootElement);
+
+        // Watch for:
+        // - any additions in the subtree: make them unfocusable too
+        // - any removals from the subtree: remove them from this inert root's managed nodes
+        // - attribute changes: if `tabindex` is added, or removed from an intrinsically focusable
+        //   element, make that node a managed node.
+        this._observer = new MutationObserver(this._onMutation.bind(this));
+        this._observer.observe(this._rootElement, { attributes: true, childList: true, subtree: true });
+      }
+
+      /**
+       * Call this whenever this object is about to become obsolete.  This unwinds all of the state
+       * stored in this object and updates the state of all of the managed nodes.
+       */
+
+
+      _createClass(InertRoot, [{
+        key: 'destructor',
+        value: function destructor() {
+          this._observer.disconnect();
+
+          if (this._rootElement) {
+            if (this._savedAriaHidden !== null) {
+              this._rootElement.setAttribute('aria-hidden', this._savedAriaHidden);
+            } else {
+              this._rootElement.removeAttribute('aria-hidden');
+            }
+          }
+
+          this._managedNodes.forEach(function (inertNode) {
+            this._unmanageNode(inertNode.node);
+          }, this);
+
+          // Note we cast the nulls to the ANY type here because:
+          // 1) We want the class properties to be declared as non-null, or else we
+          //    need even more casts throughout this code. All bets are off if an
+          //    instance has been destroyed and a method is called.
+          // 2) We don't want to cast "this", because we want type-aware optimizations
+          //    to know which properties we're setting.
+          this._observer = /** @type {?} */null;
+          this._rootElement = /** @type {?} */null;
+          this._managedNodes = /** @type {?} */null;
+          this._inertManager = /** @type {?} */null;
+        }
+
+        /**
+         * @return {!Set<!InertNode>} A copy of this InertRoot's managed nodes set.
+         */
+
+      }, {
+        key: '_makeSubtreeUnfocusable',
+
+
+        /**
+         * @param {!Node} startNode
+         */
+        value: function _makeSubtreeUnfocusable(startNode) {
+          var _this2 = this;
+
+          composedTreeWalk(startNode, function (node) {
+            return _this2._visitNode(node);
+          });
+
+          var activeElement = document.activeElement;
+
+          if (!document.body.contains(startNode)) {
+            // startNode may be in shadow DOM, so find its nearest shadowRoot to get the activeElement.
+            var node = startNode;
+            /** @type {!ShadowRoot|undefined} */
+            var root = undefined;
+            while (node) {
+              if (node.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
+                root = /** @type {!ShadowRoot} */node;
+                break;
+              }
+              node = node.parentNode;
+            }
+            if (root) {
+              activeElement = root.activeElement;
+            }
+          }
+          if (startNode.contains(activeElement)) {
+            activeElement.blur();
+            // In IE11, if an element is already focused, and then set to tabindex=-1
+            // calling blur() will not actually move the focus.
+            // To work around this we call focus() on the body instead.
+            if (activeElement === document.activeElement) {
+              document.body.focus();
+            }
+          }
+        }
+
+        /**
+         * @param {!Node} node
+         */
+
+      }, {
+        key: '_visitNode',
+        value: function _visitNode(node) {
+          if (node.nodeType !== Node.ELEMENT_NODE) {
+            return;
+          }
+          var element = /** @type {!HTMLElement} */node;
+
+          // If a descendant inert root becomes un-inert, its descendants will still be inert because of
+          // this inert root, so all of its managed nodes need to be adopted by this InertRoot.
+          if (element !== this._rootElement && element.hasAttribute('inert')) {
+            this._adoptInertRoot(element);
+          }
+
+          if (matches.call(element, _focusableElementsString) || element.hasAttribute('tabindex')) {
+            this._manageNode(element);
+          }
+        }
+
+        /**
+         * Register the given node with this InertRoot and with InertManager.
+         * @param {!Node} node
+         */
+
+      }, {
+        key: '_manageNode',
+        value: function _manageNode(node) {
+          var inertNode = this._inertManager.register(node, this);
+          this._managedNodes.add(inertNode);
+        }
+
+        /**
+         * Unregister the given node with this InertRoot and with InertManager.
+         * @param {!Node} node
+         */
+
+      }, {
+        key: '_unmanageNode',
+        value: function _unmanageNode(node) {
+          var inertNode = this._inertManager.deregister(node, this);
+          if (inertNode) {
+            this._managedNodes['delete'](inertNode);
+          }
+        }
+
+        /**
+         * Unregister the entire subtree starting at `startNode`.
+         * @param {!Node} startNode
+         */
+
+      }, {
+        key: '_unmanageSubtree',
+        value: function _unmanageSubtree(startNode) {
+          var _this3 = this;
+
+          composedTreeWalk(startNode, function (node) {
+            return _this3._unmanageNode(node);
+          });
+        }
+
+        /**
+         * If a descendant node is found with an `inert` attribute, adopt its managed nodes.
+         * @param {!HTMLElement} node
+         */
+
+      }, {
+        key: '_adoptInertRoot',
+        value: function _adoptInertRoot(node) {
+          var inertSubroot = this._inertManager.getInertRoot(node);
+
+          // During initialisation this inert root may not have been registered yet,
+          // so register it now if need be.
+          if (!inertSubroot) {
+            this._inertManager.setInert(node, true);
+            inertSubroot = this._inertManager.getInertRoot(node);
+          }
+
+          inertSubroot.managedNodes.forEach(function (savedInertNode) {
+            this._manageNode(savedInertNode.node);
+          }, this);
+        }
+
+        /**
+         * Callback used when mutation observer detects subtree additions, removals, or attribute changes.
+         * @param {!Array<!MutationRecord>} records
+         * @param {!MutationObserver} self
+         */
+
+      }, {
+        key: '_onMutation',
+        value: function _onMutation(records, self) {
+          records.forEach(function (record) {
+            var target = /** @type {!HTMLElement} */record.target;
+            if (record.type === 'childList') {
+              // Manage added nodes
+              slice.call(record.addedNodes).forEach(function (node) {
+                this._makeSubtreeUnfocusable(node);
+              }, this);
+
+              // Un-manage removed nodes
+              slice.call(record.removedNodes).forEach(function (node) {
+                this._unmanageSubtree(node);
+              }, this);
+            } else if (record.type === 'attributes') {
+              if (record.attributeName === 'tabindex') {
+                // Re-initialise inert node if tabindex changes
+                this._manageNode(target);
+              } else if (target !== this._rootElement && record.attributeName === 'inert' && target.hasAttribute('inert')) {
+                // If a new inert root is added, adopt its managed nodes and make sure it knows about the
+                // already managed nodes from this inert subroot.
+                this._adoptInertRoot(target);
+                var inertSubroot = this._inertManager.getInertRoot(target);
+                this._managedNodes.forEach(function (managedNode) {
+                  if (target.contains(managedNode.node)) {
+                    inertSubroot._manageNode(managedNode.node);
+                  }
+                });
+              }
+            }
+          }, this);
+        }
+      }, {
+        key: 'managedNodes',
+        get: function get() {
+          return new Set(this._managedNodes);
+        }
+
+        /** @return {boolean} */
+
+      }, {
+        key: 'hasSavedAriaHidden',
+        get: function get() {
+          return this._savedAriaHidden !== null;
+        }
+
+        /** @param {?string} ariaHidden */
+
+      }, {
+        key: 'savedAriaHidden',
+        set: function set(ariaHidden) {
+          this._savedAriaHidden = ariaHidden;
+        }
+
+        /** @return {?string} */
+        ,
+        get: function get() {
+          return this._savedAriaHidden;
+        }
+      }]);
+
+      return InertRoot;
+    }();
+
+    /**
+     * `InertNode` initialises and manages a single inert node.
+     * A node is inert if it is a descendant of one or more inert root elements.
+     *
+     * On construction, `InertNode` saves the existing `tabindex` value for the node, if any, and
+     * either removes the `tabindex` attribute or sets it to `-1`, depending on whether the element
+     * is intrinsically focusable or not.
+     *
+     * `InertNode` maintains a set of `InertRoot`s which are descendants of this `InertNode`. When an
+     * `InertRoot` is destroyed, and calls `InertManager.deregister()`, the `InertManager` notifies the
+     * `InertNode` via `removeInertRoot()`, which in turn destroys the `InertNode` if no `InertRoot`s
+     * remain in the set. On destruction, `InertNode` reinstates the stored `tabindex` if one exists,
+     * or removes the `tabindex` attribute if the element is intrinsically focusable.
+     */
+
+
+    var InertNode = function () {
+      /**
+       * @param {!Node} node A focusable element to be made inert.
+       * @param {!InertRoot} inertRoot The inert root element associated with this inert node.
+       */
+      function InertNode(node, inertRoot) {
+        _classCallCheck(this, InertNode);
+
+        /** @type {!Node} */
+        this._node = node;
+
+        /** @type {boolean} */
+        this._overrodeFocusMethod = false;
+
+        /**
+         * @type {!Set<!InertRoot>} The set of descendant inert roots.
+         *    If and only if this set becomes empty, this node is no longer inert.
+         */
+        this._inertRoots = new Set([inertRoot]);
+
+        /** @type {?number} */
+        this._savedTabIndex = null;
+
+        /** @type {boolean} */
+        this._destroyed = false;
+
+        // Save any prior tabindex info and make this node untabbable
+        this.ensureUntabbable();
+      }
+
+      /**
+       * Call this whenever this object is about to become obsolete.
+       * This makes the managed node focusable again and deletes all of the previously stored state.
+       */
+
+
+      _createClass(InertNode, [{
+        key: 'destructor',
+        value: function destructor() {
+          this._throwIfDestroyed();
+
+          if (this._node && this._node.nodeType === Node.ELEMENT_NODE) {
+            var element = /** @type {!HTMLElement} */this._node;
+            if (this._savedTabIndex !== null) {
+              element.setAttribute('tabindex', this._savedTabIndex);
+            } else {
+              element.removeAttribute('tabindex');
+            }
+
+            // Use `delete` to restore native focus method.
+            if (this._overrodeFocusMethod) {
+              delete element.focus;
+            }
+          }
+
+          // See note in InertRoot.destructor for why we cast these nulls to ANY.
+          this._node = /** @type {?} */null;
+          this._inertRoots = /** @type {?} */null;
+          this._destroyed = true;
+        }
+
+        /**
+         * @type {boolean} Whether this object is obsolete because the managed node is no longer inert.
+         * If the object has been destroyed, any attempt to access it will cause an exception.
+         */
+
+      }, {
+        key: '_throwIfDestroyed',
+
+
+        /**
+         * Throw if user tries to access destroyed InertNode.
+         */
+        value: function _throwIfDestroyed() {
+          if (this.destroyed) {
+            throw new Error('Trying to access destroyed InertNode');
+          }
+        }
+
+        /** @return {boolean} */
+
+      }, {
+        key: 'ensureUntabbable',
+
+
+        /** Save the existing tabindex value and make the node untabbable and unfocusable */
+        value: function ensureUntabbable() {
+          if (this.node.nodeType !== Node.ELEMENT_NODE) {
+            return;
+          }
+          var element = /** @type {!HTMLElement} */this.node;
+          if (matches.call(element, _focusableElementsString)) {
+            if ( /** @type {!HTMLElement} */element.tabIndex === -1 && this.hasSavedTabIndex) {
+              return;
+            }
+
+            if (element.hasAttribute('tabindex')) {
+              this._savedTabIndex = /** @type {!HTMLElement} */element.tabIndex;
+            }
+            element.setAttribute('tabindex', '-1');
+            if (element.nodeType === Node.ELEMENT_NODE) {
+              element.focus = function () {};
+              this._overrodeFocusMethod = true;
+            }
+          } else if (element.hasAttribute('tabindex')) {
+            this._savedTabIndex = /** @type {!HTMLElement} */element.tabIndex;
+            element.removeAttribute('tabindex');
+          }
+        }
+
+        /**
+         * Add another inert root to this inert node's set of managing inert roots.
+         * @param {!InertRoot} inertRoot
+         */
+
+      }, {
+        key: 'addInertRoot',
+        value: function addInertRoot(inertRoot) {
+          this._throwIfDestroyed();
+          this._inertRoots.add(inertRoot);
+        }
+
+        /**
+         * Remove the given inert root from this inert node's set of managing inert roots.
+         * If the set of managing inert roots becomes empty, this node is no longer inert,
+         * so the object should be destroyed.
+         * @param {!InertRoot} inertRoot
+         */
+
+      }, {
+        key: 'removeInertRoot',
+        value: function removeInertRoot(inertRoot) {
+          this._throwIfDestroyed();
+          this._inertRoots['delete'](inertRoot);
+          if (this._inertRoots.size === 0) {
+            this.destructor();
+          }
+        }
+      }, {
+        key: 'destroyed',
+        get: function get() {
+          return (/** @type {!InertNode} */this._destroyed
+          );
+        }
+      }, {
+        key: 'hasSavedTabIndex',
+        get: function get() {
+          return this._savedTabIndex !== null;
+        }
+
+        /** @return {!Node} */
+
+      }, {
+        key: 'node',
+        get: function get() {
+          this._throwIfDestroyed();
+          return this._node;
+        }
+
+        /** @param {?number} tabIndex */
+
+      }, {
+        key: 'savedTabIndex',
+        set: function set(tabIndex) {
+          this._throwIfDestroyed();
+          this._savedTabIndex = tabIndex;
+        }
+
+        /** @return {?number} */
+        ,
+        get: function get() {
+          this._throwIfDestroyed();
+          return this._savedTabIndex;
+        }
+      }]);
+
+      return InertNode;
+    }();
+
+    /**
+     * InertManager is a per-document singleton object which manages all inert roots and nodes.
+     *
+     * When an element becomes an inert root by having an `inert` attribute set and/or its `inert`
+     * property set to `true`, the `setInert` method creates an `InertRoot` object for the element.
+     * The `InertRoot` in turn registers itself as managing all of the element's focusable descendant
+     * nodes via the `register()` method. The `InertManager` ensures that a single `InertNode` instance
+     * is created for each such node, via the `_managedNodes` map.
+     */
+
+
+    var InertManager = function () {
+      /**
+       * @param {!Document} document
+       */
+      function InertManager(document) {
+        _classCallCheck(this, InertManager);
+
+        if (!document) {
+          throw new Error('Missing required argument; InertManager needs to wrap a document.');
+        }
+
+        /** @type {!Document} */
+        this._document = document;
+
+        /**
+         * All managed nodes known to this InertManager. In a map to allow looking up by Node.
+         * @type {!Map<!Node, !InertNode>}
+         */
+        this._managedNodes = new Map();
+
+        /**
+         * All inert roots known to this InertManager. In a map to allow looking up by Node.
+         * @type {!Map<!Node, !InertRoot>}
+         */
+        this._inertRoots = new Map();
+
+        /**
+         * Observer for mutations on `document.body`.
+         * @type {!MutationObserver}
+         */
+        this._observer = new MutationObserver(this._watchForInert.bind(this));
+
+        // Add inert style.
+        addInertStyle(document.head || document.body || document.documentElement);
+
+        // Wait for document to be loaded.
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', this._onDocumentLoaded.bind(this));
+        } else {
+          this._onDocumentLoaded();
+        }
+      }
+
+      /**
+       * Set whether the given element should be an inert root or not.
+       * @param {!HTMLElement} root
+       * @param {boolean} inert
+       */
+
+
+      _createClass(InertManager, [{
+        key: 'setInert',
+        value: function setInert(root, inert) {
+          if (inert) {
+            if (this._inertRoots.has(root)) {
+              // element is already inert
+              return;
+            }
+
+            var inertRoot = new InertRoot(root, this);
+            root.setAttribute('inert', '');
+            this._inertRoots.set(root, inertRoot);
+            // If not contained in the document, it must be in a shadowRoot.
+            // Ensure inert styles are added there.
+            if (!this._document.body.contains(root)) {
+              var parent = root.parentNode;
+              while (parent) {
+                if (parent.nodeType === 11) {
+                  addInertStyle(parent);
+                }
+                parent = parent.parentNode;
+              }
+            }
+          } else {
+            if (!this._inertRoots.has(root)) {
+              // element is already non-inert
+              return;
+            }
+
+            var _inertRoot = this._inertRoots.get(root);
+            _inertRoot.destructor();
+            this._inertRoots['delete'](root);
+            root.removeAttribute('inert');
+          }
+        }
+
+        /**
+         * Get the InertRoot object corresponding to the given inert root element, if any.
+         * @param {!Node} element
+         * @return {!InertRoot|undefined}
+         */
+
+      }, {
+        key: 'getInertRoot',
+        value: function getInertRoot(element) {
+          return this._inertRoots.get(element);
+        }
+
+        /**
+         * Register the given InertRoot as managing the given node.
+         * In the case where the node has a previously existing inert root, this inert root will
+         * be added to its set of inert roots.
+         * @param {!Node} node
+         * @param {!InertRoot} inertRoot
+         * @return {!InertNode} inertNode
+         */
+
+      }, {
+        key: 'register',
+        value: function register(node, inertRoot) {
+          var inertNode = this._managedNodes.get(node);
+          if (inertNode !== undefined) {
+            // node was already in an inert subtree
+            inertNode.addInertRoot(inertRoot);
+          } else {
+            inertNode = new InertNode(node, inertRoot);
+          }
+
+          this._managedNodes.set(node, inertNode);
+
+          return inertNode;
+        }
+
+        /**
+         * De-register the given InertRoot as managing the given inert node.
+         * Removes the inert root from the InertNode's set of managing inert roots, and remove the inert
+         * node from the InertManager's set of managed nodes if it is destroyed.
+         * If the node is not currently managed, this is essentially a no-op.
+         * @param {!Node} node
+         * @param {!InertRoot} inertRoot
+         * @return {?InertNode} The potentially destroyed InertNode associated with this node, if any.
+         */
+
+      }, {
+        key: 'deregister',
+        value: function deregister(node, inertRoot) {
+          var inertNode = this._managedNodes.get(node);
+          if (!inertNode) {
+            return null;
+          }
+
+          inertNode.removeInertRoot(inertRoot);
+          if (inertNode.destroyed) {
+            this._managedNodes['delete'](node);
+          }
+
+          return inertNode;
+        }
+
+        /**
+         * Callback used when document has finished loading.
+         */
+
+      }, {
+        key: '_onDocumentLoaded',
+        value: function _onDocumentLoaded() {
+          // Find all inert roots in document and make them actually inert.
+          var inertElements = slice.call(this._document.querySelectorAll('[inert]'));
+          inertElements.forEach(function (inertElement) {
+            this.setInert(inertElement, true);
+          }, this);
+
+          // Comment this out to use programmatic API only.
+          this._observer.observe(this._document.body || this._document.documentElement, { attributes: true, subtree: true, childList: true });
+        }
+
+        /**
+         * Callback used when mutation observer detects attribute changes.
+         * @param {!Array<!MutationRecord>} records
+         * @param {!MutationObserver} self
+         */
+
+      }, {
+        key: '_watchForInert',
+        value: function _watchForInert(records, self) {
+          var _this = this;
+          records.forEach(function (record) {
+            switch (record.type) {
+              case 'childList':
+                slice.call(record.addedNodes).forEach(function (node) {
+                  if (node.nodeType !== Node.ELEMENT_NODE) {
+                    return;
+                  }
+                  var inertElements = slice.call(node.querySelectorAll('[inert]'));
+                  if (matches.call(node, '[inert]')) {
+                    inertElements.unshift(node);
+                  }
+                  inertElements.forEach(function (inertElement) {
+                    this.setInert(inertElement, true);
+                  }, _this);
+                }, _this);
+                break;
+              case 'attributes':
+                if (record.attributeName !== 'inert') {
+                  return;
+                }
+                var target = /** @type {!HTMLElement} */record.target;
+                var inert = target.hasAttribute('inert');
+                _this.setInert(target, inert);
+                break;
+            }
+          }, this);
+        }
+      }]);
+
+      return InertManager;
+    }();
+
+    /**
+     * Recursively walk the composed tree from |node|.
+     * @param {!Node} node
+     * @param {(function (!HTMLElement))=} callback Callback to be called for each element traversed,
+     *     before descending into child nodes.
+     * @param {?ShadowRoot=} shadowRootAncestor The nearest ShadowRoot ancestor, if any.
+     */
+
+
+    function composedTreeWalk(node, callback, shadowRootAncestor) {
+      if (node.nodeType == Node.ELEMENT_NODE) {
+        var element = /** @type {!HTMLElement} */node;
+        if (callback) {
+          callback(element);
+        }
+
+        // Descend into node:
+        // If it has a ShadowRoot, ignore all child elements - these will be picked
+        // up by the <content> or <shadow> elements. Descend straight into the
+        // ShadowRoot.
+        var shadowRoot = /** @type {!HTMLElement} */element.shadowRoot;
+        if (shadowRoot) {
+          composedTreeWalk(shadowRoot, callback);
+          return;
+        }
+
+        // If it is a <content> element, descend into distributed elements - these
+        // are elements from outside the shadow root which are rendered inside the
+        // shadow DOM.
+        if (element.localName == 'content') {
+          var content = /** @type {!HTMLContentElement} */element;
+          // Verifies if ShadowDom v0 is supported.
+          var distributedNodes = content.getDistributedNodes ? content.getDistributedNodes() : [];
+          for (var i = 0; i < distributedNodes.length; i++) {
+            composedTreeWalk(distributedNodes[i], callback);
+          }
+          return;
+        }
+
+        // If it is a <slot> element, descend into assigned nodes - these
+        // are elements from outside the shadow root which are rendered inside the
+        // shadow DOM.
+        if (element.localName == 'slot') {
+          var slot = /** @type {!HTMLSlotElement} */element;
+          // Verify if ShadowDom v1 is supported.
+          var _distributedNodes = slot.assignedNodes ? slot.assignedNodes({ flatten: true }) : [];
+          for (var _i = 0; _i < _distributedNodes.length; _i++) {
+            composedTreeWalk(_distributedNodes[_i], callback);
+          }
+          return;
+        }
+      }
+
+      // If it is neither the parent of a ShadowRoot, a <content> element, a <slot>
+      // element, nor a <shadow> element recurse normally.
+      var child = node.firstChild;
+      while (child != null) {
+        composedTreeWalk(child, callback);
+        child = child.nextSibling;
+      }
+    }
+
+    /**
+     * Adds a style element to the node containing the inert specific styles
+     * @param {!Node} node
+     */
+    function addInertStyle(node) {
+      if (node.querySelector('style#inert-style, link#inert-style')) {
+        return;
+      }
+      var style = document.createElement('style');
+      style.setAttribute('id', 'inert-style');
+      style.textContent = '\n' + '[inert] {\n' + '  pointer-events: none;\n' + '  cursor: default;\n' + '}\n' + '\n' + '[inert], [inert] * {\n' + '  -webkit-user-select: none;\n' + '  -moz-user-select: none;\n' + '  -ms-user-select: none;\n' + '  user-select: none;\n' + '}\n';
+      node.appendChild(style);
+    }
+
+    if (!HTMLElement.prototype.hasOwnProperty('inert')) {
+      /** @type {!InertManager} */
+      var inertManager = new InertManager(document);
+
+      Object.defineProperty(HTMLElement.prototype, 'inert', {
+        enumerable: true,
+        /** @this {!HTMLElement} */
+        get: function get() {
+          return this.hasAttribute('inert');
+        },
+        /** @this {!HTMLElement} */
+        set: function set(inert) {
+          inertManager.setInert(this, inert);
+        }
+      });
+    }
+  })();
+
+})));
+
+/**
+ * @license
+ * Copyright 2016 Google Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+var cssClasses$a = {
+    CLOSING: 'mdc-dialog--closing',
+    OPEN: 'mdc-dialog--open',
+    OPENING: 'mdc-dialog--opening',
+    SCROLLABLE: 'mdc-dialog--scrollable',
+    SCROLL_LOCK: 'mdc-dialog-scroll-lock',
+    STACKED: 'mdc-dialog--stacked',
+    FULLSCREEN: 'mdc-dialog--fullscreen',
+    // Class for showing a scroll divider on full-screen dialog header element.
+    // Should only be displayed on scrollable content, when the dialog content is
+    // scrolled "underneath" the header.
+    SCROLL_DIVIDER_HEADER: 'mdc-dialog-scroll-divider-header',
+    // Class for showing a scroll divider on a full-screen dialog footer element.
+    // Should only be displayed on scrolalble content, when the dialog content is
+    // obscured "underneath" the footer.
+    SCROLL_DIVIDER_FOOTER: 'mdc-dialog-scroll-divider-footer',
+    // The "surface scrim" is a scrim covering only the surface of a dialog. This
+    // is used in situations where a confirmation dialog is shown over an already
+    // opened full-screen dialog. On larger screen-sizes, the full-screen dialog
+    // is sized as a modal and so in these situations we display a "surface scrim"
+    // to prevent a "double scrim" (where the scrim from the secondary
+    // confirmation dialog would overlap with the scrim from the full-screen
+    // dialog).
+    SURFACE_SCRIM_SHOWN: 'mdc-dialog__surface-scrim--shown',
+    // "Showing" animating class for the surface-scrim.
+    SURFACE_SCRIM_SHOWING: 'mdc-dialog__surface-scrim--showing',
+    // "Hiding" animating class for the surface-scrim.
+    SURFACE_SCRIM_HIDING: 'mdc-dialog__surface-scrim--hiding',
+    // Class to hide a dialog's scrim (used in conjunction with a surface-scrim).
+    // Note that we only hide the original scrim rather than removing it entirely
+    // to prevent interactions with the content behind this scrim, and to capture
+    // scrim clicks.
+    SCRIM_HIDDEN: 'mdc-dialog__scrim--hidden',
+};
+var strings$8 = {
+    ACTION_ATTRIBUTE: 'data-mdc-dialog-action',
+    BUTTON_DEFAULT_ATTRIBUTE: 'data-mdc-dialog-button-default',
+    BUTTON_SELECTOR: '.mdc-dialog__button',
+    CLOSED_EVENT: 'MDCDialog:closed',
+    CLOSE_ACTION: 'close',
+    CLOSING_EVENT: 'MDCDialog:closing',
+    CONTAINER_SELECTOR: '.mdc-dialog__container',
+    CONTENT_SELECTOR: '.mdc-dialog__content',
+    DESTROY_ACTION: 'destroy',
+    INITIAL_FOCUS_ATTRIBUTE: 'data-mdc-dialog-initial-focus',
+    OPENED_EVENT: 'MDCDialog:opened',
+    OPENING_EVENT: 'MDCDialog:opening',
+    SCRIM_SELECTOR: '.mdc-dialog__scrim',
+    SUPPRESS_DEFAULT_PRESS_SELECTOR: [
+        'textarea',
+        '.mdc-menu .mdc-list-item',
+        '.mdc-menu .mdc-deprecated-list-item',
+    ].join(', '),
+    SURFACE_SELECTOR: '.mdc-dialog__surface',
+};
+var numbers$6 = {
+    DIALOG_ANIMATION_CLOSE_TIME_MS: 75,
+    DIALOG_ANIMATION_OPEN_TIME_MS: 150,
+};
+
+/**
+ * @license
+ * Copyright 2020 Google Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+/**
+ * AnimationFrame provides a user-friendly abstraction around requesting
+ * and canceling animation frames.
+ */
+var AnimationFrame = /** @class */ (function () {
+    function AnimationFrame() {
+        this.rafIDs = new Map();
+    }
+    /**
+     * Requests an animation frame. Cancels any existing frame with the same key.
+     * @param {string} key The key for this callback.
+     * @param {FrameRequestCallback} callback The callback to be executed.
+     */
+    AnimationFrame.prototype.request = function (key, callback) {
+        var _this = this;
+        this.cancel(key);
+        var frameID = requestAnimationFrame(function (frame) {
+            _this.rafIDs.delete(key);
+            // Callback must come *after* the key is deleted so that nested calls to
+            // request with the same key are not deleted.
+            callback(frame);
+        });
+        this.rafIDs.set(key, frameID);
+    };
+    /**
+     * Cancels a queued callback with the given key.
+     * @param {string} key The key for this callback.
+     */
+    AnimationFrame.prototype.cancel = function (key) {
+        var rafID = this.rafIDs.get(key);
+        if (rafID) {
+            cancelAnimationFrame(rafID);
+            this.rafIDs.delete(key);
+        }
+    };
+    /**
+     * Cancels all queued callback.
+     */
+    AnimationFrame.prototype.cancelAll = function () {
+        var _this = this;
+        // Need to use forEach because it's the only iteration method supported
+        // by IE11. Suppress the underscore because we don't need it.
+        // tslint:disable-next-line:enforce-name-casing
+        this.rafIDs.forEach(function (_, key) {
+            _this.cancel(key);
+        });
+    };
+    /**
+     * Returns the queue of unexecuted callback keys.
+     */
+    AnimationFrame.prototype.getQueue = function () {
+        var queue = [];
+        // Need to use forEach because it's the only iteration method supported
+        // by IE11. Suppress the underscore because we don't need it.
+        // tslint:disable-next-line:enforce-name-casing
+        this.rafIDs.forEach(function (_, key) {
+            queue.push(key);
+        });
+        return queue;
+    };
+    return AnimationFrame;
+}());
+
+/**
+ * @license
+ * Copyright 2017 Google Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+var AnimationKeys;
+(function (AnimationKeys) {
+    AnimationKeys["POLL_SCROLL_POS"] = "poll_scroll_position";
+    AnimationKeys["POLL_LAYOUT_CHANGE"] = "poll_layout_change";
+})(AnimationKeys || (AnimationKeys = {}));
+var MDCDialogFoundation = /** @class */ (function (_super) {
+    __extends(MDCDialogFoundation, _super);
+    function MDCDialogFoundation(adapter) {
+        var _this = _super.call(this, __assign(__assign({}, MDCDialogFoundation.defaultAdapter), adapter)) || this;
+        _this.dialogOpen = false;
+        _this.isFullscreen = false;
+        _this.animationFrame = 0;
+        _this.animationTimer = 0;
+        _this.escapeKeyAction = strings$8.CLOSE_ACTION;
+        _this.scrimClickAction = strings$8.CLOSE_ACTION;
+        _this.autoStackButtons = true;
+        _this.areButtonsStacked = false;
+        _this.suppressDefaultPressSelector = strings$8.SUPPRESS_DEFAULT_PRESS_SELECTOR;
+        _this.animFrame = new AnimationFrame();
+        _this.contentScrollHandler = function () {
+            _this.handleScrollEvent();
+        };
+        _this.windowResizeHandler = function () {
+            _this.layout();
+        };
+        _this.windowOrientationChangeHandler = function () {
+            _this.layout();
+        };
+        return _this;
+    }
+    Object.defineProperty(MDCDialogFoundation, "cssClasses", {
+        get: function () {
+            return cssClasses$a;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(MDCDialogFoundation, "strings", {
+        get: function () {
+            return strings$8;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(MDCDialogFoundation, "numbers", {
+        get: function () {
+            return numbers$6;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(MDCDialogFoundation, "defaultAdapter", {
+        get: function () {
+            return {
+                addBodyClass: function () { return undefined; },
+                addClass: function () { return undefined; },
+                areButtonsStacked: function () { return false; },
+                clickDefaultButton: function () { return undefined; },
+                eventTargetMatches: function () { return false; },
+                getActionFromEvent: function () { return ''; },
+                getInitialFocusEl: function () { return null; },
+                hasClass: function () { return false; },
+                isContentScrollable: function () { return false; },
+                notifyClosed: function () { return undefined; },
+                notifyClosing: function () { return undefined; },
+                notifyOpened: function () { return undefined; },
+                notifyOpening: function () { return undefined; },
+                releaseFocus: function () { return undefined; },
+                removeBodyClass: function () { return undefined; },
+                removeClass: function () { return undefined; },
+                reverseButtons: function () { return undefined; },
+                trapFocus: function () { return undefined; },
+                registerContentEventHandler: function () { return undefined; },
+                deregisterContentEventHandler: function () { return undefined; },
+                isScrollableContentAtTop: function () { return false; },
+                isScrollableContentAtBottom: function () { return false; },
+                registerWindowEventHandler: function () { return undefined; },
+                deregisterWindowEventHandler: function () { return undefined; },
+            };
+        },
+        enumerable: false,
+        configurable: true
+    });
+    MDCDialogFoundation.prototype.init = function () {
+        if (this.adapter.hasClass(cssClasses$a.STACKED)) {
+            this.setAutoStackButtons(false);
+        }
+        this.isFullscreen = this.adapter.hasClass(cssClasses$a.FULLSCREEN);
+    };
+    MDCDialogFoundation.prototype.destroy = function () {
+        if (this.animationTimer) {
+            clearTimeout(this.animationTimer);
+            this.handleAnimationTimerEnd();
+        }
+        if (this.isFullscreen) {
+            this.adapter.deregisterContentEventHandler('scroll', this.contentScrollHandler);
+        }
+        this.animFrame.cancelAll();
+        this.adapter.deregisterWindowEventHandler('resize', this.windowResizeHandler);
+        this.adapter.deregisterWindowEventHandler('orientationchange', this.windowOrientationChangeHandler);
+    };
+    MDCDialogFoundation.prototype.open = function (dialogOptions) {
+        var _this = this;
+        this.dialogOpen = true;
+        this.adapter.notifyOpening();
+        this.adapter.addClass(cssClasses$a.OPENING);
+        if (this.isFullscreen) {
+            // A scroll event listener is registered even if the dialog is not
+            // scrollable on open, since the window resize event, or orientation
+            // change may make the dialog scrollable after it is opened.
+            this.adapter.registerContentEventHandler('scroll', this.contentScrollHandler);
+        }
+        if (dialogOptions && dialogOptions.isAboveFullscreenDialog) {
+            this.adapter.addClass(cssClasses$a.SCRIM_HIDDEN);
+        }
+        this.adapter.registerWindowEventHandler('resize', this.windowResizeHandler);
+        this.adapter.registerWindowEventHandler('orientationchange', this.windowOrientationChangeHandler);
+        // Wait a frame once display is no longer "none", to establish basis for
+        // animation
+        this.runNextAnimationFrame(function () {
+            _this.adapter.addClass(cssClasses$a.OPEN);
+            _this.adapter.addBodyClass(cssClasses$a.SCROLL_LOCK);
+            _this.layout();
+            _this.animationTimer = setTimeout(function () {
+                _this.handleAnimationTimerEnd();
+                _this.adapter.trapFocus(_this.adapter.getInitialFocusEl());
+                _this.adapter.notifyOpened();
+            }, numbers$6.DIALOG_ANIMATION_OPEN_TIME_MS);
+        });
+    };
+    MDCDialogFoundation.prototype.close = function (action) {
+        var _this = this;
+        if (action === void 0) { action = ''; }
+        if (!this.dialogOpen) {
+            // Avoid redundant close calls (and events), e.g. from keydown on elements
+            // that inherently emit click
+            return;
+        }
+        this.dialogOpen = false;
+        this.adapter.notifyClosing(action);
+        this.adapter.addClass(cssClasses$a.CLOSING);
+        this.adapter.removeClass(cssClasses$a.OPEN);
+        this.adapter.removeBodyClass(cssClasses$a.SCROLL_LOCK);
+        if (this.isFullscreen) {
+            this.adapter.deregisterContentEventHandler('scroll', this.contentScrollHandler);
+        }
+        this.adapter.deregisterWindowEventHandler('resize', this.windowResizeHandler);
+        this.adapter.deregisterWindowEventHandler('orientationchange', this.windowOrientationChangeHandler);
+        cancelAnimationFrame(this.animationFrame);
+        this.animationFrame = 0;
+        clearTimeout(this.animationTimer);
+        this.animationTimer = setTimeout(function () {
+            _this.adapter.releaseFocus();
+            _this.handleAnimationTimerEnd();
+            _this.adapter.notifyClosed(action);
+        }, numbers$6.DIALOG_ANIMATION_CLOSE_TIME_MS);
+    };
+    /**
+     * Used only in instances of showing a secondary dialog over a full-screen
+     * dialog. Shows the "surface scrim" displayed over the full-screen dialog.
+     */
+    MDCDialogFoundation.prototype.showSurfaceScrim = function () {
+        var _this = this;
+        this.adapter.addClass(cssClasses$a.SURFACE_SCRIM_SHOWING);
+        this.runNextAnimationFrame(function () {
+            _this.adapter.addClass(cssClasses$a.SURFACE_SCRIM_SHOWN);
+        });
+    };
+    /**
+     * Used only in instances of showing a secondary dialog over a full-screen
+     * dialog. Hides the "surface scrim" displayed over the full-screen dialog.
+     */
+    MDCDialogFoundation.prototype.hideSurfaceScrim = function () {
+        this.adapter.removeClass(cssClasses$a.SURFACE_SCRIM_SHOWN);
+        this.adapter.addClass(cssClasses$a.SURFACE_SCRIM_HIDING);
+    };
+    /**
+     * Handles `transitionend` event triggered when surface scrim animation is
+     * finished.
+     */
+    MDCDialogFoundation.prototype.handleSurfaceScrimTransitionEnd = function () {
+        this.adapter.removeClass(cssClasses$a.SURFACE_SCRIM_HIDING);
+        this.adapter.removeClass(cssClasses$a.SURFACE_SCRIM_SHOWING);
+    };
+    MDCDialogFoundation.prototype.isOpen = function () {
+        return this.dialogOpen;
+    };
+    MDCDialogFoundation.prototype.getEscapeKeyAction = function () {
+        return this.escapeKeyAction;
+    };
+    MDCDialogFoundation.prototype.setEscapeKeyAction = function (action) {
+        this.escapeKeyAction = action;
+    };
+    MDCDialogFoundation.prototype.getScrimClickAction = function () {
+        return this.scrimClickAction;
+    };
+    MDCDialogFoundation.prototype.setScrimClickAction = function (action) {
+        this.scrimClickAction = action;
+    };
+    MDCDialogFoundation.prototype.getAutoStackButtons = function () {
+        return this.autoStackButtons;
+    };
+    MDCDialogFoundation.prototype.setAutoStackButtons = function (autoStack) {
+        this.autoStackButtons = autoStack;
+    };
+    MDCDialogFoundation.prototype.getSuppressDefaultPressSelector = function () {
+        return this.suppressDefaultPressSelector;
+    };
+    MDCDialogFoundation.prototype.setSuppressDefaultPressSelector = function (selector) {
+        this.suppressDefaultPressSelector = selector;
+    };
+    MDCDialogFoundation.prototype.layout = function () {
+        var _this = this;
+        this.animFrame.request(AnimationKeys.POLL_LAYOUT_CHANGE, function () {
+            _this.layoutInternal();
+        });
+    };
+    /** Handles click on the dialog root element. */
+    MDCDialogFoundation.prototype.handleClick = function (evt) {
+        var isScrim = this.adapter.eventTargetMatches(evt.target, strings$8.SCRIM_SELECTOR);
+        // Check for scrim click first since it doesn't require querying ancestors.
+        if (isScrim && this.scrimClickAction !== '') {
+            this.close(this.scrimClickAction);
+        }
+        else {
+            var action = this.adapter.getActionFromEvent(evt);
+            if (action) {
+                this.close(action);
+            }
+        }
+    };
+    /** Handles keydown on the dialog root element. */
+    MDCDialogFoundation.prototype.handleKeydown = function (evt) {
+        var isEnter = evt.key === 'Enter' || evt.keyCode === 13;
+        if (!isEnter) {
+            return;
+        }
+        var action = this.adapter.getActionFromEvent(evt);
+        if (action) {
+            // Action button callback is handled in `handleClick`,
+            // since space/enter keydowns on buttons trigger click events.
+            return;
+        }
+        // `composedPath` is used here, when available, to account for use cases
+        // where a target meant to suppress the default press behaviour
+        // may exist in a shadow root.
+        // For example, a textarea inside a web component:
+        // <mwc-dialog>
+        //   <horizontal-layout>
+        //     #shadow-root (open)
+        //       <mwc-textarea>
+        //         #shadow-root (open)
+        //           <textarea></textarea>
+        //       </mwc-textarea>
+        //   </horizontal-layout>
+        // </mwc-dialog>
+        var target = evt.composedPath ? evt.composedPath()[0] : evt.target;
+        var isDefault = this.suppressDefaultPressSelector ?
+            !this.adapter.eventTargetMatches(target, this.suppressDefaultPressSelector) :
+            true;
+        if (isEnter && isDefault) {
+            this.adapter.clickDefaultButton();
+        }
+    };
+    /** Handles keydown on the document. */
+    MDCDialogFoundation.prototype.handleDocumentKeydown = function (evt) {
+        var isEscape = evt.key === 'Escape' || evt.keyCode === 27;
+        if (isEscape && this.escapeKeyAction !== '') {
+            this.close(this.escapeKeyAction);
+        }
+    };
+    /**
+     * Handles scroll event on the dialog's content element -- showing a scroll
+     * divider on the header or footer based on the scroll position. This handler
+     * should only be registered on full-screen dialogs with scrollable content.
+     */
+    MDCDialogFoundation.prototype.handleScrollEvent = function () {
+        var _this = this;
+        // Since scroll events can fire at a high rate, we throttle these events by
+        // using requestAnimationFrame.
+        this.animFrame.request(AnimationKeys.POLL_SCROLL_POS, function () {
+            _this.toggleScrollDividerHeader();
+            _this.toggleScrollDividerFooter();
+        });
+    };
+    MDCDialogFoundation.prototype.layoutInternal = function () {
+        if (this.autoStackButtons) {
+            this.detectStackedButtons();
+        }
+        this.toggleScrollableClasses();
+    };
+    MDCDialogFoundation.prototype.handleAnimationTimerEnd = function () {
+        this.animationTimer = 0;
+        this.adapter.removeClass(cssClasses$a.OPENING);
+        this.adapter.removeClass(cssClasses$a.CLOSING);
+    };
+    /**
+     * Runs the given logic on the next animation frame, using setTimeout to
+     * factor in Firefox reflow behavior.
+     */
+    MDCDialogFoundation.prototype.runNextAnimationFrame = function (callback) {
+        var _this = this;
+        cancelAnimationFrame(this.animationFrame);
+        this.animationFrame = requestAnimationFrame(function () {
+            _this.animationFrame = 0;
+            clearTimeout(_this.animationTimer);
+            _this.animationTimer = setTimeout(callback, 0);
+        });
+    };
+    MDCDialogFoundation.prototype.detectStackedButtons = function () {
+        // Remove the class first to let us measure the buttons' natural positions.
+        this.adapter.removeClass(cssClasses$a.STACKED);
+        var areButtonsStacked = this.adapter.areButtonsStacked();
+        if (areButtonsStacked) {
+            this.adapter.addClass(cssClasses$a.STACKED);
+        }
+        if (areButtonsStacked !== this.areButtonsStacked) {
+            this.adapter.reverseButtons();
+            this.areButtonsStacked = areButtonsStacked;
+        }
+    };
+    MDCDialogFoundation.prototype.toggleScrollableClasses = function () {
+        // Remove the class first to let us measure the natural height of the
+        // content.
+        this.adapter.removeClass(cssClasses$a.SCROLLABLE);
+        if (this.adapter.isContentScrollable()) {
+            this.adapter.addClass(cssClasses$a.SCROLLABLE);
+            if (this.isFullscreen) {
+                // If dialog is full-screen and scrollable, check if a scroll divider
+                // should be shown.
+                this.toggleScrollDividerHeader();
+                this.toggleScrollDividerFooter();
+            }
+        }
+    };
+    MDCDialogFoundation.prototype.toggleScrollDividerHeader = function () {
+        if (!this.adapter.isScrollableContentAtTop()) {
+            this.adapter.addClass(cssClasses$a.SCROLL_DIVIDER_HEADER);
+        }
+        else if (this.adapter.hasClass(cssClasses$a.SCROLL_DIVIDER_HEADER)) {
+            this.adapter.removeClass(cssClasses$a.SCROLL_DIVIDER_HEADER);
+        }
+    };
+    MDCDialogFoundation.prototype.toggleScrollDividerFooter = function () {
+        if (!this.adapter.isScrollableContentAtBottom()) {
+            this.adapter.addClass(cssClasses$a.SCROLL_DIVIDER_FOOTER);
+        }
+        else if (this.adapter.hasClass(cssClasses$a.SCROLL_DIVIDER_FOOTER)) {
+            this.adapter.removeClass(cssClasses$a.SCROLL_DIVIDER_FOOTER);
+        }
+    };
+    return MDCDialogFoundation;
+}(MDCFoundation));
+// tslint:disable-next-line:no-default-export Needed for backward compatibility with MDC Web v0.44.0 and earlier.
+var MDCDialogFoundation$1 = MDCDialogFoundation;
+
+/**
+ * @license
+ * Copyright 2019 Google Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+/**
+ * Determine whether the current browser supports passive event listeners, and
+ * if so, use them.
+ */
+function applyPassive(globalObj) {
+    if (globalObj === void 0) { globalObj = window; }
+    return supportsPassiveOption(globalObj) ?
+        { passive: true } :
+        false;
+}
+function supportsPassiveOption(globalObj) {
+    if (globalObj === void 0) { globalObj = window; }
+    // See
+    // https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
+    var passiveSupported = false;
+    try {
+        var options = {
+            // This function will be called when the browser
+            // attempts to access the passive property.
+            get passive() {
+                passiveSupported = true;
+                return false;
+            }
+        };
+        var handler = function () { };
+        globalObj.document.addEventListener('test', handler, options);
+        globalObj.document.removeEventListener('test', handler, options);
+    }
+    catch (err) {
+        passiveSupported = false;
+    }
+    return passiveSupported;
+}
+
+/**
+ * @license
+ * Copyright 2018 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+/**
+ * Specifies an observer callback that is run when the decorated property
+ * changes. The observer receives the current and old value as arguments.
+ */
+const observer = (observer) => 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(proto, propName) => {
+    // if we haven't wrapped `updated` in this class, do so
+    if (!proto.constructor
+        ._observers) {
+        proto.constructor._observers = new Map();
+        const userUpdated = proto.updated;
+        proto.updated = function (changedProperties) {
+            userUpdated.call(this, changedProperties);
+            changedProperties.forEach((v, k) => {
+                const observers = this.constructor
+                    ._observers;
+                const observer = observers.get(k);
+                if (observer !== undefined) {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    observer.call(this, this[k], v);
+                }
+            });
+        };
+        // clone any existing observers (superclasses)
+        // eslint-disable-next-line no-prototype-builtins
+    }
+    else if (!proto.constructor.hasOwnProperty('_observers')) {
+        const observers = proto.constructor._observers;
+        proto.constructor._observers = new Map();
+        observers.forEach(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (v, k) => proto.constructor._observers.set(k, v));
+    }
+    // set this method
+    proto.constructor._observers.set(propName, observer);
+};
+
+/**
+ * @license
+ * Copyright 2019 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+const blockingElements = document.$blockingElements;
+class DialogBase extends BaseElement {
+    constructor() {
+        super(...arguments);
+        this.hideActions = false;
+        this.stacked = false;
+        this.heading = '';
+        this.scrimClickAction = 'close';
+        this.escapeKeyAction = 'close';
+        this.open = false;
+        this.defaultAction = 'close';
+        this.actionAttribute = 'dialogAction';
+        this.initialFocusAttribute = 'dialogInitialFocus';
+        this.initialSupressDefaultPressSelector = '';
+        this.mdcFoundationClass = MDCDialogFoundation$1;
+        this.boundHandleClick = null;
+        this.boundHandleKeydown = null;
+        this.boundHandleDocumentKeydown = null;
+    }
+    set suppressDefaultPressSelector(selector) {
+        if (this.mdcFoundation) {
+            this.mdcFoundation.setSuppressDefaultPressSelector(selector);
+        }
+        else {
+            this.initialSupressDefaultPressSelector = selector;
+        }
+    }
+    /**
+     * @export
+     */
+    get suppressDefaultPressSelector() {
+        return this.mdcFoundation ?
+            this.mdcFoundation.getSuppressDefaultPressSelector() :
+            this.initialSupressDefaultPressSelector;
+    }
+    get primaryButton() {
+        let assignedNodes = this.primarySlot.assignedNodes();
+        assignedNodes = assignedNodes.filter((node) => node instanceof HTMLElement);
+        const button = assignedNodes[0];
+        return button ? button : null;
+    }
+    emitNotification(name, action) {
+        const init = { detail: action ? { action } : {} };
+        const ev = new CustomEvent(name, init);
+        this.dispatchEvent(ev);
+    }
+    getInitialFocusEl() {
+        const initFocusSelector = `[${this.initialFocusAttribute}]`;
+        // only search light DOM. This typically handles all the cases
+        const lightDomQs = this.querySelector(initFocusSelector);
+        if (lightDomQs) {
+            return lightDomQs;
+        }
+        // if not in light dom, search each flattened distributed node.
+        const primarySlot = this.primarySlot;
+        const primaryNodes = primarySlot.assignedNodes({ flatten: true });
+        const primaryFocusElement = this.searchNodeTreesForAttribute(primaryNodes, this.initialFocusAttribute);
+        if (primaryFocusElement) {
+            return primaryFocusElement;
+        }
+        const secondarySlot = this.secondarySlot;
+        const secondaryNodes = secondarySlot.assignedNodes({ flatten: true });
+        const secondaryFocusElement = this.searchNodeTreesForAttribute(secondaryNodes, this.initialFocusAttribute);
+        if (secondaryFocusElement) {
+            return secondaryFocusElement;
+        }
+        const contentSlot = this.contentSlot;
+        const contentNodes = contentSlot.assignedNodes({ flatten: true });
+        const initFocusElement = this.searchNodeTreesForAttribute(contentNodes, this.initialFocusAttribute);
+        return initFocusElement;
+    }
+    searchNodeTreesForAttribute(nodes, attribute) {
+        for (const node of nodes) {
+            if (!(node instanceof HTMLElement)) {
+                continue;
+            }
+            if (node.hasAttribute(attribute)) {
+                return node;
+            }
+            else {
+                const selection = node.querySelector(`[${attribute}]`);
+                if (selection) {
+                    return selection;
+                }
+            }
+        }
+        return null;
+    }
+    createAdapter() {
+        return Object.assign(Object.assign({}, addHasRemoveClass(this.mdcRoot)), { addBodyClass: () => document.body.style.overflow = 'hidden', removeBodyClass: () => document.body.style.overflow = '', areButtonsStacked: () => this.stacked, clickDefaultButton: () => {
+                const primary = this.primaryButton;
+                if (primary) {
+                    primary.click();
+                }
+            }, eventTargetMatches: (target, selector) => target ? matches(target, selector) : false, getActionFromEvent: (e) => {
+                if (!e.target) {
+                    return '';
+                }
+                const element = closest(e.target, `[${this.actionAttribute}]`);
+                const action = element && element.getAttribute(this.actionAttribute);
+                return action;
+            }, getInitialFocusEl: () => {
+                return this.getInitialFocusEl();
+            }, isContentScrollable: () => {
+                const el = this.contentElement;
+                return el ? el.scrollHeight > el.offsetHeight : false;
+            }, notifyClosed: (action) => this.emitNotification('closed', action), notifyClosing: (action) => {
+                if (!this.closingDueToDisconnect) {
+                    // Don't set our open state to closed just because we were
+                    // disconnected. That way if we get reconnected, we'll know to
+                    // re-open.
+                    this.open = false;
+                }
+                this.emitNotification('closing', action);
+            }, notifyOpened: () => this.emitNotification('opened'), notifyOpening: () => {
+                this.open = true;
+                this.emitNotification('opening');
+            }, reverseButtons: () => { }, releaseFocus: () => {
+                blockingElements.remove(this);
+            }, trapFocus: (el) => {
+                if (!this.isConnected) {
+                    // this is the case where it is opened and closed and then removed
+                    // from DOM before the animation has completed. Blocking Elements will
+                    // throw if this is the case
+                    return;
+                }
+                blockingElements.push(this);
+                if (el) {
+                    el.focus();
+                }
+            }, registerContentEventHandler: (evtType, handler) => {
+                const el = this.contentElement;
+                el.addEventListener(evtType, handler);
+            }, deregisterContentEventHandler: (evtType, handler) => {
+                const el = this.contentElement;
+                el.removeEventListener(evtType, handler);
+            }, isScrollableContentAtTop: () => {
+                const el = this.contentElement;
+                return el ? el.scrollTop === 0 : false;
+            }, isScrollableContentAtBottom: () => {
+                const el = this.contentElement;
+                return el ?
+                    Math.ceil(el.scrollHeight - el.scrollTop) === el.clientHeight :
+                    false;
+            }, registerWindowEventHandler: (evtType, handler) => {
+                window.addEventListener(evtType, handler, applyPassive());
+            }, deregisterWindowEventHandler: (evtType, handler) => {
+                window.removeEventListener(evtType, handler, applyPassive());
+            } });
+    }
+    render() {
+        const classes = {
+            [cssClasses$a.STACKED]: this.stacked,
+        };
+        let heading = x ``;
+        if (this.heading) {
+            heading = this.renderHeading();
+        }
+        const actionsClasses = {
+            'mdc-dialog__actions': !this.hideActions,
+        };
+        return x `
+    <div class="mdc-dialog ${o$1(classes)}"
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="title"
+        aria-describedby="content">
+      <div class="mdc-dialog__container">
+        <div class="mdc-dialog__surface">
+          ${heading}
+          <div id="content" class="mdc-dialog__content">
+            <slot id="contentSlot"></slot>
+          </div>
+          <footer
+              id="actions"
+              class="${o$1(actionsClasses)}">
+            <span>
+              <slot name="secondaryAction"></slot>
+            </span>
+            <span>
+             <slot name="primaryAction"></slot>
+            </span>
+          </footer>
+        </div>
+      </div>
+      <div class="mdc-dialog__scrim"></div>
+    </div>`;
+    }
+    renderHeading() {
+        return x `
+      <h2 id="title" class="mdc-dialog__title">${this.heading}</h2>`;
+    }
+    firstUpdated() {
+        super.firstUpdated();
+        this.mdcFoundation.setAutoStackButtons(true);
+        if (this.initialSupressDefaultPressSelector) {
+            this.suppressDefaultPressSelector =
+                this.initialSupressDefaultPressSelector;
+        }
+        else {
+            this.suppressDefaultPressSelector = [
+                this.suppressDefaultPressSelector, 'mwc-textarea',
+                'mwc-menu mwc-list-item', 'mwc-select mwc-list-item'
+            ].join(', ');
+        }
+        this.boundHandleClick = this.mdcFoundation.handleClick.bind(this.mdcFoundation);
+        this.boundHandleKeydown = this.mdcFoundation.handleKeydown.bind(this.mdcFoundation);
+        this.boundHandleDocumentKeydown =
+            this.mdcFoundation.handleDocumentKeydown.bind(this.mdcFoundation);
+    }
+    connectedCallback() {
+        super.connectedCallback();
+        if (this.open && this.mdcFoundation && !this.mdcFoundation.isOpen()) {
+            // We probably got disconnected while we were still open. Re-open,
+            // matching the behavior of native <dialog>.
+            this.setEventListeners();
+            this.mdcFoundation.open();
+        }
+    }
+    disconnectedCallback() {
+        super.disconnectedCallback();
+        if (this.open && this.mdcFoundation) {
+            // If this dialog is opened and then disconnected, we want to close
+            // the foundation, so that 1) any pending timers are cancelled
+            // (in particular for trapFocus), and 2) if we reconnect, we can open
+            // the foundation again to retrigger animations and focus.
+            this.removeEventListeners();
+            this.closingDueToDisconnect = true;
+            this.mdcFoundation.close(this.currentAction || this.defaultAction);
+            this.closingDueToDisconnect = false;
+            this.currentAction = undefined;
+            // When we close normally, the releaseFocus callback handles removing
+            // ourselves from the blocking elements stack. However, that callback
+            // happens on a delay, and when we are closing due to a disconnect we
+            // need to remove ourselves before the blocking element polyfill's
+            // mutation observer notices and logs a warning, since it's not valid to
+            // be in the blocking elements stack while disconnected.
+            blockingElements.remove(this);
+        }
+    }
+    forceLayout() {
+        this.mdcFoundation.layout();
+    }
+    focus() {
+        const initialFocusEl = this.getInitialFocusEl();
+        initialFocusEl && initialFocusEl.focus();
+    }
+    blur() {
+        if (!this.shadowRoot) {
+            return;
+        }
+        const activeEl = this.shadowRoot.activeElement;
+        if (activeEl) {
+            if (activeEl instanceof HTMLElement) {
+                activeEl.blur();
+            }
+        }
+        else {
+            const root = this.getRootNode();
+            const activeEl = root instanceof Document ? root.activeElement : null;
+            if (activeEl instanceof HTMLElement) {
+                activeEl.blur();
+            }
+        }
+    }
+    setEventListeners() {
+        if (this.boundHandleClick) {
+            this.mdcRoot.addEventListener('click', this.boundHandleClick);
+        }
+        if (this.boundHandleKeydown) {
+            this.mdcRoot.addEventListener('keydown', this.boundHandleKeydown, applyPassive());
+        }
+        if (this.boundHandleDocumentKeydown) {
+            document.addEventListener('keydown', this.boundHandleDocumentKeydown, applyPassive());
+        }
+    }
+    removeEventListeners() {
+        if (this.boundHandleClick) {
+            this.mdcRoot.removeEventListener('click', this.boundHandleClick);
+        }
+        if (this.boundHandleKeydown) {
+            this.mdcRoot.removeEventListener('keydown', this.boundHandleKeydown);
+        }
+        if (this.boundHandleDocumentKeydown) {
+            document.removeEventListener('keydown', this.boundHandleDocumentKeydown);
+        }
+    }
+    close() {
+        this.open = false;
+    }
+    show() {
+        this.open = true;
+    }
+}
+__decorate$1([
+    i$2('.mdc-dialog')
+], DialogBase.prototype, "mdcRoot", void 0);
+__decorate$1([
+    i$2('slot[name="primaryAction"]')
+], DialogBase.prototype, "primarySlot", void 0);
+__decorate$1([
+    i$2('slot[name="secondaryAction"]')
+], DialogBase.prototype, "secondarySlot", void 0);
+__decorate$1([
+    i$2('#contentSlot')
+], DialogBase.prototype, "contentSlot", void 0);
+__decorate$1([
+    i$2('.mdc-dialog__content')
+], DialogBase.prototype, "contentElement", void 0);
+__decorate$1([
+    i$2('.mdc-container')
+], DialogBase.prototype, "conatinerElement", void 0);
+__decorate$1([
+    n$2({ type: Boolean })
+], DialogBase.prototype, "hideActions", void 0);
+__decorate$1([
+    n$2({ type: Boolean }),
+    observer(function () {
+        this.forceLayout();
+    })
+], DialogBase.prototype, "stacked", void 0);
+__decorate$1([
+    n$2({ type: String })
+], DialogBase.prototype, "heading", void 0);
+__decorate$1([
+    n$2({ type: String }),
+    observer(function (newAction) {
+        this.mdcFoundation.setScrimClickAction(newAction);
+    })
+], DialogBase.prototype, "scrimClickAction", void 0);
+__decorate$1([
+    n$2({ type: String }),
+    observer(function (newAction) {
+        this.mdcFoundation.setEscapeKeyAction(newAction);
+    })
+], DialogBase.prototype, "escapeKeyAction", void 0);
+__decorate$1([
+    n$2({ type: Boolean, reflect: true }),
+    observer(function (isOpen) {
+        // Check isConnected because we could have been disconnected before first
+        // update. If we're now closed, then we shouldn't start the MDC foundation
+        // opening animation. If we're now closed, then we've already closed the
+        // foundation in disconnectedCallback.
+        if (this.mdcFoundation && this.isConnected) {
+            if (isOpen) {
+                this.setEventListeners();
+                this.mdcFoundation.open();
+            }
+            else {
+                this.removeEventListeners();
+                this.mdcFoundation.close(this.currentAction || this.defaultAction);
+                this.currentAction = undefined;
+            }
+        }
+    })
+], DialogBase.prototype, "open", void 0);
+__decorate$1([
+    n$2()
+], DialogBase.prototype, "defaultAction", void 0);
+__decorate$1([
+    n$2()
+], DialogBase.prototype, "actionAttribute", void 0);
+__decorate$1([
+    n$2()
+], DialogBase.prototype, "initialFocusAttribute", void 0);
+
+/**
+ * @license
+ * Copyright 2021 Google LLC
+ * SPDX-LIcense-Identifier: Apache-2.0
+ */
+const styles$f = i$5 `.mdc-dialog .mdc-dialog__surface{background-color:#fff;background-color:var(--mdc-theme-surface, #fff)}.mdc-dialog .mdc-dialog__scrim{background-color:rgba(0,0,0,.32)}.mdc-dialog .mdc-dialog__surface-scrim{background-color:rgba(0,0,0,.32)}.mdc-dialog .mdc-dialog__title{color:rgba(0,0,0,.87)}.mdc-dialog .mdc-dialog__content{color:rgba(0,0,0,.6)}.mdc-dialog .mdc-dialog__close{color:#000;color:var(--mdc-theme-on-surface, #000)}.mdc-dialog .mdc-dialog__close .mdc-icon-button__ripple::before,.mdc-dialog .mdc-dialog__close .mdc-icon-button__ripple::after{background-color:#000;background-color:var(--mdc-ripple-color, var(--mdc-theme-on-surface, #000))}.mdc-dialog .mdc-dialog__close:hover .mdc-icon-button__ripple::before,.mdc-dialog .mdc-dialog__close.mdc-ripple-surface--hover .mdc-icon-button__ripple::before{opacity:0.04;opacity:var(--mdc-ripple-hover-opacity, 0.04)}.mdc-dialog .mdc-dialog__close.mdc-ripple-upgraded--background-focused .mdc-icon-button__ripple::before,.mdc-dialog .mdc-dialog__close:not(.mdc-ripple-upgraded):focus .mdc-icon-button__ripple::before{transition-duration:75ms;opacity:0.12;opacity:var(--mdc-ripple-focus-opacity, 0.12)}.mdc-dialog .mdc-dialog__close:not(.mdc-ripple-upgraded) .mdc-icon-button__ripple::after{transition:opacity 150ms linear}.mdc-dialog .mdc-dialog__close:not(.mdc-ripple-upgraded):active .mdc-icon-button__ripple::after{transition-duration:75ms;opacity:0.12;opacity:var(--mdc-ripple-press-opacity, 0.12)}.mdc-dialog .mdc-dialog__close.mdc-ripple-upgraded{--mdc-ripple-fg-opacity:var(--mdc-ripple-press-opacity, 0.12)}.mdc-dialog.mdc-dialog--scrollable .mdc-dialog__title,.mdc-dialog.mdc-dialog--scrollable .mdc-dialog__actions,.mdc-dialog.mdc-dialog--scrollable.mdc-dialog-scroll-divider-footer .mdc-dialog__actions{border-color:rgba(0,0,0,.12)}.mdc-dialog.mdc-dialog--scrollable .mdc-dialog__title{border-bottom:1px solid rgba(0,0,0,.12);margin-bottom:0}.mdc-dialog.mdc-dialog-scroll-divider-header.mdc-dialog--fullscreen .mdc-dialog__header{box-shadow:0px 3px 1px -2px rgba(0, 0, 0, 0.2),0px 2px 2px 0px rgba(0, 0, 0, 0.14),0px 1px 5px 0px rgba(0,0,0,.12)}.mdc-dialog .mdc-dialog__surface{border-radius:4px;border-radius:var(--mdc-shape-medium, 4px)}.mdc-dialog__surface{box-shadow:0px 11px 15px -7px rgba(0, 0, 0, 0.2),0px 24px 38px 3px rgba(0, 0, 0, 0.14),0px 9px 46px 8px rgba(0,0,0,.12)}.mdc-dialog__title{-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased;font-family:Roboto, sans-serif;font-family:var(--mdc-typography-headline6-font-family, var(--mdc-typography-font-family, Roboto, sans-serif));font-size:1.25rem;font-size:var(--mdc-typography-headline6-font-size, 1.25rem);line-height:2rem;line-height:var(--mdc-typography-headline6-line-height, 2rem);font-weight:500;font-weight:var(--mdc-typography-headline6-font-weight, 500);letter-spacing:0.0125em;letter-spacing:var(--mdc-typography-headline6-letter-spacing, 0.0125em);text-decoration:inherit;text-decoration:var(--mdc-typography-headline6-text-decoration, inherit);text-transform:inherit;text-transform:var(--mdc-typography-headline6-text-transform, inherit)}.mdc-dialog__content{-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased;font-family:Roboto, sans-serif;font-family:var(--mdc-typography-body1-font-family, var(--mdc-typography-font-family, Roboto, sans-serif));font-size:1rem;font-size:var(--mdc-typography-body1-font-size, 1rem);line-height:1.5rem;line-height:var(--mdc-typography-body1-line-height, 1.5rem);font-weight:400;font-weight:var(--mdc-typography-body1-font-weight, 400);letter-spacing:0.03125em;letter-spacing:var(--mdc-typography-body1-letter-spacing, 0.03125em);text-decoration:inherit;text-decoration:var(--mdc-typography-body1-text-decoration, inherit);text-transform:inherit;text-transform:var(--mdc-typography-body1-text-transform, inherit)}.mdc-elevation-overlay{position:absolute;border-radius:inherit;pointer-events:none;opacity:0;opacity:var(--mdc-elevation-overlay-opacity, 0);transition:opacity 280ms cubic-bezier(0.4, 0, 0.2, 1);background-color:#fff;background-color:var(--mdc-elevation-overlay-color, #fff)}.mdc-dialog,.mdc-dialog__scrim{position:fixed;top:0;left:0;align-items:center;justify-content:center;box-sizing:border-box;width:100%;height:100%}.mdc-dialog{display:none;z-index:7;z-index:var(--mdc-dialog-z-index, 7)}.mdc-dialog .mdc-dialog__content{padding:20px 24px 20px 24px}.mdc-dialog .mdc-dialog__surface{min-width:280px}@media(max-width: 592px){.mdc-dialog .mdc-dialog__surface{max-width:calc(100vw - 32px)}}@media(min-width: 592px){.mdc-dialog .mdc-dialog__surface{max-width:560px}}.mdc-dialog .mdc-dialog__surface{max-height:calc(100% - 32px)}.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface{max-width:none}@media(max-width: 960px){.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface{max-height:560px;width:560px}.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface .mdc-dialog__close{right:-12px}}@media(max-width: 720px)and (max-width: 672px){.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface{width:calc(100vw - 112px)}}@media(max-width: 720px)and (min-width: 672px){.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface{width:560px}}@media(max-width: 720px)and (max-height: 720px){.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface{max-height:calc(100vh - 160px)}}@media(max-width: 720px)and (min-height: 720px){.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface{max-height:560px}}@media(max-width: 720px){.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface .mdc-dialog__close{right:-12px}}@media(max-width: 720px)and (max-height: 400px){.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface{height:100%;max-height:100vh;max-width:100vw;width:100vw;border-radius:0}.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface .mdc-dialog__close{order:-1;left:-12px}.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface .mdc-dialog__header{padding:0 16px 9px;justify-content:flex-start}.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface .mdc-dialog__title{margin-left:calc(16px - 2 * 12px)}}@media(max-width: 600px){.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface{height:100%;max-height:100vh;max-width:100vw;width:100vw;border-radius:0}.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface .mdc-dialog__close{order:-1;left:-12px}.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface .mdc-dialog__header{padding:0 16px 9px;justify-content:flex-start}.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface .mdc-dialog__title{margin-left:calc(16px - 2 * 12px)}}@media(min-width: 960px){.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface{width:calc(100vw - 400px)}.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface .mdc-dialog__close{right:-12px}}.mdc-dialog.mdc-dialog__scrim--hidden .mdc-dialog__scrim{opacity:0}.mdc-dialog__scrim{opacity:0;z-index:-1}.mdc-dialog__container{display:flex;flex-direction:row;align-items:center;justify-content:space-around;box-sizing:border-box;height:100%;transform:scale(0.8);opacity:0;pointer-events:none}.mdc-dialog__surface{position:relative;display:flex;flex-direction:column;flex-grow:0;flex-shrink:0;box-sizing:border-box;max-width:100%;max-height:100%;pointer-events:auto;overflow-y:auto}.mdc-dialog__surface .mdc-elevation-overlay{width:100%;height:100%;top:0;left:0}[dir=rtl] .mdc-dialog__surface,.mdc-dialog__surface[dir=rtl]{text-align:right}@media screen and (forced-colors: active),(-ms-high-contrast: active){.mdc-dialog__surface{outline:2px solid windowText}}.mdc-dialog__surface::before{position:absolute;box-sizing:border-box;width:100%;height:100%;top:0;left:0;border:2px solid transparent;border-radius:inherit;content:"";pointer-events:none}@media screen and (forced-colors: active){.mdc-dialog__surface::before{border-color:CanvasText}}@media screen and (-ms-high-contrast: active),screen and (-ms-high-contrast: none){.mdc-dialog__surface::before{content:none}}.mdc-dialog__title{display:block;margin-top:0;position:relative;flex-shrink:0;box-sizing:border-box;margin:0 0 1px;padding:0 24px 9px}.mdc-dialog__title::before{display:inline-block;width:0;height:40px;content:"";vertical-align:0}[dir=rtl] .mdc-dialog__title,.mdc-dialog__title[dir=rtl]{text-align:right}.mdc-dialog--scrollable .mdc-dialog__title{margin-bottom:1px;padding-bottom:15px}.mdc-dialog--fullscreen .mdc-dialog__header{align-items:baseline;border-bottom:1px solid transparent;display:inline-flex;justify-content:space-between;padding:0 24px 9px;z-index:1}@media screen and (forced-colors: active){.mdc-dialog--fullscreen .mdc-dialog__header{border-bottom-color:CanvasText}}.mdc-dialog--fullscreen .mdc-dialog__header .mdc-dialog__close{right:-12px}.mdc-dialog--fullscreen .mdc-dialog__title{margin-bottom:0;padding:0;border-bottom:0}.mdc-dialog--fullscreen.mdc-dialog--scrollable .mdc-dialog__title{border-bottom:0;margin-bottom:0}.mdc-dialog--fullscreen .mdc-dialog__close{top:5px}.mdc-dialog--fullscreen.mdc-dialog--scrollable .mdc-dialog__actions{border-top:1px solid transparent}@media screen and (forced-colors: active){.mdc-dialog--fullscreen.mdc-dialog--scrollable .mdc-dialog__actions{border-top-color:CanvasText}}.mdc-dialog__content{flex-grow:1;box-sizing:border-box;margin:0;overflow:auto}.mdc-dialog__content>:first-child{margin-top:0}.mdc-dialog__content>:last-child{margin-bottom:0}.mdc-dialog__title+.mdc-dialog__content,.mdc-dialog__header+.mdc-dialog__content{padding-top:0}.mdc-dialog--scrollable .mdc-dialog__title+.mdc-dialog__content{padding-top:8px;padding-bottom:8px}.mdc-dialog__content .mdc-deprecated-list:first-child:last-child{padding:6px 0 0}.mdc-dialog--scrollable .mdc-dialog__content .mdc-deprecated-list:first-child:last-child{padding:0}.mdc-dialog__actions{display:flex;position:relative;flex-shrink:0;flex-wrap:wrap;align-items:center;justify-content:flex-end;box-sizing:border-box;min-height:52px;margin:0;padding:8px;border-top:1px solid transparent}@media screen and (forced-colors: active){.mdc-dialog__actions{border-top-color:CanvasText}}.mdc-dialog--stacked .mdc-dialog__actions{flex-direction:column;align-items:flex-end}.mdc-dialog__button{margin-left:8px;margin-right:0;max-width:100%;text-align:right}[dir=rtl] .mdc-dialog__button,.mdc-dialog__button[dir=rtl]{margin-left:0;margin-right:8px}.mdc-dialog__button:first-child{margin-left:0;margin-right:0}[dir=rtl] .mdc-dialog__button:first-child,.mdc-dialog__button:first-child[dir=rtl]{margin-left:0;margin-right:0}[dir=rtl] .mdc-dialog__button,.mdc-dialog__button[dir=rtl]{text-align:left}.mdc-dialog--stacked .mdc-dialog__button:not(:first-child){margin-top:12px}.mdc-dialog--open,.mdc-dialog--opening,.mdc-dialog--closing{display:flex}.mdc-dialog--opening .mdc-dialog__scrim{transition:opacity 150ms linear}.mdc-dialog--opening .mdc-dialog__container{transition:opacity 75ms linear,transform 150ms 0ms cubic-bezier(0, 0, 0.2, 1)}.mdc-dialog--closing .mdc-dialog__scrim,.mdc-dialog--closing .mdc-dialog__container{transition:opacity 75ms linear}.mdc-dialog--closing .mdc-dialog__container{transform:none}.mdc-dialog--open .mdc-dialog__scrim{opacity:1}.mdc-dialog--open .mdc-dialog__container{transform:none;opacity:1}.mdc-dialog--open.mdc-dialog__surface-scrim--shown .mdc-dialog__surface-scrim{opacity:1;z-index:1}.mdc-dialog--open.mdc-dialog__surface-scrim--hiding .mdc-dialog__surface-scrim{transition:opacity 75ms linear}.mdc-dialog--open.mdc-dialog__surface-scrim--showing .mdc-dialog__surface-scrim{transition:opacity 150ms linear}.mdc-dialog__surface-scrim{display:none;opacity:0;position:absolute;width:100%;height:100%}.mdc-dialog__surface-scrim--shown .mdc-dialog__surface-scrim,.mdc-dialog__surface-scrim--showing .mdc-dialog__surface-scrim,.mdc-dialog__surface-scrim--hiding .mdc-dialog__surface-scrim{display:block}.mdc-dialog-scroll-lock{overflow:hidden}.mdc-dialog--no-content-padding .mdc-dialog__content{padding:0}.mdc-dialog--sheet .mdc-dialog__close{right:12px;top:9px;position:absolute;z-index:1}#actions:not(.mdc-dialog__actions){display:none}.mdc-dialog__surface{box-shadow:var(--mdc-dialog-box-shadow, 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12))}@media(min-width: 560px){.mdc-dialog .mdc-dialog__surface{max-width:560px;max-width:var(--mdc-dialog-max-width, 560px)}}.mdc-dialog .mdc-dialog__scrim{background-color:rgba(0, 0, 0, 0.32);background-color:var(--mdc-dialog-scrim-color, rgba(0, 0, 0, 0.32))}.mdc-dialog .mdc-dialog__title{color:rgba(0, 0, 0, 0.87);color:var(--mdc-dialog-heading-ink-color, rgba(0, 0, 0, 0.87))}.mdc-dialog .mdc-dialog__content{color:rgba(0, 0, 0, 0.6);color:var(--mdc-dialog-content-ink-color, rgba(0, 0, 0, 0.6))}.mdc-dialog.mdc-dialog--scrollable .mdc-dialog__title,.mdc-dialog.mdc-dialog--scrollable .mdc-dialog__actions{border-color:rgba(0, 0, 0, 0.12);border-color:var(--mdc-dialog-scroll-divider-color, rgba(0, 0, 0, 0.12))}.mdc-dialog .mdc-dialog__surface{min-width:280px;min-width:var(--mdc-dialog-min-width, 280px)}.mdc-dialog .mdc-dialog__surface{max-height:var(--mdc-dialog-max-height, calc(100% - 32px))}#actions ::slotted(*){margin-left:8px;margin-right:0;max-width:100%;text-align:right}[dir=rtl] #actions ::slotted(*),#actions ::slotted(*[dir=rtl]){margin-left:0;margin-right:8px}[dir=rtl] #actions ::slotted(*),#actions ::slotted(*[dir=rtl]){text-align:left}.mdc-dialog--stacked #actions{flex-direction:column-reverse}.mdc-dialog--stacked #actions *:not(:last-child) ::slotted(*){flex-basis:.000000001px;margin-top:12px}`;
+
+/**
+ * @license
+ * Copyright 2019 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+let Dialog = class Dialog extends DialogBase {
+};
+Dialog.styles = [styles$f];
+Dialog = __decorate$1([
+    e$7('mwc-dialog')
+], Dialog);
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -23144,2227 +25390,6 @@ customElements.define('ace-editor', AceEditor);
 
 /**
  * @license
- * Copyright 2016 Google Inc. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-(() => {
-    var _a, _b, _c;
-    /* Symbols for private properties */
-    const _blockingElements = Symbol();
-    const _alreadyInertElements = Symbol();
-    const _topElParents = Symbol();
-    const _siblingsToRestore = Symbol();
-    const _parentMO = Symbol();
-    /* Symbols for private static methods */
-    const _topChanged = Symbol();
-    const _swapInertedSibling = Symbol();
-    const _inertSiblings = Symbol();
-    const _restoreInertedSiblings = Symbol();
-    const _getParents = Symbol();
-    const _getDistributedChildren = Symbol();
-    const _isInertable = Symbol();
-    const _handleMutations = Symbol();
-    class BlockingElementsImpl {
-        constructor() {
-            /**
-             * The blocking elements.
-             */
-            this[_a] = [];
-            /**
-             * Used to keep track of the parents of the top element, from the element
-             * itself up to body. When top changes, the old top might have been removed
-             * from the document, so we need to memoize the inerted parents' siblings
-             * in order to restore their inerteness when top changes.
-             */
-            this[_b] = [];
-            /**
-             * Elements that are already inert before the first blocking element is
-             * pushed.
-             */
-            this[_c] = new Set();
-        }
-        destructor() {
-            // Restore original inertness.
-            this[_restoreInertedSiblings](this[_topElParents]);
-            // Note we don't want to make these properties nullable on the class,
-            // since then we'd need non-null casts in many places. Calling a method on
-            // a BlockingElements instance after calling destructor will result in an
-            // exception.
-            const nullable = this;
-            nullable[_blockingElements] = null;
-            nullable[_topElParents] = null;
-            nullable[_alreadyInertElements] = null;
-        }
-        get top() {
-            const elems = this[_blockingElements];
-            return elems[elems.length - 1] || null;
-        }
-        push(element) {
-            if (!element || element === this.top) {
-                return;
-            }
-            // Remove it from the stack, we'll bring it to the top.
-            this.remove(element);
-            this[_topChanged](element);
-            this[_blockingElements].push(element);
-        }
-        remove(element) {
-            const i = this[_blockingElements].indexOf(element);
-            if (i === -1) {
-                return false;
-            }
-            this[_blockingElements].splice(i, 1);
-            // Top changed only if the removed element was the top element.
-            if (i === this[_blockingElements].length) {
-                this[_topChanged](this.top);
-            }
-            return true;
-        }
-        pop() {
-            const top = this.top;
-            top && this.remove(top);
-            return top;
-        }
-        has(element) {
-            return this[_blockingElements].indexOf(element) !== -1;
-        }
-        /**
-         * Sets `inert` to all document elements except the new top element, its
-         * parents, and its distributed content.
-         */
-        [(_a = _blockingElements, _b = _topElParents, _c = _alreadyInertElements, _topChanged)](newTop) {
-            const toKeepInert = this[_alreadyInertElements];
-            const oldParents = this[_topElParents];
-            // No new top, reset old top if any.
-            if (!newTop) {
-                this[_restoreInertedSiblings](oldParents);
-                toKeepInert.clear();
-                this[_topElParents] = [];
-                return;
-            }
-            const newParents = this[_getParents](newTop);
-            // New top is not contained in the main document!
-            if (newParents[newParents.length - 1].parentNode !== document.body) {
-                throw Error('Non-connected element cannot be a blocking element');
-            }
-            // Cast here because we know we'll call _inertSiblings on newParents
-            // below.
-            this[_topElParents] = newParents;
-            const toSkip = this[_getDistributedChildren](newTop);
-            // No previous top element.
-            if (!oldParents.length) {
-                this[_inertSiblings](newParents, toSkip, toKeepInert);
-                return;
-            }
-            let i = oldParents.length - 1;
-            let j = newParents.length - 1;
-            // Find common parent. Index 0 is the element itself (so stop before it).
-            while (i > 0 && j > 0 && oldParents[i] === newParents[j]) {
-                i--;
-                j--;
-            }
-            // If up the parents tree there are 2 elements that are siblings, swap
-            // the inerted sibling.
-            if (oldParents[i] !== newParents[j]) {
-                this[_swapInertedSibling](oldParents[i], newParents[j]);
-            }
-            // Restore old parents siblings inertness.
-            i > 0 && this[_restoreInertedSiblings](oldParents.slice(0, i));
-            // Make new parents siblings inert.
-            j > 0 && this[_inertSiblings](newParents.slice(0, j), toSkip, null);
-        }
-        /**
-         * Swaps inertness between two sibling elements.
-         * Sets the property `inert` over the attribute since the inert spec
-         * doesn't specify if it should be reflected.
-         * https://html.spec.whatwg.org/multipage/interaction.html#inert
-         */
-        [_swapInertedSibling](oldInert, newInert) {
-            const siblingsToRestore = oldInert[_siblingsToRestore];
-            // oldInert is not contained in siblings to restore, so we have to check
-            // if it's inertable and if already inert.
-            if (this[_isInertable](oldInert) && !oldInert.inert) {
-                oldInert.inert = true;
-                siblingsToRestore.add(oldInert);
-            }
-            // If newInert was already between the siblings to restore, it means it is
-            // inertable and must be restored.
-            if (siblingsToRestore.has(newInert)) {
-                newInert.inert = false;
-                siblingsToRestore.delete(newInert);
-            }
-            newInert[_parentMO] = oldInert[_parentMO];
-            newInert[_siblingsToRestore] = siblingsToRestore;
-            oldInert[_parentMO] = undefined;
-            oldInert[_siblingsToRestore] = undefined;
-        }
-        /**
-         * Restores original inertness to the siblings of the elements.
-         * Sets the property `inert` over the attribute since the inert spec
-         * doesn't specify if it should be reflected.
-         * https://html.spec.whatwg.org/multipage/interaction.html#inert
-         */
-        [_restoreInertedSiblings](elements) {
-            for (const element of elements) {
-                const mo = element[_parentMO];
-                mo.disconnect();
-                element[_parentMO] = undefined;
-                const siblings = element[_siblingsToRestore];
-                for (const sibling of siblings) {
-                    sibling.inert = false;
-                }
-                element[_siblingsToRestore] = undefined;
-            }
-        }
-        /**
-         * Inerts the siblings of the elements except the elements to skip. Stores
-         * the inerted siblings into the element's symbol `_siblingsToRestore`.
-         * Pass `toKeepInert` to collect the already inert elements.
-         * Sets the property `inert` over the attribute since the inert spec
-         * doesn't specify if it should be reflected.
-         * https://html.spec.whatwg.org/multipage/interaction.html#inert
-         */
-        [_inertSiblings](elements, toSkip, toKeepInert) {
-            for (const element of elements) {
-                // Assume element is not a Document, so it must have a parentNode.
-                const parent = element.parentNode;
-                const children = parent.children;
-                const inertedSiblings = new Set();
-                for (let j = 0; j < children.length; j++) {
-                    const sibling = children[j];
-                    // Skip the input element, if not inertable or to be skipped.
-                    if (sibling === element || !this[_isInertable](sibling) ||
-                        (toSkip && toSkip.has(sibling))) {
-                        continue;
-                    }
-                    // Should be collected since already inerted.
-                    if (toKeepInert && sibling.inert) {
-                        toKeepInert.add(sibling);
-                    }
-                    else {
-                        sibling.inert = true;
-                        inertedSiblings.add(sibling);
-                    }
-                }
-                // Store the siblings that were inerted.
-                element[_siblingsToRestore] = inertedSiblings;
-                // Observe only immediate children mutations on the parent.
-                const mo = new MutationObserver(this[_handleMutations].bind(this));
-                element[_parentMO] = mo;
-                let parentToObserve = parent;
-                // If we're using the ShadyDOM polyfill, then our parent could be a
-                // shady root, which is an object that acts like a ShadowRoot, but isn't
-                // actually a node in the real DOM. Observe the real DOM parent instead.
-                const maybeShadyRoot = parentToObserve;
-                if (maybeShadyRoot.__shady && maybeShadyRoot.host) {
-                    parentToObserve = maybeShadyRoot.host;
-                }
-                mo.observe(parentToObserve, {
-                    childList: true,
-                });
-            }
-        }
-        /**
-         * Handles newly added/removed nodes by toggling their inertness.
-         * It also checks if the current top Blocking Element has been removed,
-         * notifying and removing it.
-         */
-        [_handleMutations](mutations) {
-            const parents = this[_topElParents];
-            const toKeepInert = this[_alreadyInertElements];
-            for (const mutation of mutations) {
-                // If the target is a shadowRoot, get its host as we skip shadowRoots when
-                // computing _topElParents.
-                const target = mutation.target.host || mutation.target;
-                const idx = target === document.body ?
-                    parents.length :
-                    parents.indexOf(target);
-                const inertedChild = parents[idx - 1];
-                const inertedSiblings = inertedChild[_siblingsToRestore];
-                // To restore.
-                for (let i = 0; i < mutation.removedNodes.length; i++) {
-                    const sibling = mutation.removedNodes[i];
-                    if (sibling === inertedChild) {
-                        console.info('Detected removal of the top Blocking Element.');
-                        this.pop();
-                        return;
-                    }
-                    if (inertedSiblings.has(sibling)) {
-                        sibling.inert = false;
-                        inertedSiblings.delete(sibling);
-                    }
-                }
-                // To inert.
-                for (let i = 0; i < mutation.addedNodes.length; i++) {
-                    const sibling = mutation.addedNodes[i];
-                    if (!this[_isInertable](sibling)) {
-                        continue;
-                    }
-                    if (toKeepInert && sibling.inert) {
-                        toKeepInert.add(sibling);
-                    }
-                    else {
-                        sibling.inert = true;
-                        inertedSiblings.add(sibling);
-                    }
-                }
-            }
-        }
-        /**
-         * Returns if the element is inertable.
-         */
-        [_isInertable](element) {
-            return false === /^(style|template|script)$/.test(element.localName);
-        }
-        /**
-         * Returns the list of newParents of an element, starting from element
-         * (included) up to `document.body` (excluded).
-         */
-        [_getParents](element) {
-            const parents = [];
-            let current = element;
-            // Stop to body.
-            while (current && current !== document.body) {
-                // Skip shadow roots.
-                if (current.nodeType === Node.ELEMENT_NODE) {
-                    parents.push(current);
-                }
-                // ShadowDom v1
-                if (current.assignedSlot) {
-                    // Collect slots from deepest slot to top.
-                    while (current = current.assignedSlot) {
-                        parents.push(current);
-                    }
-                    // Continue the search on the top slot.
-                    current = parents.pop();
-                    continue;
-                }
-                current = current.parentNode ||
-                    current.host;
-            }
-            return parents;
-        }
-        /**
-         * Returns the distributed children of the element's shadow root.
-         * Returns null if the element doesn't have a shadow root.
-         */
-        [_getDistributedChildren](element) {
-            const shadowRoot = element.shadowRoot;
-            if (!shadowRoot) {
-                return null;
-            }
-            const result = new Set();
-            let i;
-            let j;
-            let nodes;
-            const slots = shadowRoot.querySelectorAll('slot');
-            if (slots.length && slots[0].assignedNodes) {
-                for (i = 0; i < slots.length; i++) {
-                    nodes = slots[i].assignedNodes({
-                        flatten: true,
-                    });
-                    for (j = 0; j < nodes.length; j++) {
-                        if (nodes[j].nodeType === Node.ELEMENT_NODE) {
-                            result.add(nodes[j]);
-                        }
-                    }
-                }
-                // No need to search for <content>.
-            }
-            return result;
-        }
-    }
-    document.$blockingElements =
-        new BlockingElementsImpl();
-})();
-
-(function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory() :
-  typeof define === 'function' && define.amd ? define('inert', factory) :
-  (factory());
-}(undefined, (function () {
-  var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-  /**
-   * This work is licensed under the W3C Software and Document License
-   * (http://www.w3.org/Consortium/Legal/2015/copyright-software-and-document).
-   */
-
-  (function () {
-    // Return early if we're not running inside of the browser.
-    if (typeof window === 'undefined') {
-      return;
-    }
-
-    // Convenience function for converting NodeLists.
-    /** @type {typeof Array.prototype.slice} */
-    var slice = Array.prototype.slice;
-
-    /**
-     * IE has a non-standard name for "matches".
-     * @type {typeof Element.prototype.matches}
-     */
-    var matches = Element.prototype.matches || Element.prototype.msMatchesSelector;
-
-    /** @type {string} */
-    var _focusableElementsString = ['a[href]', 'area[href]', 'input:not([disabled])', 'select:not([disabled])', 'textarea:not([disabled])', 'button:not([disabled])', 'details', 'summary', 'iframe', 'object', 'embed', '[contenteditable]'].join(',');
-
-    /**
-     * `InertRoot` manages a single inert subtree, i.e. a DOM subtree whose root element has an `inert`
-     * attribute.
-     *
-     * Its main functions are:
-     *
-     * - to create and maintain a set of managed `InertNode`s, including when mutations occur in the
-     *   subtree. The `makeSubtreeUnfocusable()` method handles collecting `InertNode`s via registering
-     *   each focusable node in the subtree with the singleton `InertManager` which manages all known
-     *   focusable nodes within inert subtrees. `InertManager` ensures that a single `InertNode`
-     *   instance exists for each focusable node which has at least one inert root as an ancestor.
-     *
-     * - to notify all managed `InertNode`s when this subtree stops being inert (i.e. when the `inert`
-     *   attribute is removed from the root node). This is handled in the destructor, which calls the
-     *   `deregister` method on `InertManager` for each managed inert node.
-     */
-
-    var InertRoot = function () {
-      /**
-       * @param {!HTMLElement} rootElement The HTMLElement at the root of the inert subtree.
-       * @param {!InertManager} inertManager The global singleton InertManager object.
-       */
-      function InertRoot(rootElement, inertManager) {
-        _classCallCheck(this, InertRoot);
-
-        /** @type {!InertManager} */
-        this._inertManager = inertManager;
-
-        /** @type {!HTMLElement} */
-        this._rootElement = rootElement;
-
-        /**
-         * @type {!Set<!InertNode>}
-         * All managed focusable nodes in this InertRoot's subtree.
-         */
-        this._managedNodes = new Set();
-
-        // Make the subtree hidden from assistive technology
-        if (this._rootElement.hasAttribute('aria-hidden')) {
-          /** @type {?string} */
-          this._savedAriaHidden = this._rootElement.getAttribute('aria-hidden');
-        } else {
-          this._savedAriaHidden = null;
-        }
-        this._rootElement.setAttribute('aria-hidden', 'true');
-
-        // Make all focusable elements in the subtree unfocusable and add them to _managedNodes
-        this._makeSubtreeUnfocusable(this._rootElement);
-
-        // Watch for:
-        // - any additions in the subtree: make them unfocusable too
-        // - any removals from the subtree: remove them from this inert root's managed nodes
-        // - attribute changes: if `tabindex` is added, or removed from an intrinsically focusable
-        //   element, make that node a managed node.
-        this._observer = new MutationObserver(this._onMutation.bind(this));
-        this._observer.observe(this._rootElement, { attributes: true, childList: true, subtree: true });
-      }
-
-      /**
-       * Call this whenever this object is about to become obsolete.  This unwinds all of the state
-       * stored in this object and updates the state of all of the managed nodes.
-       */
-
-
-      _createClass(InertRoot, [{
-        key: 'destructor',
-        value: function destructor() {
-          this._observer.disconnect();
-
-          if (this._rootElement) {
-            if (this._savedAriaHidden !== null) {
-              this._rootElement.setAttribute('aria-hidden', this._savedAriaHidden);
-            } else {
-              this._rootElement.removeAttribute('aria-hidden');
-            }
-          }
-
-          this._managedNodes.forEach(function (inertNode) {
-            this._unmanageNode(inertNode.node);
-          }, this);
-
-          // Note we cast the nulls to the ANY type here because:
-          // 1) We want the class properties to be declared as non-null, or else we
-          //    need even more casts throughout this code. All bets are off if an
-          //    instance has been destroyed and a method is called.
-          // 2) We don't want to cast "this", because we want type-aware optimizations
-          //    to know which properties we're setting.
-          this._observer = /** @type {?} */null;
-          this._rootElement = /** @type {?} */null;
-          this._managedNodes = /** @type {?} */null;
-          this._inertManager = /** @type {?} */null;
-        }
-
-        /**
-         * @return {!Set<!InertNode>} A copy of this InertRoot's managed nodes set.
-         */
-
-      }, {
-        key: '_makeSubtreeUnfocusable',
-
-
-        /**
-         * @param {!Node} startNode
-         */
-        value: function _makeSubtreeUnfocusable(startNode) {
-          var _this2 = this;
-
-          composedTreeWalk(startNode, function (node) {
-            return _this2._visitNode(node);
-          });
-
-          var activeElement = document.activeElement;
-
-          if (!document.body.contains(startNode)) {
-            // startNode may be in shadow DOM, so find its nearest shadowRoot to get the activeElement.
-            var node = startNode;
-            /** @type {!ShadowRoot|undefined} */
-            var root = undefined;
-            while (node) {
-              if (node.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
-                root = /** @type {!ShadowRoot} */node;
-                break;
-              }
-              node = node.parentNode;
-            }
-            if (root) {
-              activeElement = root.activeElement;
-            }
-          }
-          if (startNode.contains(activeElement)) {
-            activeElement.blur();
-            // In IE11, if an element is already focused, and then set to tabindex=-1
-            // calling blur() will not actually move the focus.
-            // To work around this we call focus() on the body instead.
-            if (activeElement === document.activeElement) {
-              document.body.focus();
-            }
-          }
-        }
-
-        /**
-         * @param {!Node} node
-         */
-
-      }, {
-        key: '_visitNode',
-        value: function _visitNode(node) {
-          if (node.nodeType !== Node.ELEMENT_NODE) {
-            return;
-          }
-          var element = /** @type {!HTMLElement} */node;
-
-          // If a descendant inert root becomes un-inert, its descendants will still be inert because of
-          // this inert root, so all of its managed nodes need to be adopted by this InertRoot.
-          if (element !== this._rootElement && element.hasAttribute('inert')) {
-            this._adoptInertRoot(element);
-          }
-
-          if (matches.call(element, _focusableElementsString) || element.hasAttribute('tabindex')) {
-            this._manageNode(element);
-          }
-        }
-
-        /**
-         * Register the given node with this InertRoot and with InertManager.
-         * @param {!Node} node
-         */
-
-      }, {
-        key: '_manageNode',
-        value: function _manageNode(node) {
-          var inertNode = this._inertManager.register(node, this);
-          this._managedNodes.add(inertNode);
-        }
-
-        /**
-         * Unregister the given node with this InertRoot and with InertManager.
-         * @param {!Node} node
-         */
-
-      }, {
-        key: '_unmanageNode',
-        value: function _unmanageNode(node) {
-          var inertNode = this._inertManager.deregister(node, this);
-          if (inertNode) {
-            this._managedNodes['delete'](inertNode);
-          }
-        }
-
-        /**
-         * Unregister the entire subtree starting at `startNode`.
-         * @param {!Node} startNode
-         */
-
-      }, {
-        key: '_unmanageSubtree',
-        value: function _unmanageSubtree(startNode) {
-          var _this3 = this;
-
-          composedTreeWalk(startNode, function (node) {
-            return _this3._unmanageNode(node);
-          });
-        }
-
-        /**
-         * If a descendant node is found with an `inert` attribute, adopt its managed nodes.
-         * @param {!HTMLElement} node
-         */
-
-      }, {
-        key: '_adoptInertRoot',
-        value: function _adoptInertRoot(node) {
-          var inertSubroot = this._inertManager.getInertRoot(node);
-
-          // During initialisation this inert root may not have been registered yet,
-          // so register it now if need be.
-          if (!inertSubroot) {
-            this._inertManager.setInert(node, true);
-            inertSubroot = this._inertManager.getInertRoot(node);
-          }
-
-          inertSubroot.managedNodes.forEach(function (savedInertNode) {
-            this._manageNode(savedInertNode.node);
-          }, this);
-        }
-
-        /**
-         * Callback used when mutation observer detects subtree additions, removals, or attribute changes.
-         * @param {!Array<!MutationRecord>} records
-         * @param {!MutationObserver} self
-         */
-
-      }, {
-        key: '_onMutation',
-        value: function _onMutation(records, self) {
-          records.forEach(function (record) {
-            var target = /** @type {!HTMLElement} */record.target;
-            if (record.type === 'childList') {
-              // Manage added nodes
-              slice.call(record.addedNodes).forEach(function (node) {
-                this._makeSubtreeUnfocusable(node);
-              }, this);
-
-              // Un-manage removed nodes
-              slice.call(record.removedNodes).forEach(function (node) {
-                this._unmanageSubtree(node);
-              }, this);
-            } else if (record.type === 'attributes') {
-              if (record.attributeName === 'tabindex') {
-                // Re-initialise inert node if tabindex changes
-                this._manageNode(target);
-              } else if (target !== this._rootElement && record.attributeName === 'inert' && target.hasAttribute('inert')) {
-                // If a new inert root is added, adopt its managed nodes and make sure it knows about the
-                // already managed nodes from this inert subroot.
-                this._adoptInertRoot(target);
-                var inertSubroot = this._inertManager.getInertRoot(target);
-                this._managedNodes.forEach(function (managedNode) {
-                  if (target.contains(managedNode.node)) {
-                    inertSubroot._manageNode(managedNode.node);
-                  }
-                });
-              }
-            }
-          }, this);
-        }
-      }, {
-        key: 'managedNodes',
-        get: function get() {
-          return new Set(this._managedNodes);
-        }
-
-        /** @return {boolean} */
-
-      }, {
-        key: 'hasSavedAriaHidden',
-        get: function get() {
-          return this._savedAriaHidden !== null;
-        }
-
-        /** @param {?string} ariaHidden */
-
-      }, {
-        key: 'savedAriaHidden',
-        set: function set(ariaHidden) {
-          this._savedAriaHidden = ariaHidden;
-        }
-
-        /** @return {?string} */
-        ,
-        get: function get() {
-          return this._savedAriaHidden;
-        }
-      }]);
-
-      return InertRoot;
-    }();
-
-    /**
-     * `InertNode` initialises and manages a single inert node.
-     * A node is inert if it is a descendant of one or more inert root elements.
-     *
-     * On construction, `InertNode` saves the existing `tabindex` value for the node, if any, and
-     * either removes the `tabindex` attribute or sets it to `-1`, depending on whether the element
-     * is intrinsically focusable or not.
-     *
-     * `InertNode` maintains a set of `InertRoot`s which are descendants of this `InertNode`. When an
-     * `InertRoot` is destroyed, and calls `InertManager.deregister()`, the `InertManager` notifies the
-     * `InertNode` via `removeInertRoot()`, which in turn destroys the `InertNode` if no `InertRoot`s
-     * remain in the set. On destruction, `InertNode` reinstates the stored `tabindex` if one exists,
-     * or removes the `tabindex` attribute if the element is intrinsically focusable.
-     */
-
-
-    var InertNode = function () {
-      /**
-       * @param {!Node} node A focusable element to be made inert.
-       * @param {!InertRoot} inertRoot The inert root element associated with this inert node.
-       */
-      function InertNode(node, inertRoot) {
-        _classCallCheck(this, InertNode);
-
-        /** @type {!Node} */
-        this._node = node;
-
-        /** @type {boolean} */
-        this._overrodeFocusMethod = false;
-
-        /**
-         * @type {!Set<!InertRoot>} The set of descendant inert roots.
-         *    If and only if this set becomes empty, this node is no longer inert.
-         */
-        this._inertRoots = new Set([inertRoot]);
-
-        /** @type {?number} */
-        this._savedTabIndex = null;
-
-        /** @type {boolean} */
-        this._destroyed = false;
-
-        // Save any prior tabindex info and make this node untabbable
-        this.ensureUntabbable();
-      }
-
-      /**
-       * Call this whenever this object is about to become obsolete.
-       * This makes the managed node focusable again and deletes all of the previously stored state.
-       */
-
-
-      _createClass(InertNode, [{
-        key: 'destructor',
-        value: function destructor() {
-          this._throwIfDestroyed();
-
-          if (this._node && this._node.nodeType === Node.ELEMENT_NODE) {
-            var element = /** @type {!HTMLElement} */this._node;
-            if (this._savedTabIndex !== null) {
-              element.setAttribute('tabindex', this._savedTabIndex);
-            } else {
-              element.removeAttribute('tabindex');
-            }
-
-            // Use `delete` to restore native focus method.
-            if (this._overrodeFocusMethod) {
-              delete element.focus;
-            }
-          }
-
-          // See note in InertRoot.destructor for why we cast these nulls to ANY.
-          this._node = /** @type {?} */null;
-          this._inertRoots = /** @type {?} */null;
-          this._destroyed = true;
-        }
-
-        /**
-         * @type {boolean} Whether this object is obsolete because the managed node is no longer inert.
-         * If the object has been destroyed, any attempt to access it will cause an exception.
-         */
-
-      }, {
-        key: '_throwIfDestroyed',
-
-
-        /**
-         * Throw if user tries to access destroyed InertNode.
-         */
-        value: function _throwIfDestroyed() {
-          if (this.destroyed) {
-            throw new Error('Trying to access destroyed InertNode');
-          }
-        }
-
-        /** @return {boolean} */
-
-      }, {
-        key: 'ensureUntabbable',
-
-
-        /** Save the existing tabindex value and make the node untabbable and unfocusable */
-        value: function ensureUntabbable() {
-          if (this.node.nodeType !== Node.ELEMENT_NODE) {
-            return;
-          }
-          var element = /** @type {!HTMLElement} */this.node;
-          if (matches.call(element, _focusableElementsString)) {
-            if ( /** @type {!HTMLElement} */element.tabIndex === -1 && this.hasSavedTabIndex) {
-              return;
-            }
-
-            if (element.hasAttribute('tabindex')) {
-              this._savedTabIndex = /** @type {!HTMLElement} */element.tabIndex;
-            }
-            element.setAttribute('tabindex', '-1');
-            if (element.nodeType === Node.ELEMENT_NODE) {
-              element.focus = function () {};
-              this._overrodeFocusMethod = true;
-            }
-          } else if (element.hasAttribute('tabindex')) {
-            this._savedTabIndex = /** @type {!HTMLElement} */element.tabIndex;
-            element.removeAttribute('tabindex');
-          }
-        }
-
-        /**
-         * Add another inert root to this inert node's set of managing inert roots.
-         * @param {!InertRoot} inertRoot
-         */
-
-      }, {
-        key: 'addInertRoot',
-        value: function addInertRoot(inertRoot) {
-          this._throwIfDestroyed();
-          this._inertRoots.add(inertRoot);
-        }
-
-        /**
-         * Remove the given inert root from this inert node's set of managing inert roots.
-         * If the set of managing inert roots becomes empty, this node is no longer inert,
-         * so the object should be destroyed.
-         * @param {!InertRoot} inertRoot
-         */
-
-      }, {
-        key: 'removeInertRoot',
-        value: function removeInertRoot(inertRoot) {
-          this._throwIfDestroyed();
-          this._inertRoots['delete'](inertRoot);
-          if (this._inertRoots.size === 0) {
-            this.destructor();
-          }
-        }
-      }, {
-        key: 'destroyed',
-        get: function get() {
-          return (/** @type {!InertNode} */this._destroyed
-          );
-        }
-      }, {
-        key: 'hasSavedTabIndex',
-        get: function get() {
-          return this._savedTabIndex !== null;
-        }
-
-        /** @return {!Node} */
-
-      }, {
-        key: 'node',
-        get: function get() {
-          this._throwIfDestroyed();
-          return this._node;
-        }
-
-        /** @param {?number} tabIndex */
-
-      }, {
-        key: 'savedTabIndex',
-        set: function set(tabIndex) {
-          this._throwIfDestroyed();
-          this._savedTabIndex = tabIndex;
-        }
-
-        /** @return {?number} */
-        ,
-        get: function get() {
-          this._throwIfDestroyed();
-          return this._savedTabIndex;
-        }
-      }]);
-
-      return InertNode;
-    }();
-
-    /**
-     * InertManager is a per-document singleton object which manages all inert roots and nodes.
-     *
-     * When an element becomes an inert root by having an `inert` attribute set and/or its `inert`
-     * property set to `true`, the `setInert` method creates an `InertRoot` object for the element.
-     * The `InertRoot` in turn registers itself as managing all of the element's focusable descendant
-     * nodes via the `register()` method. The `InertManager` ensures that a single `InertNode` instance
-     * is created for each such node, via the `_managedNodes` map.
-     */
-
-
-    var InertManager = function () {
-      /**
-       * @param {!Document} document
-       */
-      function InertManager(document) {
-        _classCallCheck(this, InertManager);
-
-        if (!document) {
-          throw new Error('Missing required argument; InertManager needs to wrap a document.');
-        }
-
-        /** @type {!Document} */
-        this._document = document;
-
-        /**
-         * All managed nodes known to this InertManager. In a map to allow looking up by Node.
-         * @type {!Map<!Node, !InertNode>}
-         */
-        this._managedNodes = new Map();
-
-        /**
-         * All inert roots known to this InertManager. In a map to allow looking up by Node.
-         * @type {!Map<!Node, !InertRoot>}
-         */
-        this._inertRoots = new Map();
-
-        /**
-         * Observer for mutations on `document.body`.
-         * @type {!MutationObserver}
-         */
-        this._observer = new MutationObserver(this._watchForInert.bind(this));
-
-        // Add inert style.
-        addInertStyle(document.head || document.body || document.documentElement);
-
-        // Wait for document to be loaded.
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', this._onDocumentLoaded.bind(this));
-        } else {
-          this._onDocumentLoaded();
-        }
-      }
-
-      /**
-       * Set whether the given element should be an inert root or not.
-       * @param {!HTMLElement} root
-       * @param {boolean} inert
-       */
-
-
-      _createClass(InertManager, [{
-        key: 'setInert',
-        value: function setInert(root, inert) {
-          if (inert) {
-            if (this._inertRoots.has(root)) {
-              // element is already inert
-              return;
-            }
-
-            var inertRoot = new InertRoot(root, this);
-            root.setAttribute('inert', '');
-            this._inertRoots.set(root, inertRoot);
-            // If not contained in the document, it must be in a shadowRoot.
-            // Ensure inert styles are added there.
-            if (!this._document.body.contains(root)) {
-              var parent = root.parentNode;
-              while (parent) {
-                if (parent.nodeType === 11) {
-                  addInertStyle(parent);
-                }
-                parent = parent.parentNode;
-              }
-            }
-          } else {
-            if (!this._inertRoots.has(root)) {
-              // element is already non-inert
-              return;
-            }
-
-            var _inertRoot = this._inertRoots.get(root);
-            _inertRoot.destructor();
-            this._inertRoots['delete'](root);
-            root.removeAttribute('inert');
-          }
-        }
-
-        /**
-         * Get the InertRoot object corresponding to the given inert root element, if any.
-         * @param {!Node} element
-         * @return {!InertRoot|undefined}
-         */
-
-      }, {
-        key: 'getInertRoot',
-        value: function getInertRoot(element) {
-          return this._inertRoots.get(element);
-        }
-
-        /**
-         * Register the given InertRoot as managing the given node.
-         * In the case where the node has a previously existing inert root, this inert root will
-         * be added to its set of inert roots.
-         * @param {!Node} node
-         * @param {!InertRoot} inertRoot
-         * @return {!InertNode} inertNode
-         */
-
-      }, {
-        key: 'register',
-        value: function register(node, inertRoot) {
-          var inertNode = this._managedNodes.get(node);
-          if (inertNode !== undefined) {
-            // node was already in an inert subtree
-            inertNode.addInertRoot(inertRoot);
-          } else {
-            inertNode = new InertNode(node, inertRoot);
-          }
-
-          this._managedNodes.set(node, inertNode);
-
-          return inertNode;
-        }
-
-        /**
-         * De-register the given InertRoot as managing the given inert node.
-         * Removes the inert root from the InertNode's set of managing inert roots, and remove the inert
-         * node from the InertManager's set of managed nodes if it is destroyed.
-         * If the node is not currently managed, this is essentially a no-op.
-         * @param {!Node} node
-         * @param {!InertRoot} inertRoot
-         * @return {?InertNode} The potentially destroyed InertNode associated with this node, if any.
-         */
-
-      }, {
-        key: 'deregister',
-        value: function deregister(node, inertRoot) {
-          var inertNode = this._managedNodes.get(node);
-          if (!inertNode) {
-            return null;
-          }
-
-          inertNode.removeInertRoot(inertRoot);
-          if (inertNode.destroyed) {
-            this._managedNodes['delete'](node);
-          }
-
-          return inertNode;
-        }
-
-        /**
-         * Callback used when document has finished loading.
-         */
-
-      }, {
-        key: '_onDocumentLoaded',
-        value: function _onDocumentLoaded() {
-          // Find all inert roots in document and make them actually inert.
-          var inertElements = slice.call(this._document.querySelectorAll('[inert]'));
-          inertElements.forEach(function (inertElement) {
-            this.setInert(inertElement, true);
-          }, this);
-
-          // Comment this out to use programmatic API only.
-          this._observer.observe(this._document.body || this._document.documentElement, { attributes: true, subtree: true, childList: true });
-        }
-
-        /**
-         * Callback used when mutation observer detects attribute changes.
-         * @param {!Array<!MutationRecord>} records
-         * @param {!MutationObserver} self
-         */
-
-      }, {
-        key: '_watchForInert',
-        value: function _watchForInert(records, self) {
-          var _this = this;
-          records.forEach(function (record) {
-            switch (record.type) {
-              case 'childList':
-                slice.call(record.addedNodes).forEach(function (node) {
-                  if (node.nodeType !== Node.ELEMENT_NODE) {
-                    return;
-                  }
-                  var inertElements = slice.call(node.querySelectorAll('[inert]'));
-                  if (matches.call(node, '[inert]')) {
-                    inertElements.unshift(node);
-                  }
-                  inertElements.forEach(function (inertElement) {
-                    this.setInert(inertElement, true);
-                  }, _this);
-                }, _this);
-                break;
-              case 'attributes':
-                if (record.attributeName !== 'inert') {
-                  return;
-                }
-                var target = /** @type {!HTMLElement} */record.target;
-                var inert = target.hasAttribute('inert');
-                _this.setInert(target, inert);
-                break;
-            }
-          }, this);
-        }
-      }]);
-
-      return InertManager;
-    }();
-
-    /**
-     * Recursively walk the composed tree from |node|.
-     * @param {!Node} node
-     * @param {(function (!HTMLElement))=} callback Callback to be called for each element traversed,
-     *     before descending into child nodes.
-     * @param {?ShadowRoot=} shadowRootAncestor The nearest ShadowRoot ancestor, if any.
-     */
-
-
-    function composedTreeWalk(node, callback, shadowRootAncestor) {
-      if (node.nodeType == Node.ELEMENT_NODE) {
-        var element = /** @type {!HTMLElement} */node;
-        if (callback) {
-          callback(element);
-        }
-
-        // Descend into node:
-        // If it has a ShadowRoot, ignore all child elements - these will be picked
-        // up by the <content> or <shadow> elements. Descend straight into the
-        // ShadowRoot.
-        var shadowRoot = /** @type {!HTMLElement} */element.shadowRoot;
-        if (shadowRoot) {
-          composedTreeWalk(shadowRoot, callback);
-          return;
-        }
-
-        // If it is a <content> element, descend into distributed elements - these
-        // are elements from outside the shadow root which are rendered inside the
-        // shadow DOM.
-        if (element.localName == 'content') {
-          var content = /** @type {!HTMLContentElement} */element;
-          // Verifies if ShadowDom v0 is supported.
-          var distributedNodes = content.getDistributedNodes ? content.getDistributedNodes() : [];
-          for (var i = 0; i < distributedNodes.length; i++) {
-            composedTreeWalk(distributedNodes[i], callback);
-          }
-          return;
-        }
-
-        // If it is a <slot> element, descend into assigned nodes - these
-        // are elements from outside the shadow root which are rendered inside the
-        // shadow DOM.
-        if (element.localName == 'slot') {
-          var slot = /** @type {!HTMLSlotElement} */element;
-          // Verify if ShadowDom v1 is supported.
-          var _distributedNodes = slot.assignedNodes ? slot.assignedNodes({ flatten: true }) : [];
-          for (var _i = 0; _i < _distributedNodes.length; _i++) {
-            composedTreeWalk(_distributedNodes[_i], callback);
-          }
-          return;
-        }
-      }
-
-      // If it is neither the parent of a ShadowRoot, a <content> element, a <slot>
-      // element, nor a <shadow> element recurse normally.
-      var child = node.firstChild;
-      while (child != null) {
-        composedTreeWalk(child, callback);
-        child = child.nextSibling;
-      }
-    }
-
-    /**
-     * Adds a style element to the node containing the inert specific styles
-     * @param {!Node} node
-     */
-    function addInertStyle(node) {
-      if (node.querySelector('style#inert-style, link#inert-style')) {
-        return;
-      }
-      var style = document.createElement('style');
-      style.setAttribute('id', 'inert-style');
-      style.textContent = '\n' + '[inert] {\n' + '  pointer-events: none;\n' + '  cursor: default;\n' + '}\n' + '\n' + '[inert], [inert] * {\n' + '  -webkit-user-select: none;\n' + '  -moz-user-select: none;\n' + '  -ms-user-select: none;\n' + '  user-select: none;\n' + '}\n';
-      node.appendChild(style);
-    }
-
-    if (!HTMLElement.prototype.hasOwnProperty('inert')) {
-      /** @type {!InertManager} */
-      var inertManager = new InertManager(document);
-
-      Object.defineProperty(HTMLElement.prototype, 'inert', {
-        enumerable: true,
-        /** @this {!HTMLElement} */
-        get: function get() {
-          return this.hasAttribute('inert');
-        },
-        /** @this {!HTMLElement} */
-        set: function set(inert) {
-          inertManager.setInert(this, inert);
-        }
-      });
-    }
-  })();
-
-})));
-
-/**
- * @license
- * Copyright 2016 Google Inc.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-var cssClasses$a = {
-    CLOSING: 'mdc-dialog--closing',
-    OPEN: 'mdc-dialog--open',
-    OPENING: 'mdc-dialog--opening',
-    SCROLLABLE: 'mdc-dialog--scrollable',
-    SCROLL_LOCK: 'mdc-dialog-scroll-lock',
-    STACKED: 'mdc-dialog--stacked',
-    FULLSCREEN: 'mdc-dialog--fullscreen',
-    // Class for showing a scroll divider on full-screen dialog header element.
-    // Should only be displayed on scrollable content, when the dialog content is
-    // scrolled "underneath" the header.
-    SCROLL_DIVIDER_HEADER: 'mdc-dialog-scroll-divider-header',
-    // Class for showing a scroll divider on a full-screen dialog footer element.
-    // Should only be displayed on scrolalble content, when the dialog content is
-    // obscured "underneath" the footer.
-    SCROLL_DIVIDER_FOOTER: 'mdc-dialog-scroll-divider-footer',
-    // The "surface scrim" is a scrim covering only the surface of a dialog. This
-    // is used in situations where a confirmation dialog is shown over an already
-    // opened full-screen dialog. On larger screen-sizes, the full-screen dialog
-    // is sized as a modal and so in these situations we display a "surface scrim"
-    // to prevent a "double scrim" (where the scrim from the secondary
-    // confirmation dialog would overlap with the scrim from the full-screen
-    // dialog).
-    SURFACE_SCRIM_SHOWN: 'mdc-dialog__surface-scrim--shown',
-    // "Showing" animating class for the surface-scrim.
-    SURFACE_SCRIM_SHOWING: 'mdc-dialog__surface-scrim--showing',
-    // "Hiding" animating class for the surface-scrim.
-    SURFACE_SCRIM_HIDING: 'mdc-dialog__surface-scrim--hiding',
-    // Class to hide a dialog's scrim (used in conjunction with a surface-scrim).
-    // Note that we only hide the original scrim rather than removing it entirely
-    // to prevent interactions with the content behind this scrim, and to capture
-    // scrim clicks.
-    SCRIM_HIDDEN: 'mdc-dialog__scrim--hidden',
-};
-var strings$8 = {
-    ACTION_ATTRIBUTE: 'data-mdc-dialog-action',
-    BUTTON_DEFAULT_ATTRIBUTE: 'data-mdc-dialog-button-default',
-    BUTTON_SELECTOR: '.mdc-dialog__button',
-    CLOSED_EVENT: 'MDCDialog:closed',
-    CLOSE_ACTION: 'close',
-    CLOSING_EVENT: 'MDCDialog:closing',
-    CONTAINER_SELECTOR: '.mdc-dialog__container',
-    CONTENT_SELECTOR: '.mdc-dialog__content',
-    DESTROY_ACTION: 'destroy',
-    INITIAL_FOCUS_ATTRIBUTE: 'data-mdc-dialog-initial-focus',
-    OPENED_EVENT: 'MDCDialog:opened',
-    OPENING_EVENT: 'MDCDialog:opening',
-    SCRIM_SELECTOR: '.mdc-dialog__scrim',
-    SUPPRESS_DEFAULT_PRESS_SELECTOR: [
-        'textarea',
-        '.mdc-menu .mdc-list-item',
-        '.mdc-menu .mdc-deprecated-list-item',
-    ].join(', '),
-    SURFACE_SELECTOR: '.mdc-dialog__surface',
-};
-var numbers$6 = {
-    DIALOG_ANIMATION_CLOSE_TIME_MS: 75,
-    DIALOG_ANIMATION_OPEN_TIME_MS: 150,
-};
-
-/**
- * @license
- * Copyright 2020 Google Inc.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-/**
- * AnimationFrame provides a user-friendly abstraction around requesting
- * and canceling animation frames.
- */
-var AnimationFrame = /** @class */ (function () {
-    function AnimationFrame() {
-        this.rafIDs = new Map();
-    }
-    /**
-     * Requests an animation frame. Cancels any existing frame with the same key.
-     * @param {string} key The key for this callback.
-     * @param {FrameRequestCallback} callback The callback to be executed.
-     */
-    AnimationFrame.prototype.request = function (key, callback) {
-        var _this = this;
-        this.cancel(key);
-        var frameID = requestAnimationFrame(function (frame) {
-            _this.rafIDs.delete(key);
-            // Callback must come *after* the key is deleted so that nested calls to
-            // request with the same key are not deleted.
-            callback(frame);
-        });
-        this.rafIDs.set(key, frameID);
-    };
-    /**
-     * Cancels a queued callback with the given key.
-     * @param {string} key The key for this callback.
-     */
-    AnimationFrame.prototype.cancel = function (key) {
-        var rafID = this.rafIDs.get(key);
-        if (rafID) {
-            cancelAnimationFrame(rafID);
-            this.rafIDs.delete(key);
-        }
-    };
-    /**
-     * Cancels all queued callback.
-     */
-    AnimationFrame.prototype.cancelAll = function () {
-        var _this = this;
-        // Need to use forEach because it's the only iteration method supported
-        // by IE11. Suppress the underscore because we don't need it.
-        // tslint:disable-next-line:enforce-name-casing
-        this.rafIDs.forEach(function (_, key) {
-            _this.cancel(key);
-        });
-    };
-    /**
-     * Returns the queue of unexecuted callback keys.
-     */
-    AnimationFrame.prototype.getQueue = function () {
-        var queue = [];
-        // Need to use forEach because it's the only iteration method supported
-        // by IE11. Suppress the underscore because we don't need it.
-        // tslint:disable-next-line:enforce-name-casing
-        this.rafIDs.forEach(function (_, key) {
-            queue.push(key);
-        });
-        return queue;
-    };
-    return AnimationFrame;
-}());
-
-/**
- * @license
- * Copyright 2017 Google Inc.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-var AnimationKeys;
-(function (AnimationKeys) {
-    AnimationKeys["POLL_SCROLL_POS"] = "poll_scroll_position";
-    AnimationKeys["POLL_LAYOUT_CHANGE"] = "poll_layout_change";
-})(AnimationKeys || (AnimationKeys = {}));
-var MDCDialogFoundation = /** @class */ (function (_super) {
-    __extends(MDCDialogFoundation, _super);
-    function MDCDialogFoundation(adapter) {
-        var _this = _super.call(this, __assign(__assign({}, MDCDialogFoundation.defaultAdapter), adapter)) || this;
-        _this.dialogOpen = false;
-        _this.isFullscreen = false;
-        _this.animationFrame = 0;
-        _this.animationTimer = 0;
-        _this.escapeKeyAction = strings$8.CLOSE_ACTION;
-        _this.scrimClickAction = strings$8.CLOSE_ACTION;
-        _this.autoStackButtons = true;
-        _this.areButtonsStacked = false;
-        _this.suppressDefaultPressSelector = strings$8.SUPPRESS_DEFAULT_PRESS_SELECTOR;
-        _this.animFrame = new AnimationFrame();
-        _this.contentScrollHandler = function () {
-            _this.handleScrollEvent();
-        };
-        _this.windowResizeHandler = function () {
-            _this.layout();
-        };
-        _this.windowOrientationChangeHandler = function () {
-            _this.layout();
-        };
-        return _this;
-    }
-    Object.defineProperty(MDCDialogFoundation, "cssClasses", {
-        get: function () {
-            return cssClasses$a;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(MDCDialogFoundation, "strings", {
-        get: function () {
-            return strings$8;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(MDCDialogFoundation, "numbers", {
-        get: function () {
-            return numbers$6;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(MDCDialogFoundation, "defaultAdapter", {
-        get: function () {
-            return {
-                addBodyClass: function () { return undefined; },
-                addClass: function () { return undefined; },
-                areButtonsStacked: function () { return false; },
-                clickDefaultButton: function () { return undefined; },
-                eventTargetMatches: function () { return false; },
-                getActionFromEvent: function () { return ''; },
-                getInitialFocusEl: function () { return null; },
-                hasClass: function () { return false; },
-                isContentScrollable: function () { return false; },
-                notifyClosed: function () { return undefined; },
-                notifyClosing: function () { return undefined; },
-                notifyOpened: function () { return undefined; },
-                notifyOpening: function () { return undefined; },
-                releaseFocus: function () { return undefined; },
-                removeBodyClass: function () { return undefined; },
-                removeClass: function () { return undefined; },
-                reverseButtons: function () { return undefined; },
-                trapFocus: function () { return undefined; },
-                registerContentEventHandler: function () { return undefined; },
-                deregisterContentEventHandler: function () { return undefined; },
-                isScrollableContentAtTop: function () { return false; },
-                isScrollableContentAtBottom: function () { return false; },
-                registerWindowEventHandler: function () { return undefined; },
-                deregisterWindowEventHandler: function () { return undefined; },
-            };
-        },
-        enumerable: false,
-        configurable: true
-    });
-    MDCDialogFoundation.prototype.init = function () {
-        if (this.adapter.hasClass(cssClasses$a.STACKED)) {
-            this.setAutoStackButtons(false);
-        }
-        this.isFullscreen = this.adapter.hasClass(cssClasses$a.FULLSCREEN);
-    };
-    MDCDialogFoundation.prototype.destroy = function () {
-        if (this.animationTimer) {
-            clearTimeout(this.animationTimer);
-            this.handleAnimationTimerEnd();
-        }
-        if (this.isFullscreen) {
-            this.adapter.deregisterContentEventHandler('scroll', this.contentScrollHandler);
-        }
-        this.animFrame.cancelAll();
-        this.adapter.deregisterWindowEventHandler('resize', this.windowResizeHandler);
-        this.adapter.deregisterWindowEventHandler('orientationchange', this.windowOrientationChangeHandler);
-    };
-    MDCDialogFoundation.prototype.open = function (dialogOptions) {
-        var _this = this;
-        this.dialogOpen = true;
-        this.adapter.notifyOpening();
-        this.adapter.addClass(cssClasses$a.OPENING);
-        if (this.isFullscreen) {
-            // A scroll event listener is registered even if the dialog is not
-            // scrollable on open, since the window resize event, or orientation
-            // change may make the dialog scrollable after it is opened.
-            this.adapter.registerContentEventHandler('scroll', this.contentScrollHandler);
-        }
-        if (dialogOptions && dialogOptions.isAboveFullscreenDialog) {
-            this.adapter.addClass(cssClasses$a.SCRIM_HIDDEN);
-        }
-        this.adapter.registerWindowEventHandler('resize', this.windowResizeHandler);
-        this.adapter.registerWindowEventHandler('orientationchange', this.windowOrientationChangeHandler);
-        // Wait a frame once display is no longer "none", to establish basis for
-        // animation
-        this.runNextAnimationFrame(function () {
-            _this.adapter.addClass(cssClasses$a.OPEN);
-            _this.adapter.addBodyClass(cssClasses$a.SCROLL_LOCK);
-            _this.layout();
-            _this.animationTimer = setTimeout(function () {
-                _this.handleAnimationTimerEnd();
-                _this.adapter.trapFocus(_this.adapter.getInitialFocusEl());
-                _this.adapter.notifyOpened();
-            }, numbers$6.DIALOG_ANIMATION_OPEN_TIME_MS);
-        });
-    };
-    MDCDialogFoundation.prototype.close = function (action) {
-        var _this = this;
-        if (action === void 0) { action = ''; }
-        if (!this.dialogOpen) {
-            // Avoid redundant close calls (and events), e.g. from keydown on elements
-            // that inherently emit click
-            return;
-        }
-        this.dialogOpen = false;
-        this.adapter.notifyClosing(action);
-        this.adapter.addClass(cssClasses$a.CLOSING);
-        this.adapter.removeClass(cssClasses$a.OPEN);
-        this.adapter.removeBodyClass(cssClasses$a.SCROLL_LOCK);
-        if (this.isFullscreen) {
-            this.adapter.deregisterContentEventHandler('scroll', this.contentScrollHandler);
-        }
-        this.adapter.deregisterWindowEventHandler('resize', this.windowResizeHandler);
-        this.adapter.deregisterWindowEventHandler('orientationchange', this.windowOrientationChangeHandler);
-        cancelAnimationFrame(this.animationFrame);
-        this.animationFrame = 0;
-        clearTimeout(this.animationTimer);
-        this.animationTimer = setTimeout(function () {
-            _this.adapter.releaseFocus();
-            _this.handleAnimationTimerEnd();
-            _this.adapter.notifyClosed(action);
-        }, numbers$6.DIALOG_ANIMATION_CLOSE_TIME_MS);
-    };
-    /**
-     * Used only in instances of showing a secondary dialog over a full-screen
-     * dialog. Shows the "surface scrim" displayed over the full-screen dialog.
-     */
-    MDCDialogFoundation.prototype.showSurfaceScrim = function () {
-        var _this = this;
-        this.adapter.addClass(cssClasses$a.SURFACE_SCRIM_SHOWING);
-        this.runNextAnimationFrame(function () {
-            _this.adapter.addClass(cssClasses$a.SURFACE_SCRIM_SHOWN);
-        });
-    };
-    /**
-     * Used only in instances of showing a secondary dialog over a full-screen
-     * dialog. Hides the "surface scrim" displayed over the full-screen dialog.
-     */
-    MDCDialogFoundation.prototype.hideSurfaceScrim = function () {
-        this.adapter.removeClass(cssClasses$a.SURFACE_SCRIM_SHOWN);
-        this.adapter.addClass(cssClasses$a.SURFACE_SCRIM_HIDING);
-    };
-    /**
-     * Handles `transitionend` event triggered when surface scrim animation is
-     * finished.
-     */
-    MDCDialogFoundation.prototype.handleSurfaceScrimTransitionEnd = function () {
-        this.adapter.removeClass(cssClasses$a.SURFACE_SCRIM_HIDING);
-        this.adapter.removeClass(cssClasses$a.SURFACE_SCRIM_SHOWING);
-    };
-    MDCDialogFoundation.prototype.isOpen = function () {
-        return this.dialogOpen;
-    };
-    MDCDialogFoundation.prototype.getEscapeKeyAction = function () {
-        return this.escapeKeyAction;
-    };
-    MDCDialogFoundation.prototype.setEscapeKeyAction = function (action) {
-        this.escapeKeyAction = action;
-    };
-    MDCDialogFoundation.prototype.getScrimClickAction = function () {
-        return this.scrimClickAction;
-    };
-    MDCDialogFoundation.prototype.setScrimClickAction = function (action) {
-        this.scrimClickAction = action;
-    };
-    MDCDialogFoundation.prototype.getAutoStackButtons = function () {
-        return this.autoStackButtons;
-    };
-    MDCDialogFoundation.prototype.setAutoStackButtons = function (autoStack) {
-        this.autoStackButtons = autoStack;
-    };
-    MDCDialogFoundation.prototype.getSuppressDefaultPressSelector = function () {
-        return this.suppressDefaultPressSelector;
-    };
-    MDCDialogFoundation.prototype.setSuppressDefaultPressSelector = function (selector) {
-        this.suppressDefaultPressSelector = selector;
-    };
-    MDCDialogFoundation.prototype.layout = function () {
-        var _this = this;
-        this.animFrame.request(AnimationKeys.POLL_LAYOUT_CHANGE, function () {
-            _this.layoutInternal();
-        });
-    };
-    /** Handles click on the dialog root element. */
-    MDCDialogFoundation.prototype.handleClick = function (evt) {
-        var isScrim = this.adapter.eventTargetMatches(evt.target, strings$8.SCRIM_SELECTOR);
-        // Check for scrim click first since it doesn't require querying ancestors.
-        if (isScrim && this.scrimClickAction !== '') {
-            this.close(this.scrimClickAction);
-        }
-        else {
-            var action = this.adapter.getActionFromEvent(evt);
-            if (action) {
-                this.close(action);
-            }
-        }
-    };
-    /** Handles keydown on the dialog root element. */
-    MDCDialogFoundation.prototype.handleKeydown = function (evt) {
-        var isEnter = evt.key === 'Enter' || evt.keyCode === 13;
-        if (!isEnter) {
-            return;
-        }
-        var action = this.adapter.getActionFromEvent(evt);
-        if (action) {
-            // Action button callback is handled in `handleClick`,
-            // since space/enter keydowns on buttons trigger click events.
-            return;
-        }
-        // `composedPath` is used here, when available, to account for use cases
-        // where a target meant to suppress the default press behaviour
-        // may exist in a shadow root.
-        // For example, a textarea inside a web component:
-        // <mwc-dialog>
-        //   <horizontal-layout>
-        //     #shadow-root (open)
-        //       <mwc-textarea>
-        //         #shadow-root (open)
-        //           <textarea></textarea>
-        //       </mwc-textarea>
-        //   </horizontal-layout>
-        // </mwc-dialog>
-        var target = evt.composedPath ? evt.composedPath()[0] : evt.target;
-        var isDefault = this.suppressDefaultPressSelector ?
-            !this.adapter.eventTargetMatches(target, this.suppressDefaultPressSelector) :
-            true;
-        if (isEnter && isDefault) {
-            this.adapter.clickDefaultButton();
-        }
-    };
-    /** Handles keydown on the document. */
-    MDCDialogFoundation.prototype.handleDocumentKeydown = function (evt) {
-        var isEscape = evt.key === 'Escape' || evt.keyCode === 27;
-        if (isEscape && this.escapeKeyAction !== '') {
-            this.close(this.escapeKeyAction);
-        }
-    };
-    /**
-     * Handles scroll event on the dialog's content element -- showing a scroll
-     * divider on the header or footer based on the scroll position. This handler
-     * should only be registered on full-screen dialogs with scrollable content.
-     */
-    MDCDialogFoundation.prototype.handleScrollEvent = function () {
-        var _this = this;
-        // Since scroll events can fire at a high rate, we throttle these events by
-        // using requestAnimationFrame.
-        this.animFrame.request(AnimationKeys.POLL_SCROLL_POS, function () {
-            _this.toggleScrollDividerHeader();
-            _this.toggleScrollDividerFooter();
-        });
-    };
-    MDCDialogFoundation.prototype.layoutInternal = function () {
-        if (this.autoStackButtons) {
-            this.detectStackedButtons();
-        }
-        this.toggleScrollableClasses();
-    };
-    MDCDialogFoundation.prototype.handleAnimationTimerEnd = function () {
-        this.animationTimer = 0;
-        this.adapter.removeClass(cssClasses$a.OPENING);
-        this.adapter.removeClass(cssClasses$a.CLOSING);
-    };
-    /**
-     * Runs the given logic on the next animation frame, using setTimeout to
-     * factor in Firefox reflow behavior.
-     */
-    MDCDialogFoundation.prototype.runNextAnimationFrame = function (callback) {
-        var _this = this;
-        cancelAnimationFrame(this.animationFrame);
-        this.animationFrame = requestAnimationFrame(function () {
-            _this.animationFrame = 0;
-            clearTimeout(_this.animationTimer);
-            _this.animationTimer = setTimeout(callback, 0);
-        });
-    };
-    MDCDialogFoundation.prototype.detectStackedButtons = function () {
-        // Remove the class first to let us measure the buttons' natural positions.
-        this.adapter.removeClass(cssClasses$a.STACKED);
-        var areButtonsStacked = this.adapter.areButtonsStacked();
-        if (areButtonsStacked) {
-            this.adapter.addClass(cssClasses$a.STACKED);
-        }
-        if (areButtonsStacked !== this.areButtonsStacked) {
-            this.adapter.reverseButtons();
-            this.areButtonsStacked = areButtonsStacked;
-        }
-    };
-    MDCDialogFoundation.prototype.toggleScrollableClasses = function () {
-        // Remove the class first to let us measure the natural height of the
-        // content.
-        this.adapter.removeClass(cssClasses$a.SCROLLABLE);
-        if (this.adapter.isContentScrollable()) {
-            this.adapter.addClass(cssClasses$a.SCROLLABLE);
-            if (this.isFullscreen) {
-                // If dialog is full-screen and scrollable, check if a scroll divider
-                // should be shown.
-                this.toggleScrollDividerHeader();
-                this.toggleScrollDividerFooter();
-            }
-        }
-    };
-    MDCDialogFoundation.prototype.toggleScrollDividerHeader = function () {
-        if (!this.adapter.isScrollableContentAtTop()) {
-            this.adapter.addClass(cssClasses$a.SCROLL_DIVIDER_HEADER);
-        }
-        else if (this.adapter.hasClass(cssClasses$a.SCROLL_DIVIDER_HEADER)) {
-            this.adapter.removeClass(cssClasses$a.SCROLL_DIVIDER_HEADER);
-        }
-    };
-    MDCDialogFoundation.prototype.toggleScrollDividerFooter = function () {
-        if (!this.adapter.isScrollableContentAtBottom()) {
-            this.adapter.addClass(cssClasses$a.SCROLL_DIVIDER_FOOTER);
-        }
-        else if (this.adapter.hasClass(cssClasses$a.SCROLL_DIVIDER_FOOTER)) {
-            this.adapter.removeClass(cssClasses$a.SCROLL_DIVIDER_FOOTER);
-        }
-    };
-    return MDCDialogFoundation;
-}(MDCFoundation));
-// tslint:disable-next-line:no-default-export Needed for backward compatibility with MDC Web v0.44.0 and earlier.
-var MDCDialogFoundation$1 = MDCDialogFoundation;
-
-/**
- * @license
- * Copyright 2019 Google Inc.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-/**
- * Determine whether the current browser supports passive event listeners, and
- * if so, use them.
- */
-function applyPassive(globalObj) {
-    if (globalObj === void 0) { globalObj = window; }
-    return supportsPassiveOption(globalObj) ?
-        { passive: true } :
-        false;
-}
-function supportsPassiveOption(globalObj) {
-    if (globalObj === void 0) { globalObj = window; }
-    // See
-    // https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
-    var passiveSupported = false;
-    try {
-        var options = {
-            // This function will be called when the browser
-            // attempts to access the passive property.
-            get passive() {
-                passiveSupported = true;
-                return false;
-            }
-        };
-        var handler = function () { };
-        globalObj.document.addEventListener('test', handler, options);
-        globalObj.document.removeEventListener('test', handler, options);
-    }
-    catch (err) {
-        passiveSupported = false;
-    }
-    return passiveSupported;
-}
-
-/**
- * @license
- * Copyright 2018 Google LLC
- * SPDX-License-Identifier: Apache-2.0
- */
-/**
- * Specifies an observer callback that is run when the decorated property
- * changes. The observer receives the current and old value as arguments.
- */
-const observer = (observer) => 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-(proto, propName) => {
-    // if we haven't wrapped `updated` in this class, do so
-    if (!proto.constructor
-        ._observers) {
-        proto.constructor._observers = new Map();
-        const userUpdated = proto.updated;
-        proto.updated = function (changedProperties) {
-            userUpdated.call(this, changedProperties);
-            changedProperties.forEach((v, k) => {
-                const observers = this.constructor
-                    ._observers;
-                const observer = observers.get(k);
-                if (observer !== undefined) {
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    observer.call(this, this[k], v);
-                }
-            });
-        };
-        // clone any existing observers (superclasses)
-        // eslint-disable-next-line no-prototype-builtins
-    }
-    else if (!proto.constructor.hasOwnProperty('_observers')) {
-        const observers = proto.constructor._observers;
-        proto.constructor._observers = new Map();
-        observers.forEach(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (v, k) => proto.constructor._observers.set(k, v));
-    }
-    // set this method
-    proto.constructor._observers.set(propName, observer);
-};
-
-/**
- * @license
- * Copyright 2019 Google LLC
- * SPDX-License-Identifier: Apache-2.0
- */
-const blockingElements = document.$blockingElements;
-class DialogBase extends BaseElement {
-    constructor() {
-        super(...arguments);
-        this.hideActions = false;
-        this.stacked = false;
-        this.heading = '';
-        this.scrimClickAction = 'close';
-        this.escapeKeyAction = 'close';
-        this.open = false;
-        this.defaultAction = 'close';
-        this.actionAttribute = 'dialogAction';
-        this.initialFocusAttribute = 'dialogInitialFocus';
-        this.initialSupressDefaultPressSelector = '';
-        this.mdcFoundationClass = MDCDialogFoundation$1;
-        this.boundHandleClick = null;
-        this.boundHandleKeydown = null;
-        this.boundHandleDocumentKeydown = null;
-    }
-    set suppressDefaultPressSelector(selector) {
-        if (this.mdcFoundation) {
-            this.mdcFoundation.setSuppressDefaultPressSelector(selector);
-        }
-        else {
-            this.initialSupressDefaultPressSelector = selector;
-        }
-    }
-    /**
-     * @export
-     */
-    get suppressDefaultPressSelector() {
-        return this.mdcFoundation ?
-            this.mdcFoundation.getSuppressDefaultPressSelector() :
-            this.initialSupressDefaultPressSelector;
-    }
-    get primaryButton() {
-        let assignedNodes = this.primarySlot.assignedNodes();
-        assignedNodes = assignedNodes.filter((node) => node instanceof HTMLElement);
-        const button = assignedNodes[0];
-        return button ? button : null;
-    }
-    emitNotification(name, action) {
-        const init = { detail: action ? { action } : {} };
-        const ev = new CustomEvent(name, init);
-        this.dispatchEvent(ev);
-    }
-    getInitialFocusEl() {
-        const initFocusSelector = `[${this.initialFocusAttribute}]`;
-        // only search light DOM. This typically handles all the cases
-        const lightDomQs = this.querySelector(initFocusSelector);
-        if (lightDomQs) {
-            return lightDomQs;
-        }
-        // if not in light dom, search each flattened distributed node.
-        const primarySlot = this.primarySlot;
-        const primaryNodes = primarySlot.assignedNodes({ flatten: true });
-        const primaryFocusElement = this.searchNodeTreesForAttribute(primaryNodes, this.initialFocusAttribute);
-        if (primaryFocusElement) {
-            return primaryFocusElement;
-        }
-        const secondarySlot = this.secondarySlot;
-        const secondaryNodes = secondarySlot.assignedNodes({ flatten: true });
-        const secondaryFocusElement = this.searchNodeTreesForAttribute(secondaryNodes, this.initialFocusAttribute);
-        if (secondaryFocusElement) {
-            return secondaryFocusElement;
-        }
-        const contentSlot = this.contentSlot;
-        const contentNodes = contentSlot.assignedNodes({ flatten: true });
-        const initFocusElement = this.searchNodeTreesForAttribute(contentNodes, this.initialFocusAttribute);
-        return initFocusElement;
-    }
-    searchNodeTreesForAttribute(nodes, attribute) {
-        for (const node of nodes) {
-            if (!(node instanceof HTMLElement)) {
-                continue;
-            }
-            if (node.hasAttribute(attribute)) {
-                return node;
-            }
-            else {
-                const selection = node.querySelector(`[${attribute}]`);
-                if (selection) {
-                    return selection;
-                }
-            }
-        }
-        return null;
-    }
-    createAdapter() {
-        return Object.assign(Object.assign({}, addHasRemoveClass(this.mdcRoot)), { addBodyClass: () => document.body.style.overflow = 'hidden', removeBodyClass: () => document.body.style.overflow = '', areButtonsStacked: () => this.stacked, clickDefaultButton: () => {
-                const primary = this.primaryButton;
-                if (primary) {
-                    primary.click();
-                }
-            }, eventTargetMatches: (target, selector) => target ? matches(target, selector) : false, getActionFromEvent: (e) => {
-                if (!e.target) {
-                    return '';
-                }
-                const element = closest(e.target, `[${this.actionAttribute}]`);
-                const action = element && element.getAttribute(this.actionAttribute);
-                return action;
-            }, getInitialFocusEl: () => {
-                return this.getInitialFocusEl();
-            }, isContentScrollable: () => {
-                const el = this.contentElement;
-                return el ? el.scrollHeight > el.offsetHeight : false;
-            }, notifyClosed: (action) => this.emitNotification('closed', action), notifyClosing: (action) => {
-                if (!this.closingDueToDisconnect) {
-                    // Don't set our open state to closed just because we were
-                    // disconnected. That way if we get reconnected, we'll know to
-                    // re-open.
-                    this.open = false;
-                }
-                this.emitNotification('closing', action);
-            }, notifyOpened: () => this.emitNotification('opened'), notifyOpening: () => {
-                this.open = true;
-                this.emitNotification('opening');
-            }, reverseButtons: () => { }, releaseFocus: () => {
-                blockingElements.remove(this);
-            }, trapFocus: (el) => {
-                if (!this.isConnected) {
-                    // this is the case where it is opened and closed and then removed
-                    // from DOM before the animation has completed. Blocking Elements will
-                    // throw if this is the case
-                    return;
-                }
-                blockingElements.push(this);
-                if (el) {
-                    el.focus();
-                }
-            }, registerContentEventHandler: (evtType, handler) => {
-                const el = this.contentElement;
-                el.addEventListener(evtType, handler);
-            }, deregisterContentEventHandler: (evtType, handler) => {
-                const el = this.contentElement;
-                el.removeEventListener(evtType, handler);
-            }, isScrollableContentAtTop: () => {
-                const el = this.contentElement;
-                return el ? el.scrollTop === 0 : false;
-            }, isScrollableContentAtBottom: () => {
-                const el = this.contentElement;
-                return el ?
-                    Math.ceil(el.scrollHeight - el.scrollTop) === el.clientHeight :
-                    false;
-            }, registerWindowEventHandler: (evtType, handler) => {
-                window.addEventListener(evtType, handler, applyPassive());
-            }, deregisterWindowEventHandler: (evtType, handler) => {
-                window.removeEventListener(evtType, handler, applyPassive());
-            } });
-    }
-    render() {
-        const classes = {
-            [cssClasses$a.STACKED]: this.stacked,
-        };
-        let heading = x ``;
-        if (this.heading) {
-            heading = this.renderHeading();
-        }
-        const actionsClasses = {
-            'mdc-dialog__actions': !this.hideActions,
-        };
-        return x `
-    <div class="mdc-dialog ${o$1(classes)}"
-        role="alertdialog"
-        aria-modal="true"
-        aria-labelledby="title"
-        aria-describedby="content">
-      <div class="mdc-dialog__container">
-        <div class="mdc-dialog__surface">
-          ${heading}
-          <div id="content" class="mdc-dialog__content">
-            <slot id="contentSlot"></slot>
-          </div>
-          <footer
-              id="actions"
-              class="${o$1(actionsClasses)}">
-            <span>
-              <slot name="secondaryAction"></slot>
-            </span>
-            <span>
-             <slot name="primaryAction"></slot>
-            </span>
-          </footer>
-        </div>
-      </div>
-      <div class="mdc-dialog__scrim"></div>
-    </div>`;
-    }
-    renderHeading() {
-        return x `
-      <h2 id="title" class="mdc-dialog__title">${this.heading}</h2>`;
-    }
-    firstUpdated() {
-        super.firstUpdated();
-        this.mdcFoundation.setAutoStackButtons(true);
-        if (this.initialSupressDefaultPressSelector) {
-            this.suppressDefaultPressSelector =
-                this.initialSupressDefaultPressSelector;
-        }
-        else {
-            this.suppressDefaultPressSelector = [
-                this.suppressDefaultPressSelector, 'mwc-textarea',
-                'mwc-menu mwc-list-item', 'mwc-select mwc-list-item'
-            ].join(', ');
-        }
-        this.boundHandleClick = this.mdcFoundation.handleClick.bind(this.mdcFoundation);
-        this.boundHandleKeydown = this.mdcFoundation.handleKeydown.bind(this.mdcFoundation);
-        this.boundHandleDocumentKeydown =
-            this.mdcFoundation.handleDocumentKeydown.bind(this.mdcFoundation);
-    }
-    connectedCallback() {
-        super.connectedCallback();
-        if (this.open && this.mdcFoundation && !this.mdcFoundation.isOpen()) {
-            // We probably got disconnected while we were still open. Re-open,
-            // matching the behavior of native <dialog>.
-            this.setEventListeners();
-            this.mdcFoundation.open();
-        }
-    }
-    disconnectedCallback() {
-        super.disconnectedCallback();
-        if (this.open && this.mdcFoundation) {
-            // If this dialog is opened and then disconnected, we want to close
-            // the foundation, so that 1) any pending timers are cancelled
-            // (in particular for trapFocus), and 2) if we reconnect, we can open
-            // the foundation again to retrigger animations and focus.
-            this.removeEventListeners();
-            this.closingDueToDisconnect = true;
-            this.mdcFoundation.close(this.currentAction || this.defaultAction);
-            this.closingDueToDisconnect = false;
-            this.currentAction = undefined;
-            // When we close normally, the releaseFocus callback handles removing
-            // ourselves from the blocking elements stack. However, that callback
-            // happens on a delay, and when we are closing due to a disconnect we
-            // need to remove ourselves before the blocking element polyfill's
-            // mutation observer notices and logs a warning, since it's not valid to
-            // be in the blocking elements stack while disconnected.
-            blockingElements.remove(this);
-        }
-    }
-    forceLayout() {
-        this.mdcFoundation.layout();
-    }
-    focus() {
-        const initialFocusEl = this.getInitialFocusEl();
-        initialFocusEl && initialFocusEl.focus();
-    }
-    blur() {
-        if (!this.shadowRoot) {
-            return;
-        }
-        const activeEl = this.shadowRoot.activeElement;
-        if (activeEl) {
-            if (activeEl instanceof HTMLElement) {
-                activeEl.blur();
-            }
-        }
-        else {
-            const root = this.getRootNode();
-            const activeEl = root instanceof Document ? root.activeElement : null;
-            if (activeEl instanceof HTMLElement) {
-                activeEl.blur();
-            }
-        }
-    }
-    setEventListeners() {
-        if (this.boundHandleClick) {
-            this.mdcRoot.addEventListener('click', this.boundHandleClick);
-        }
-        if (this.boundHandleKeydown) {
-            this.mdcRoot.addEventListener('keydown', this.boundHandleKeydown, applyPassive());
-        }
-        if (this.boundHandleDocumentKeydown) {
-            document.addEventListener('keydown', this.boundHandleDocumentKeydown, applyPassive());
-        }
-    }
-    removeEventListeners() {
-        if (this.boundHandleClick) {
-            this.mdcRoot.removeEventListener('click', this.boundHandleClick);
-        }
-        if (this.boundHandleKeydown) {
-            this.mdcRoot.removeEventListener('keydown', this.boundHandleKeydown);
-        }
-        if (this.boundHandleDocumentKeydown) {
-            document.removeEventListener('keydown', this.boundHandleDocumentKeydown);
-        }
-    }
-    close() {
-        this.open = false;
-    }
-    show() {
-        this.open = true;
-    }
-}
-__decorate$1([
-    i$2('.mdc-dialog')
-], DialogBase.prototype, "mdcRoot", void 0);
-__decorate$1([
-    i$2('slot[name="primaryAction"]')
-], DialogBase.prototype, "primarySlot", void 0);
-__decorate$1([
-    i$2('slot[name="secondaryAction"]')
-], DialogBase.prototype, "secondarySlot", void 0);
-__decorate$1([
-    i$2('#contentSlot')
-], DialogBase.prototype, "contentSlot", void 0);
-__decorate$1([
-    i$2('.mdc-dialog__content')
-], DialogBase.prototype, "contentElement", void 0);
-__decorate$1([
-    i$2('.mdc-container')
-], DialogBase.prototype, "conatinerElement", void 0);
-__decorate$1([
-    e$6({ type: Boolean })
-], DialogBase.prototype, "hideActions", void 0);
-__decorate$1([
-    e$6({ type: Boolean }),
-    observer(function () {
-        this.forceLayout();
-    })
-], DialogBase.prototype, "stacked", void 0);
-__decorate$1([
-    e$6({ type: String })
-], DialogBase.prototype, "heading", void 0);
-__decorate$1([
-    e$6({ type: String }),
-    observer(function (newAction) {
-        this.mdcFoundation.setScrimClickAction(newAction);
-    })
-], DialogBase.prototype, "scrimClickAction", void 0);
-__decorate$1([
-    e$6({ type: String }),
-    observer(function (newAction) {
-        this.mdcFoundation.setEscapeKeyAction(newAction);
-    })
-], DialogBase.prototype, "escapeKeyAction", void 0);
-__decorate$1([
-    e$6({ type: Boolean, reflect: true }),
-    observer(function (isOpen) {
-        // Check isConnected because we could have been disconnected before first
-        // update. If we're now closed, then we shouldn't start the MDC foundation
-        // opening animation. If we're now closed, then we've already closed the
-        // foundation in disconnectedCallback.
-        if (this.mdcFoundation && this.isConnected) {
-            if (isOpen) {
-                this.setEventListeners();
-                this.mdcFoundation.open();
-            }
-            else {
-                this.removeEventListeners();
-                this.mdcFoundation.close(this.currentAction || this.defaultAction);
-                this.currentAction = undefined;
-            }
-        }
-    })
-], DialogBase.prototype, "open", void 0);
-__decorate$1([
-    e$6()
-], DialogBase.prototype, "defaultAction", void 0);
-__decorate$1([
-    e$6()
-], DialogBase.prototype, "actionAttribute", void 0);
-__decorate$1([
-    e$6()
-], DialogBase.prototype, "initialFocusAttribute", void 0);
-
-/**
- * @license
- * Copyright 2021 Google LLC
- * SPDX-LIcense-Identifier: Apache-2.0
- */
-const styles$f = i$5 `.mdc-dialog .mdc-dialog__surface{background-color:#fff;background-color:var(--mdc-theme-surface, #fff)}.mdc-dialog .mdc-dialog__scrim{background-color:rgba(0,0,0,.32)}.mdc-dialog .mdc-dialog__surface-scrim{background-color:rgba(0,0,0,.32)}.mdc-dialog .mdc-dialog__title{color:rgba(0,0,0,.87)}.mdc-dialog .mdc-dialog__content{color:rgba(0,0,0,.6)}.mdc-dialog .mdc-dialog__close{color:#000;color:var(--mdc-theme-on-surface, #000)}.mdc-dialog .mdc-dialog__close .mdc-icon-button__ripple::before,.mdc-dialog .mdc-dialog__close .mdc-icon-button__ripple::after{background-color:#000;background-color:var(--mdc-ripple-color, var(--mdc-theme-on-surface, #000))}.mdc-dialog .mdc-dialog__close:hover .mdc-icon-button__ripple::before,.mdc-dialog .mdc-dialog__close.mdc-ripple-surface--hover .mdc-icon-button__ripple::before{opacity:0.04;opacity:var(--mdc-ripple-hover-opacity, 0.04)}.mdc-dialog .mdc-dialog__close.mdc-ripple-upgraded--background-focused .mdc-icon-button__ripple::before,.mdc-dialog .mdc-dialog__close:not(.mdc-ripple-upgraded):focus .mdc-icon-button__ripple::before{transition-duration:75ms;opacity:0.12;opacity:var(--mdc-ripple-focus-opacity, 0.12)}.mdc-dialog .mdc-dialog__close:not(.mdc-ripple-upgraded) .mdc-icon-button__ripple::after{transition:opacity 150ms linear}.mdc-dialog .mdc-dialog__close:not(.mdc-ripple-upgraded):active .mdc-icon-button__ripple::after{transition-duration:75ms;opacity:0.12;opacity:var(--mdc-ripple-press-opacity, 0.12)}.mdc-dialog .mdc-dialog__close.mdc-ripple-upgraded{--mdc-ripple-fg-opacity:var(--mdc-ripple-press-opacity, 0.12)}.mdc-dialog.mdc-dialog--scrollable .mdc-dialog__title,.mdc-dialog.mdc-dialog--scrollable .mdc-dialog__actions,.mdc-dialog.mdc-dialog--scrollable.mdc-dialog-scroll-divider-footer .mdc-dialog__actions{border-color:rgba(0,0,0,.12)}.mdc-dialog.mdc-dialog--scrollable .mdc-dialog__title{border-bottom:1px solid rgba(0,0,0,.12);margin-bottom:0}.mdc-dialog.mdc-dialog-scroll-divider-header.mdc-dialog--fullscreen .mdc-dialog__header{box-shadow:0px 3px 1px -2px rgba(0, 0, 0, 0.2),0px 2px 2px 0px rgba(0, 0, 0, 0.14),0px 1px 5px 0px rgba(0,0,0,.12)}.mdc-dialog .mdc-dialog__surface{border-radius:4px;border-radius:var(--mdc-shape-medium, 4px)}.mdc-dialog__surface{box-shadow:0px 11px 15px -7px rgba(0, 0, 0, 0.2),0px 24px 38px 3px rgba(0, 0, 0, 0.14),0px 9px 46px 8px rgba(0,0,0,.12)}.mdc-dialog__title{-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased;font-family:Roboto, sans-serif;font-family:var(--mdc-typography-headline6-font-family, var(--mdc-typography-font-family, Roboto, sans-serif));font-size:1.25rem;font-size:var(--mdc-typography-headline6-font-size, 1.25rem);line-height:2rem;line-height:var(--mdc-typography-headline6-line-height, 2rem);font-weight:500;font-weight:var(--mdc-typography-headline6-font-weight, 500);letter-spacing:0.0125em;letter-spacing:var(--mdc-typography-headline6-letter-spacing, 0.0125em);text-decoration:inherit;text-decoration:var(--mdc-typography-headline6-text-decoration, inherit);text-transform:inherit;text-transform:var(--mdc-typography-headline6-text-transform, inherit)}.mdc-dialog__content{-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased;font-family:Roboto, sans-serif;font-family:var(--mdc-typography-body1-font-family, var(--mdc-typography-font-family, Roboto, sans-serif));font-size:1rem;font-size:var(--mdc-typography-body1-font-size, 1rem);line-height:1.5rem;line-height:var(--mdc-typography-body1-line-height, 1.5rem);font-weight:400;font-weight:var(--mdc-typography-body1-font-weight, 400);letter-spacing:0.03125em;letter-spacing:var(--mdc-typography-body1-letter-spacing, 0.03125em);text-decoration:inherit;text-decoration:var(--mdc-typography-body1-text-decoration, inherit);text-transform:inherit;text-transform:var(--mdc-typography-body1-text-transform, inherit)}.mdc-elevation-overlay{position:absolute;border-radius:inherit;pointer-events:none;opacity:0;opacity:var(--mdc-elevation-overlay-opacity, 0);transition:opacity 280ms cubic-bezier(0.4, 0, 0.2, 1);background-color:#fff;background-color:var(--mdc-elevation-overlay-color, #fff)}.mdc-dialog,.mdc-dialog__scrim{position:fixed;top:0;left:0;align-items:center;justify-content:center;box-sizing:border-box;width:100%;height:100%}.mdc-dialog{display:none;z-index:7;z-index:var(--mdc-dialog-z-index, 7)}.mdc-dialog .mdc-dialog__content{padding:20px 24px 20px 24px}.mdc-dialog .mdc-dialog__surface{min-width:280px}@media(max-width: 592px){.mdc-dialog .mdc-dialog__surface{max-width:calc(100vw - 32px)}}@media(min-width: 592px){.mdc-dialog .mdc-dialog__surface{max-width:560px}}.mdc-dialog .mdc-dialog__surface{max-height:calc(100% - 32px)}.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface{max-width:none}@media(max-width: 960px){.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface{max-height:560px;width:560px}.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface .mdc-dialog__close{right:-12px}}@media(max-width: 720px)and (max-width: 672px){.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface{width:calc(100vw - 112px)}}@media(max-width: 720px)and (min-width: 672px){.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface{width:560px}}@media(max-width: 720px)and (max-height: 720px){.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface{max-height:calc(100vh - 160px)}}@media(max-width: 720px)and (min-height: 720px){.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface{max-height:560px}}@media(max-width: 720px){.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface .mdc-dialog__close{right:-12px}}@media(max-width: 720px)and (max-height: 400px){.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface{height:100%;max-height:100vh;max-width:100vw;width:100vw;border-radius:0}.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface .mdc-dialog__close{order:-1;left:-12px}.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface .mdc-dialog__header{padding:0 16px 9px;justify-content:flex-start}.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface .mdc-dialog__title{margin-left:calc(16px - 2 * 12px)}}@media(max-width: 600px){.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface{height:100%;max-height:100vh;max-width:100vw;width:100vw;border-radius:0}.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface .mdc-dialog__close{order:-1;left:-12px}.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface .mdc-dialog__header{padding:0 16px 9px;justify-content:flex-start}.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface .mdc-dialog__title{margin-left:calc(16px - 2 * 12px)}}@media(min-width: 960px){.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface{width:calc(100vw - 400px)}.mdc-dialog.mdc-dialog--fullscreen .mdc-dialog__surface .mdc-dialog__close{right:-12px}}.mdc-dialog.mdc-dialog__scrim--hidden .mdc-dialog__scrim{opacity:0}.mdc-dialog__scrim{opacity:0;z-index:-1}.mdc-dialog__container{display:flex;flex-direction:row;align-items:center;justify-content:space-around;box-sizing:border-box;height:100%;transform:scale(0.8);opacity:0;pointer-events:none}.mdc-dialog__surface{position:relative;display:flex;flex-direction:column;flex-grow:0;flex-shrink:0;box-sizing:border-box;max-width:100%;max-height:100%;pointer-events:auto;overflow-y:auto}.mdc-dialog__surface .mdc-elevation-overlay{width:100%;height:100%;top:0;left:0}[dir=rtl] .mdc-dialog__surface,.mdc-dialog__surface[dir=rtl]{text-align:right}@media screen and (forced-colors: active),(-ms-high-contrast: active){.mdc-dialog__surface{outline:2px solid windowText}}.mdc-dialog__surface::before{position:absolute;box-sizing:border-box;width:100%;height:100%;top:0;left:0;border:2px solid transparent;border-radius:inherit;content:"";pointer-events:none}@media screen and (forced-colors: active){.mdc-dialog__surface::before{border-color:CanvasText}}@media screen and (-ms-high-contrast: active),screen and (-ms-high-contrast: none){.mdc-dialog__surface::before{content:none}}.mdc-dialog__title{display:block;margin-top:0;position:relative;flex-shrink:0;box-sizing:border-box;margin:0 0 1px;padding:0 24px 9px}.mdc-dialog__title::before{display:inline-block;width:0;height:40px;content:"";vertical-align:0}[dir=rtl] .mdc-dialog__title,.mdc-dialog__title[dir=rtl]{text-align:right}.mdc-dialog--scrollable .mdc-dialog__title{margin-bottom:1px;padding-bottom:15px}.mdc-dialog--fullscreen .mdc-dialog__header{align-items:baseline;border-bottom:1px solid transparent;display:inline-flex;justify-content:space-between;padding:0 24px 9px;z-index:1}@media screen and (forced-colors: active){.mdc-dialog--fullscreen .mdc-dialog__header{border-bottom-color:CanvasText}}.mdc-dialog--fullscreen .mdc-dialog__header .mdc-dialog__close{right:-12px}.mdc-dialog--fullscreen .mdc-dialog__title{margin-bottom:0;padding:0;border-bottom:0}.mdc-dialog--fullscreen.mdc-dialog--scrollable .mdc-dialog__title{border-bottom:0;margin-bottom:0}.mdc-dialog--fullscreen .mdc-dialog__close{top:5px}.mdc-dialog--fullscreen.mdc-dialog--scrollable .mdc-dialog__actions{border-top:1px solid transparent}@media screen and (forced-colors: active){.mdc-dialog--fullscreen.mdc-dialog--scrollable .mdc-dialog__actions{border-top-color:CanvasText}}.mdc-dialog__content{flex-grow:1;box-sizing:border-box;margin:0;overflow:auto}.mdc-dialog__content>:first-child{margin-top:0}.mdc-dialog__content>:last-child{margin-bottom:0}.mdc-dialog__title+.mdc-dialog__content,.mdc-dialog__header+.mdc-dialog__content{padding-top:0}.mdc-dialog--scrollable .mdc-dialog__title+.mdc-dialog__content{padding-top:8px;padding-bottom:8px}.mdc-dialog__content .mdc-deprecated-list:first-child:last-child{padding:6px 0 0}.mdc-dialog--scrollable .mdc-dialog__content .mdc-deprecated-list:first-child:last-child{padding:0}.mdc-dialog__actions{display:flex;position:relative;flex-shrink:0;flex-wrap:wrap;align-items:center;justify-content:flex-end;box-sizing:border-box;min-height:52px;margin:0;padding:8px;border-top:1px solid transparent}@media screen and (forced-colors: active){.mdc-dialog__actions{border-top-color:CanvasText}}.mdc-dialog--stacked .mdc-dialog__actions{flex-direction:column;align-items:flex-end}.mdc-dialog__button{margin-left:8px;margin-right:0;max-width:100%;text-align:right}[dir=rtl] .mdc-dialog__button,.mdc-dialog__button[dir=rtl]{margin-left:0;margin-right:8px}.mdc-dialog__button:first-child{margin-left:0;margin-right:0}[dir=rtl] .mdc-dialog__button:first-child,.mdc-dialog__button:first-child[dir=rtl]{margin-left:0;margin-right:0}[dir=rtl] .mdc-dialog__button,.mdc-dialog__button[dir=rtl]{text-align:left}.mdc-dialog--stacked .mdc-dialog__button:not(:first-child){margin-top:12px}.mdc-dialog--open,.mdc-dialog--opening,.mdc-dialog--closing{display:flex}.mdc-dialog--opening .mdc-dialog__scrim{transition:opacity 150ms linear}.mdc-dialog--opening .mdc-dialog__container{transition:opacity 75ms linear,transform 150ms 0ms cubic-bezier(0, 0, 0.2, 1)}.mdc-dialog--closing .mdc-dialog__scrim,.mdc-dialog--closing .mdc-dialog__container{transition:opacity 75ms linear}.mdc-dialog--closing .mdc-dialog__container{transform:none}.mdc-dialog--open .mdc-dialog__scrim{opacity:1}.mdc-dialog--open .mdc-dialog__container{transform:none;opacity:1}.mdc-dialog--open.mdc-dialog__surface-scrim--shown .mdc-dialog__surface-scrim{opacity:1;z-index:1}.mdc-dialog--open.mdc-dialog__surface-scrim--hiding .mdc-dialog__surface-scrim{transition:opacity 75ms linear}.mdc-dialog--open.mdc-dialog__surface-scrim--showing .mdc-dialog__surface-scrim{transition:opacity 150ms linear}.mdc-dialog__surface-scrim{display:none;opacity:0;position:absolute;width:100%;height:100%}.mdc-dialog__surface-scrim--shown .mdc-dialog__surface-scrim,.mdc-dialog__surface-scrim--showing .mdc-dialog__surface-scrim,.mdc-dialog__surface-scrim--hiding .mdc-dialog__surface-scrim{display:block}.mdc-dialog-scroll-lock{overflow:hidden}.mdc-dialog--no-content-padding .mdc-dialog__content{padding:0}.mdc-dialog--sheet .mdc-dialog__close{right:12px;top:9px;position:absolute;z-index:1}#actions:not(.mdc-dialog__actions){display:none}.mdc-dialog__surface{box-shadow:var(--mdc-dialog-box-shadow, 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12))}@media(min-width: 560px){.mdc-dialog .mdc-dialog__surface{max-width:560px;max-width:var(--mdc-dialog-max-width, 560px)}}.mdc-dialog .mdc-dialog__scrim{background-color:rgba(0, 0, 0, 0.32);background-color:var(--mdc-dialog-scrim-color, rgba(0, 0, 0, 0.32))}.mdc-dialog .mdc-dialog__title{color:rgba(0, 0, 0, 0.87);color:var(--mdc-dialog-heading-ink-color, rgba(0, 0, 0, 0.87))}.mdc-dialog .mdc-dialog__content{color:rgba(0, 0, 0, 0.6);color:var(--mdc-dialog-content-ink-color, rgba(0, 0, 0, 0.6))}.mdc-dialog.mdc-dialog--scrollable .mdc-dialog__title,.mdc-dialog.mdc-dialog--scrollable .mdc-dialog__actions{border-color:rgba(0, 0, 0, 0.12);border-color:var(--mdc-dialog-scroll-divider-color, rgba(0, 0, 0, 0.12))}.mdc-dialog .mdc-dialog__surface{min-width:280px;min-width:var(--mdc-dialog-min-width, 280px)}.mdc-dialog .mdc-dialog__surface{max-height:var(--mdc-dialog-max-height, calc(100% - 32px))}#actions ::slotted(*){margin-left:8px;margin-right:0;max-width:100%;text-align:right}[dir=rtl] #actions ::slotted(*),#actions ::slotted(*[dir=rtl]){margin-left:0;margin-right:8px}[dir=rtl] #actions ::slotted(*),#actions ::slotted(*[dir=rtl]){text-align:left}.mdc-dialog--stacked #actions{flex-direction:column-reverse}.mdc-dialog--stacked #actions *:not(:last-child) ::slotted(*){flex-basis:.000000001px;margin-top:12px}`;
-
-/**
- * @license
- * Copyright 2019 Google LLC
- * SPDX-License-Identifier: Apache-2.0
- */
-let Dialog = class Dialog extends DialogBase {
-};
-Dialog.styles = [styles$f];
-Dialog = __decorate$1([
-    e$7('mwc-dialog')
-], Dialog);
-
-/**
- * @license
  * Copyright 2021 Google LLC
  * SPDX-LIcense-Identifier: Apache-2.0
  */
@@ -25521,37 +25546,37 @@ class ButtonBase extends s$1 {
 ButtonBase.shadowRootOptions = { mode: 'open', delegatesFocus: true };
 __decorate$1([
     ariaProperty,
-    e$6({ type: String, attribute: 'aria-haspopup' })
+    n$2({ type: String, attribute: 'aria-haspopup' })
 ], ButtonBase.prototype, "ariaHasPopup", void 0);
 __decorate$1([
-    e$6({ type: Boolean, reflect: true })
+    n$2({ type: Boolean, reflect: true })
 ], ButtonBase.prototype, "raised", void 0);
 __decorate$1([
-    e$6({ type: Boolean, reflect: true })
+    n$2({ type: Boolean, reflect: true })
 ], ButtonBase.prototype, "unelevated", void 0);
 __decorate$1([
-    e$6({ type: Boolean, reflect: true })
+    n$2({ type: Boolean, reflect: true })
 ], ButtonBase.prototype, "outlined", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], ButtonBase.prototype, "dense", void 0);
 __decorate$1([
-    e$6({ type: Boolean, reflect: true })
+    n$2({ type: Boolean, reflect: true })
 ], ButtonBase.prototype, "disabled", void 0);
 __decorate$1([
-    e$6({ type: Boolean, attribute: 'trailingicon' })
+    n$2({ type: Boolean, attribute: 'trailingicon' })
 ], ButtonBase.prototype, "trailingIcon", void 0);
 __decorate$1([
-    e$6({ type: Boolean, reflect: true })
+    n$2({ type: Boolean, reflect: true })
 ], ButtonBase.prototype, "fullwidth", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], ButtonBase.prototype, "icon", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], ButtonBase.prototype, "label", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], ButtonBase.prototype, "expandContent", void 0);
 __decorate$1([
     i$2('#button')
@@ -25599,7 +25624,7 @@ function newEditEvent(edit) {
 function crossProduct$1(...arrays) {
     return arrays.reduce((a, b) => a.flatMap(d => b.map(e => [d, e].flat())), [[]]);
 }
-const wizardInputSelector = 'scl-wizarding-textfield, mwc-textfield, mwc-textarea, ace-editor, mwc-select, scl-wizarding-select, scl-wizarding-checkbox';
+const wizardInputSelector = 'scl-textfield, mwc-textfield, mwc-textarea, ace-editor, mwc-select, scl-select, scl-checkbox';
 function canCheckValidity(type) {
     return 'checkValidity' in type;
 }
@@ -25652,7 +25677,14 @@ function isPublic$1(element) {
     return !element.closest('Private');
 }
 /** @returns a new [[`tag`]] element owned by [[`doc`]]. */
-function createElement(doc, tag, attrs) {
+function createElement(doc, tag, attrs, namespace) {
+    if (namespace) {
+        const element = doc.createElementNS(namespace, tag);
+        Object.entries(attrs)
+            .filter(([_, value]) => value !== null)
+            .forEach(([name, value]) => element.setAttribute(name, value));
+        return element;
+    }
     const element = doc.createElementNS(doc.documentElement.namespaceURI, tag);
     Object.entries(attrs)
         .filter(([_, value]) => value !== null)
@@ -25662,7 +25694,9 @@ function createElement(doc, tag, attrs) {
 function getChildElementsByTagName$1(element, tag) {
     if (!element || !tag)
         return [];
-    return Array.from(element.children).filter(element => element.tagName === tag);
+    return Array.from(element.children).filter(
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    element => element.tagName === tag);
 }
 function getTypes(element) {
     var _a, _b, _c;
@@ -25836,7 +25870,7 @@ function dialogInputs(dialog) {
 function dialogValid(dialog) {
     return dialogInputs(dialog).every(checkValidity);
 }
-/** A wizard style dialog consisting of several pages commiting some
+/** A wizard style dialog consisting of several pages committing some
  * [[`EditorAction`]] on completion and aborting on dismissal. */
 let SclWizardDialog = class SclWizardDialog extends s$1 {
     /** The `Dialog` showing the active [[`WizardPage`]]. */
@@ -25984,6 +26018,7 @@ let SclWizardDialog = class SclWizardDialog extends s$1 {
 };
 SclWizardDialog.styles = i$5 `
     mwc-dialog {
+      --mdc-dialog-min-width: 400px;
       --mdc-dialog-max-width: 92vw;
     }
 
@@ -26009,10 +26044,10 @@ SclWizardDialog.styles = i$5 `
     }
   `;
 __decorate$1([
-    e$6({ type: Array })
+    n$2({ type: Array })
 ], SclWizardDialog.prototype, "wizard", void 0);
 __decorate$1([
-    e$6({ attribute: false })
+    n$2({ attribute: false })
 ], SclWizardDialog.prototype, "wizardRequest", void 0);
 __decorate$1([
     t$1()
@@ -26089,7 +26124,6 @@ let CodeDialog = class CodeDialog extends s$1 {
         soft-tabs
         theme="ace/theme/solarized_light"
         value="${formatXml(new XMLSerializer().serializeToString(this.element))}"
-        style="width: 80vw; height: calc(100vh - 240px);"
       ></ace-editor>
       <mwc-button slot="secondaryAction" dialogAction="close"
         >Cancel</mwc-button
@@ -26114,7 +26148,7 @@ CodeDialog.styles = i$5 `
     }
   `;
 __decorate$1([
-    e$6({ attribute: false })
+    n$2({ attribute: false })
 ], CodeDialog.prototype, "element", void 0);
 __decorate$1([
     i$2('ace-editor')
@@ -28145,16 +28179,16 @@ __decorate$1([
     e$3('mwc-ripple')
 ], ListItemBase.prototype, "ripple", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], ListItemBase.prototype, "value", void 0);
 __decorate$1([
-    e$6({ type: String, reflect: true })
+    n$2({ type: String, reflect: true })
 ], ListItemBase.prototype, "group", void 0);
 __decorate$1([
-    e$6({ type: Number, reflect: true })
+    n$2({ type: Number, reflect: true })
 ], ListItemBase.prototype, "tabindex", void 0);
 __decorate$1([
-    e$6({ type: Boolean, reflect: true }),
+    n$2({ type: Boolean, reflect: true }),
     observer(function (value) {
         if (value) {
             this.setAttribute('aria-disabled', 'true');
@@ -28165,22 +28199,22 @@ __decorate$1([
     })
 ], ListItemBase.prototype, "disabled", void 0);
 __decorate$1([
-    e$6({ type: Boolean, reflect: true })
+    n$2({ type: Boolean, reflect: true })
 ], ListItemBase.prototype, "twoline", void 0);
 __decorate$1([
-    e$6({ type: Boolean, reflect: true })
+    n$2({ type: Boolean, reflect: true })
 ], ListItemBase.prototype, "activated", void 0);
 __decorate$1([
-    e$6({ type: String, reflect: true })
+    n$2({ type: String, reflect: true })
 ], ListItemBase.prototype, "graphic", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], ListItemBase.prototype, "multipleGraphics", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], ListItemBase.prototype, "hasMeta", void 0);
 __decorate$1([
-    e$6({ type: Boolean, reflect: true }),
+    n$2({ type: Boolean, reflect: true }),
     observer(function (value) {
         if (value) {
             this.removeAttribute('aria-checked');
@@ -28195,7 +28229,7 @@ __decorate$1([
     })
 ], ListItemBase.prototype, "noninteractive", void 0);
 __decorate$1([
-    e$6({ type: Boolean, reflect: true }),
+    n$2({ type: Boolean, reflect: true }),
     observer(function (value) {
         const role = this.getAttribute('role');
         const isAriaSelectable = role === 'gridcell' || role === 'option' ||
@@ -29330,7 +29364,7 @@ class ListBase extends BaseElement {
     }
 }
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], ListBase.prototype, "emptyMessage", void 0);
 __decorate$1([
     i$2('.mdc-deprecated-list')
@@ -29342,7 +29376,7 @@ __decorate$1([
     o$2('', true, '[tabindex="0"]')
 ], ListBase.prototype, "tabbableElements", void 0);
 __decorate$1([
-    e$6({ type: Boolean }),
+    n$2({ type: Boolean }),
     observer(function (value) {
         if (this.mdcFoundation) {
             this.mdcFoundation.setUseActivatedClass(value);
@@ -29350,7 +29384,7 @@ __decorate$1([
     })
 ], ListBase.prototype, "activatable", void 0);
 __decorate$1([
-    e$6({ type: Boolean }),
+    n$2({ type: Boolean }),
     observer(function (newValue, oldValue) {
         if (this.mdcFoundation) {
             this.mdcFoundation.setMulti(newValue);
@@ -29361,7 +29395,7 @@ __decorate$1([
     })
 ], ListBase.prototype, "multi", void 0);
 __decorate$1([
-    e$6({ type: Boolean }),
+    n$2({ type: Boolean }),
     observer(function (value) {
         if (this.mdcFoundation) {
             this.mdcFoundation.setWrapFocus(value);
@@ -29369,7 +29403,7 @@ __decorate$1([
     })
 ], ListBase.prototype, "wrapFocus", void 0);
 __decorate$1([
-    e$6({ type: String }),
+    n$2({ type: String }),
     observer(function (_newValue, oldValue) {
         if (oldValue !== undefined) {
             this.updateItems();
@@ -29377,16 +29411,16 @@ __decorate$1([
     })
 ], ListBase.prototype, "itemRoles", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], ListBase.prototype, "innerRole", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], ListBase.prototype, "innerAriaLabel", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], ListBase.prototype, "rootTabbable", void 0);
 __decorate$1([
-    e$6({ type: Boolean, reflect: true }),
+    n$2({ type: Boolean, reflect: true }),
     observer(function (value) {
         var _a, _b;
         if (value) {
@@ -30347,7 +30381,7 @@ __decorate$1([
     i$2('slot')
 ], MenuSurfaceBase.prototype, "slotElement", void 0);
 __decorate$1([
-    e$6({ type: Boolean }),
+    n$2({ type: Boolean }),
     observer(function (isAbsolute) {
         if (this.mdcFoundation && !this.fixed) {
             this.mdcFoundation.setIsHoisted(isAbsolute);
@@ -30355,10 +30389,10 @@ __decorate$1([
     })
 ], MenuSurfaceBase.prototype, "absolute", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], MenuSurfaceBase.prototype, "fullwidth", void 0);
 __decorate$1([
-    e$6({ type: Boolean }),
+    n$2({ type: Boolean }),
     observer(function (isFixed) {
         if (this.mdcFoundation && !this.absolute) {
             this.mdcFoundation.setFixedPosition(isFixed);
@@ -30366,7 +30400,7 @@ __decorate$1([
     })
 ], MenuSurfaceBase.prototype, "fixed", void 0);
 __decorate$1([
-    e$6({ type: Number }),
+    n$2({ type: Number }),
     observer(function (value) {
         if (this.mdcFoundation && this.y !== null && value !== null) {
             this.mdcFoundation.setAbsolutePosition(value, this.y);
@@ -30375,7 +30409,7 @@ __decorate$1([
     })
 ], MenuSurfaceBase.prototype, "x", void 0);
 __decorate$1([
-    e$6({ type: Number }),
+    n$2({ type: Number }),
     observer(function (value) {
         if (this.mdcFoundation && this.x !== null && value !== null) {
             this.mdcFoundation.setAbsolutePosition(this.x, value);
@@ -30384,7 +30418,7 @@ __decorate$1([
     })
 ], MenuSurfaceBase.prototype, "y", void 0);
 __decorate$1([
-    e$6({ type: Boolean }),
+    n$2({ type: Boolean }),
     observer(function (value) {
         if (this.mdcFoundation) {
             this.mdcFoundation.setQuickOpen(value);
@@ -30392,13 +30426,13 @@ __decorate$1([
     })
 ], MenuSurfaceBase.prototype, "quick", void 0);
 __decorate$1([
-    e$6({ type: Boolean, reflect: true }),
+    n$2({ type: Boolean, reflect: true }),
     observer(function (isOpen, wasOpen) {
         this.onOpenChanged(isOpen, wasOpen);
     })
 ], MenuSurfaceBase.prototype, "open", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], MenuSurfaceBase.prototype, "stayOpenOnBodyClick", void 0);
 __decorate$1([
     t$1(),
@@ -30414,7 +30448,7 @@ __decorate$1([
     })
 ], MenuSurfaceBase.prototype, "bitwiseCorner", void 0);
 __decorate$1([
-    e$6({ type: String }),
+    n$2({ type: String }),
     observer(function (value) {
         if (this.mdcFoundation) {
             const isValidValue = value === 'START' || value === 'END';
@@ -30430,7 +30464,7 @@ __decorate$1([
     })
 ], MenuSurfaceBase.prototype, "menuCorner", void 0);
 __decorate$1([
-    e$6({ type: String }),
+    n$2({ type: String }),
     observer(function (value) {
         if (this.mdcFoundation) {
             if (value) {
@@ -31048,58 +31082,58 @@ __decorate$1([
     i$2('slot')
 ], MenuBase.prototype, "slotElement", void 0);
 __decorate$1([
-    e$6({ type: Object })
+    n$2({ type: Object })
 ], MenuBase.prototype, "anchor", void 0);
 __decorate$1([
-    e$6({ type: Boolean, reflect: true })
+    n$2({ type: Boolean, reflect: true })
 ], MenuBase.prototype, "open", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], MenuBase.prototype, "quick", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], MenuBase.prototype, "wrapFocus", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], MenuBase.prototype, "innerRole", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], MenuBase.prototype, "innerAriaLabel", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], MenuBase.prototype, "corner", void 0);
 __decorate$1([
-    e$6({ type: Number })
+    n$2({ type: Number })
 ], MenuBase.prototype, "x", void 0);
 __decorate$1([
-    e$6({ type: Number })
+    n$2({ type: Number })
 ], MenuBase.prototype, "y", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], MenuBase.prototype, "absolute", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], MenuBase.prototype, "multi", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], MenuBase.prototype, "activatable", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], MenuBase.prototype, "fixed", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], MenuBase.prototype, "forceGroupSelection", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], MenuBase.prototype, "fullwidth", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], MenuBase.prototype, "menuCorner", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], MenuBase.prototype, "stayOpenOnBodyClick", void 0);
 __decorate$1([
-    e$6({ type: String }),
+    n$2({ type: String }),
     observer(function (value) {
         if (this.mdcFoundation) {
             this.mdcFoundation.setDefaultFocusState(DefaultFocusState[value]);
@@ -31198,7 +31232,7 @@ class FormElement extends BaseElement {
 }
 FormElement.shadowRootOptions = { mode: 'open', delegatesFocus: true };
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], FormElement.prototype, "disabled", void 0);
 
 /**
@@ -31859,18 +31893,18 @@ class SwitchBase extends FormElement {
     }
 }
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], SwitchBase.prototype, "processing", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], SwitchBase.prototype, "selected", void 0);
 __decorate$1([
     ariaProperty,
-    e$6({ type: String, attribute: 'aria-label' })
+    n$2({ type: String, attribute: 'aria-label' })
 ], SwitchBase.prototype, "ariaLabel", void 0);
 __decorate$1([
     ariaProperty,
-    e$6({ type: String, attribute: 'aria-labelledby' })
+    n$2({ type: String, attribute: 'aria-labelledby' })
 ], SwitchBase.prototype, "ariaLabelledBy", void 0);
 __decorate$1([
     e$3('mwc-ripple')
@@ -31879,10 +31913,10 @@ __decorate$1([
     t$1()
 ], SwitchBase.prototype, "shouldRenderRipple", void 0);
 __decorate$1([
-    e$6({ type: String, reflect: true })
+    n$2({ type: String, reflect: true })
 ], SwitchBase.prototype, "name", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], SwitchBase.prototype, "value", void 0);
 __decorate$1([
     i$2('input')
@@ -32087,10 +32121,10 @@ __decorate$1([
     i$2('.mdc-notched-outline')
 ], NotchedOutlineBase.prototype, "mdcRoot", void 0);
 __decorate$1([
-    e$6({ type: Number })
+    n$2({ type: Number })
 ], NotchedOutlineBase.prototype, "width", void 0);
 __decorate$1([
-    e$6({ type: Boolean, reflect: true })
+    n$2({ type: Boolean, reflect: true })
 ], NotchedOutlineBase.prototype, "open", void 0);
 __decorate$1([
     i$2('.mdc-notched-outline__notch')
@@ -33148,13 +33182,13 @@ var MDCTextFieldFoundation$1 = MDCTextFieldFoundation;
  * @license
  * Copyright 2020 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */const e=o=>void 0===o.strings,f={},s=(o,l=f)=>o._$AH=l;
+ */const e=o=>void 0===o.strings,s={},a=(o,l=s)=>o._$AH=l;
 
 /**
  * @license
  * Copyright 2020 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */const l=e$1(class extends i$1{constructor(r){if(super(r),r.type!==t.PROPERTY&&r.type!==t.ATTRIBUTE&&r.type!==t.BOOLEAN_ATTRIBUTE)throw Error("The `live` directive is not allowed on child or event bindings");if(!e(r))throw Error("`live` bindings can only contain a single expression")}render(r){return r}update(i,[t$1]){if(t$1===T||t$1===A)return t$1;const o=i.element,l=i.name;if(i.type===t.PROPERTY){if(t$1===o[l])return T}else if(i.type===t.BOOLEAN_ATTRIBUTE){if(!!t$1===o.hasAttribute(l))return T}else if(i.type===t.ATTRIBUTE&&o.getAttribute(l)===t$1+"")return T;return s(i),t$1}});
+ */const l=e$1(class extends i$1{constructor(r){if(super(r),r.type!==t.PROPERTY&&r.type!==t.ATTRIBUTE&&r.type!==t.BOOLEAN_ATTRIBUTE)throw Error("The `live` directive is not allowed on child or event bindings");if(!e(r))throw Error("`live` bindings can only contain a single expression")}render(r){return r}update(i,[t$1]){if(t$1===T$1||t$1===A$1)return t$1;const o=i.element,l=i.name;if(i.type===t.PROPERTY){if(t$1===o[l])return T$1}else if(i.type===t.BOOLEAN_ATTRIBUTE){if(!!t$1===o.hasAttribute(l))return T$1}else if(i.type===t.ATTRIBUTE&&o.getAttribute(l)===t$1+"")return T$1;return a(i),t$1}});
 
 /**
  * @license
@@ -33646,16 +33680,16 @@ __decorate$1([
     i$2('.mdc-notched-outline__notch')
 ], TextFieldBase.prototype, "notchElement", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], TextFieldBase.prototype, "value", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], TextFieldBase.prototype, "type", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], TextFieldBase.prototype, "placeholder", void 0);
 __decorate$1([
-    e$6({ type: String }),
+    n$2({ type: String }),
     observer(function (_newVal, oldVal) {
         if (oldVal !== undefined && this.label !== oldVal) {
             this.layout();
@@ -33663,25 +33697,25 @@ __decorate$1([
     })
 ], TextFieldBase.prototype, "label", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], TextFieldBase.prototype, "icon", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], TextFieldBase.prototype, "iconTrailing", void 0);
 __decorate$1([
-    e$6({ type: Boolean, reflect: true })
+    n$2({ type: Boolean, reflect: true })
 ], TextFieldBase.prototype, "disabled", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], TextFieldBase.prototype, "required", void 0);
 __decorate$1([
-    e$6({ type: Number })
+    n$2({ type: Number })
 ], TextFieldBase.prototype, "minLength", void 0);
 __decorate$1([
-    e$6({ type: Number })
+    n$2({ type: Number })
 ], TextFieldBase.prototype, "maxLength", void 0);
 __decorate$1([
-    e$6({ type: Boolean, reflect: true }),
+    n$2({ type: Boolean, reflect: true }),
     observer(function (_newVal, oldVal) {
         if (oldVal !== undefined && this.outlined !== oldVal) {
             this.layout();
@@ -33689,58 +33723,58 @@ __decorate$1([
     })
 ], TextFieldBase.prototype, "outlined", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], TextFieldBase.prototype, "helper", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], TextFieldBase.prototype, "validateOnInitialRender", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], TextFieldBase.prototype, "validationMessage", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], TextFieldBase.prototype, "autoValidate", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], TextFieldBase.prototype, "pattern", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], TextFieldBase.prototype, "min", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], TextFieldBase.prototype, "max", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], TextFieldBase.prototype, "step", void 0);
 __decorate$1([
-    e$6({ type: Number })
+    n$2({ type: Number })
 ], TextFieldBase.prototype, "size", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], TextFieldBase.prototype, "helperPersistent", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], TextFieldBase.prototype, "charCounter", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], TextFieldBase.prototype, "endAligned", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], TextFieldBase.prototype, "prefix", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], TextFieldBase.prototype, "suffix", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], TextFieldBase.prototype, "name", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], TextFieldBase.prototype, "inputMode", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], TextFieldBase.prototype, "readOnly", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], TextFieldBase.prototype, "autocapitalize", void 0);
 __decorate$1([
     t$1()
@@ -33782,7 +33816,7 @@ TextField = __decorate$1([
  * `multiplier` if an SI `unit` is given.
  *
  * NB: Use `maybeValue: string | null` instead of `value` if `nullable`! */
-let SclWizardingTextfield = class SclWizardingTextfield extends TextField {
+let SclTextfield = class SclTextfield extends TextField {
     get multiplier() {
         var _a, _b;
         if (this.unit === '')
@@ -33848,7 +33882,7 @@ let SclWizardingTextfield = class SclWizardingTextfield extends TextField {
     checkValidity() {
         if (this.reservedValues &&
             this.reservedValues.some(array => array === this.value)) {
-            this.setCustomValidity('Value already used');
+            this.setCustomValidity('textfield.unique');
             return false;
         }
         this.setCustomValidity('');
@@ -33897,7 +33931,7 @@ let SclWizardingTextfield = class SclWizardingTextfield extends TextField {
     renderMulplierList() {
         return x `${this.multipliers.map(multiplier => x `<mwc-list-item ?selected=${multiplier === this.multiplier}
           >${multiplier === null
-            ? 'Nulled multiplier'
+            ? 'textfield.noMultiplier'
             : multiplier}</mwc-list-item
         >`)}`;
     }
@@ -33928,41 +33962,41 @@ let SclWizardingTextfield = class SclWizardingTextfield extends TextField {
     }
 };
 __decorate$1([
-    e$6({ type: Boolean })
-], SclWizardingTextfield.prototype, "nullable", void 0);
+    n$2({ type: Boolean })
+], SclTextfield.prototype, "nullable", void 0);
 __decorate$1([
-    e$6({ type: Array })
-], SclWizardingTextfield.prototype, "multipliers", void 0);
+    n$2({ type: Array })
+], SclTextfield.prototype, "multipliers", void 0);
 __decorate$1([
-    e$6({ type: String })
-], SclWizardingTextfield.prototype, "multiplier", null);
+    n$2({ type: String })
+], SclTextfield.prototype, "multiplier", null);
 __decorate$1([
-    e$6({ type: String })
-], SclWizardingTextfield.prototype, "unit", void 0);
+    n$2({ type: String })
+], SclTextfield.prototype, "unit", void 0);
 __decorate$1([
     t$1()
-], SclWizardingTextfield.prototype, "null", null);
+], SclTextfield.prototype, "null", null);
 __decorate$1([
-    e$6({ type: String })
-], SclWizardingTextfield.prototype, "maybeValue", null);
+    n$2({ type: String })
+], SclTextfield.prototype, "maybeValue", null);
 __decorate$1([
-    e$6({ type: String })
-], SclWizardingTextfield.prototype, "defaultValue", void 0);
+    n$2({ type: String })
+], SclTextfield.prototype, "defaultValue", void 0);
 __decorate$1([
-    e$6({ type: Array })
-], SclWizardingTextfield.prototype, "reservedValues", void 0);
+    n$2({ type: Array })
+], SclTextfield.prototype, "reservedValues", void 0);
 __decorate$1([
     i$2('mwc-switch')
-], SclWizardingTextfield.prototype, "nullSwitch", void 0);
+], SclTextfield.prototype, "nullSwitch", void 0);
 __decorate$1([
     i$2('mwc-menu')
-], SclWizardingTextfield.prototype, "multiplierMenu", void 0);
+], SclTextfield.prototype, "multiplierMenu", void 0);
 __decorate$1([
     i$2('mwc-icon-button')
-], SclWizardingTextfield.prototype, "multiplierButton", void 0);
-SclWizardingTextfield = __decorate$1([
-    e$7('scl-wizarding-textfield')
-], SclWizardingTextfield);
+], SclTextfield.prototype, "multiplierButton", void 0);
+SclTextfield = __decorate$1([
+    e$7('scl-textfield')
+], SclTextfield);
 
 const tAbstractConductingEquipment = [
     'TransformerWinding',
@@ -34770,6 +34804,415 @@ const relatives = {
         children: [...tEquipmentContainerSequence, 'Voltage', 'Bay', 'Function'],
     },
 };
+const tFunctionCategory = ['SubCategory', 'FunctionCatRef'];
+const tProcessResources = ['ProcessResource'];
+const tProcessResource = ['Resource'];
+const tPowerSystemRelations = ['PowerSystemRelation'];
+const tLNodeInputs = ['SourceRef'];
+const tLNodeOutputs = ['ControlRef'];
+const tVariable = ['VariableApplyTo'];
+const tServiceSpecifications = [
+    'GooseParameters',
+    'SMVParameters',
+    'ReportParameters',
+    'BinaryWiringParameters',
+    'AnalogueWiringParameters',
+    'LogParameters',
+];
+const tCommServiceSpecifications = [
+    'GooseParameters',
+    'SMVParameters',
+    'ReportParameters',
+];
+const tFunctionRef = ['SignalRole'];
+const tFunctionRoleContent = [
+    'FunctionRef',
+    'BehaviorDescriptionRef',
+    'ProcessResourceRef',
+    'VariableRef',
+    'FunctionCategoryRef',
+    'PowerSystemRelationRef',
+];
+const tFunctionRole = ['FunctionRoleContent'];
+const tAllocationRole = ['FunctionRef'];
+const tApplication = [
+    'FunctionRole',
+    'FunctionalVariant',
+    'FunctionalVariantGroup',
+    'AllocationRoleRef',
+    'ApplicationSclRef',
+];
+const tBehaviorDescription = [
+    'InputVar',
+    'OutputVar',
+    'BehaviorReference',
+];
+const tProject = ['ProjectProcessReference'];
+const tFunctionTemplate = [
+    'SubFunctionTemplate',
+    'GeneralEquipment',
+    'ConductingEquipment',
+];
+const tSubFunctionTemplate = [
+    'GeneralEquipment',
+    'ConductingEquipment',
+    'SubFunctionTemplate',
+];
+const tFunctionSclRef = ['SclFileReference'];
+const tDOS = [
+    'SDS',
+    'DAS',
+    'SubscriberLNode',
+    'ControllingLNode',
+    'ProcessEcho',
+    'LogParametersRef',
+];
+const tSDS = [
+    'SDS',
+    'DAS',
+    'SubscriberLNode',
+    'ControllingLNode',
+    'ProcessEcho',
+    'LogParametersRef',
+];
+const tDAS = [
+    'SubscriberLNode',
+    'ControllingLNode',
+    'ProcessEcho',
+    'LogParametersRef',
+    'Val',
+];
+const tSubscriberLNode = [
+    'GooseParametersRef',
+    'SMVParametersRef',
+    'ReportParametersRef',
+    'BinaryWiringParametersRef',
+];
+const tControllingLNode = [
+    'BinaryWiringParametersRef',
+    'AnalogueWiringParametersRef',
+];
+const sCL6100Tags = [
+    'Private',
+    'FunctionCategory',
+    'ProcessResources',
+    'PowerSystemRelations',
+    'LNodeInputs',
+    'LNodeOutputs',
+    'ProcessEcho',
+    'LNodeSpecNaming',
+    'DOS',
+    'FunctionSclRef',
+    'Variable',
+    'CommunicationServiceSpecifications',
+    'ServiceSpecifications',
+    'BayType',
+    'AllocationRole',
+    'Application',
+    'BehaviorDescription',
+    'Project',
+    'FunctionTemplate',
+    ...tFunctionCategory,
+    ...tProcessResources,
+    ...tProcessResource,
+    ...tPowerSystemRelations,
+    ...tLNodeInputs,
+    ...tLNodeOutputs,
+    ...tVariable,
+    ...tCommServiceSpecifications,
+    ...tServiceSpecifications,
+    ...tFunctionRef,
+    ...tFunctionRoleContent,
+    ...tFunctionRole,
+    ...tAllocationRole,
+    ...tApplication,
+    ...tBehaviorDescription,
+    ...tProject,
+    ...tFunctionTemplate,
+    ...tSubFunctionTemplate,
+    ...tFunctionSclRef,
+    ...tDOS,
+    ...tSDS,
+    ...tDAS,
+    ...tSubscriberLNode,
+    ...tControllingLNode,
+];
+const tags6100 = {
+    Private: {
+        parents: [],
+        children: [
+            'ProcessResources',
+            'ServiceSpecifications',
+            'Application',
+            'Variable',
+            'LNodeSpecNaming',
+            'LNodeInputs',
+            'DOS',
+            'AllocationRole',
+            'BehaviorDescription',
+        ],
+    },
+    SubCategory: {
+        parents: ['FunctionCategory'],
+        children: [],
+    },
+    GooseParameters: {
+        parents: ['CommunicationServiceSpecifications', 'ServiceSpecifications'],
+        children: [],
+    },
+    SMVParameters: {
+        parents: ['CommunicationServiceSpecifications', 'ServiceSpecifications'],
+        children: [],
+    },
+    ReportParameters: {
+        parents: ['CommunicationServiceSpecifications', 'ServiceSpecifications'],
+        children: [],
+    },
+    SignalRole: {
+        parents: ['FunctionRef'],
+        children: [],
+    },
+    FunctionRef: {
+        parents: ['FunctionRoleContent', 'AllocationRole'],
+        children: [...tFunctionRef],
+    },
+    BehaviorDescriptionRef: {
+        parents: ['FunctionRoleContent'],
+        children: [],
+    },
+    ProcessResourceRef: {
+        parents: ['FunctionRoleContent'],
+        children: [],
+    },
+    VariableRef: {
+        parents: ['FunctionRoleContent'],
+        children: [],
+    },
+    FunctionCategoryRef: {
+        parents: ['FunctionRoleContent'],
+        children: [],
+    },
+    PowerSystemRelationRef: {
+        parents: ['FunctionRoleContent'],
+        children: [],
+    },
+    FunctionRoleContent: {
+        parents: ['FunctionRole'],
+        children: [...tFunctionRoleContent],
+    },
+    FunctionRole: {
+        parents: ['Application'],
+        children: [...tFunctionRole],
+    },
+    FunctionalVariant: {
+        parents: ['Application'],
+        children: [],
+    },
+    FunctionalVariantGroup: {
+        parents: ['Application'],
+        children: [],
+    },
+    AllocationRoleRef: {
+        parents: ['Application'],
+        children: [],
+    },
+    ApplicationSclRef: {
+        parents: ['Application'],
+        children: [],
+    },
+    InputVar: {
+        parents: ['BehaviorDescription'],
+        children: [],
+    },
+    OutputVar: {
+        parents: ['BehaviorDescription'],
+        children: [],
+    },
+    BehaviorReference: {
+        parents: ['BehaviorDescription'],
+        children: [],
+    },
+    ProjectProcessReference: {
+        parents: ['Project'],
+        children: [],
+    },
+    SubFunctionTemplate: {
+        parents: ['FunctionTemplate'],
+        children: [...tSubFunctionTemplate],
+    },
+    GeneralEquipment: {
+        parents: ['FunctionTemplate', 'SubFunctionTemplate'],
+        children: [],
+    },
+    ConductingEquipment: {
+        parents: ['FunctionTemplate', 'SubFunctionTemplate'],
+        children: [],
+    },
+    FunctionCatRef: {
+        parents: ['FunctionCategory'],
+        children: [],
+    },
+    ProcessResource: {
+        parents: ['ProcessResources'],
+        children: [...tProcessResource],
+    },
+    Resource: {
+        parents: ['ProcessResource'],
+        children: [],
+    },
+    PowerSystemRelation: {
+        parents: ['PowerSystemRelations'],
+        children: [],
+    },
+    SourceRef: {
+        parents: ['LNodeInputs'],
+        children: [],
+    },
+    ControlRef: {
+        parents: ['LNodeOutputs'],
+        children: [],
+    },
+    VariableApplyTo: {
+        parents: ['Variable'],
+        children: [],
+    },
+    BinaryWiringParameters: {
+        parents: ['ServiceSpecifications'],
+        children: [],
+    },
+    AnalogueWiringParameters: {
+        parents: ['ServiceSpecifications'],
+        children: [],
+    },
+    LogParameters: {
+        parents: ['ServiceSpecifications'],
+        children: [],
+    },
+    FunctionCategory: {
+        parents: ['Private'],
+        children: [...tFunctionCategory],
+    },
+    ProcessResources: {
+        parents: ['Private'],
+        children: ['ProcessResource'],
+    },
+    PowerSystemRelations: {
+        parents: ['Private'],
+        children: [...tPowerSystemRelations],
+    },
+    LNodeInputs: {
+        parents: ['Private'],
+        children: [...tLNodeInputs],
+    },
+    LNodeOutputs: {
+        parents: ['Private'],
+        children: [...tLNodeOutputs],
+    },
+    ProcessEcho: {
+        parents: ['DOS'],
+        children: [],
+    },
+    LNodeSpecNaming: {
+        parents: ['Private'],
+        children: [],
+    },
+    DOS: {
+        parents: ['Private'],
+        children: [...tDOS],
+    },
+    FunctionSclRef: {
+        parents: ['Private'],
+        children: [...tFunctionSclRef],
+    },
+    Variable: {
+        parents: ['Private'],
+        children: [...tVariable],
+    },
+    CommunicationServiceSpecifications: {
+        parents: ['Private'],
+        children: [...tCommServiceSpecifications],
+    },
+    ServiceSpecifications: {
+        parents: ['Private'],
+        children: [...tServiceSpecifications],
+    },
+    BayType: {
+        parents: ['Private'],
+        children: [],
+    },
+    AllocationRole: {
+        parents: ['Private'],
+        children: [...tAllocationRole],
+    },
+    Application: {
+        parents: ['Private'],
+        children: [...tApplication],
+    },
+    BehaviorDescription: {
+        parents: ['Private'],
+        children: [...tBehaviorDescription],
+    },
+    Project: {
+        parents: ['Private'],
+        children: [...tProject],
+    },
+    FunctionTemplate: {
+        parents: ['Private'],
+        children: [...tFunctionTemplate],
+    },
+    SclFileReference: {
+        parents: ['FunctionSclRef'],
+        children: [],
+    },
+    SDS: {
+        parents: ['DOS'],
+        children: [...tSDS],
+    },
+    DAS: {
+        parents: ['DOS'],
+        children: [...tDAS],
+    },
+    SubscriberLNode: {
+        parents: ['DOS'],
+        children: [...tSubscriberLNode],
+    },
+    ControllingLNode: {
+        parents: ['DOS'],
+        children: [],
+    },
+    LogParametersRef: {
+        parents: ['DOS'],
+        children: [],
+    },
+    GooseParametersRef: {
+        parents: ['SubscriberLNode'],
+        children: [],
+    },
+    SMVParametersRef: {
+        parents: ['SubscriberLNode'],
+        children: [],
+    },
+    ReportParametersRef: {
+        parents: ['SubscriberLNode'],
+        children: [],
+    },
+    BinaryWiringParametersRef: {
+        parents: ['SubscriberLNode', 'ControllingLNode'],
+        children: [],
+    },
+    Val: {
+        parents: ['DAS'],
+        children: [],
+    },
+    AnalogueWiringParametersRef: {
+        parents: ['ControllingLNode'],
+        children: [],
+    },
+};
+const tagSet6100 = new Set(sCL6100Tags);
+function isSCL6100Tag(tag) {
+    return tagSet6100.has(tag);
+}
 function getReference(parent, tag) {
     var _a, _b, _c;
     const parentTag = parent.tagName;
@@ -34791,22 +35234,41 @@ function getReference(parent, tag) {
     }
     return nextSibling !== null && nextSibling !== void 0 ? nextSibling : null;
 }
+function get6100Reference(parent, tag) {
+    var _a, _b, _c;
+    const parentTag = parent.localName;
+    const children = Array.from(parent.children);
+    if (!isSCL6100Tag(parentTag))
+        return (_a = children.find(child => child.localName === tag)) !== null && _a !== void 0 ? _a : null;
+    const sequence = (_c = (_b = tags6100[parentTag]) === null || _b === void 0 ? void 0 : _b.children) !== null && _c !== void 0 ? _c : [];
+    let index = sequence.findIndex(element => element === tag);
+    if (index < 0)
+        return null;
+    let nextSibling;
+    while (index < sequence.length && !nextSibling) {
+        // eslint-disable-next-line no-loop-func
+        nextSibling = children.find(child => child.localName === sequence[index]);
+        // eslint-disable-next-line no-plusplus
+        index++;
+    }
+    return nextSibling !== null && nextSibling !== void 0 ? nextSibling : null;
+}
 
 /* eslint-disable import/no-extraneous-dependencies */
 function renderBayWizard(options) {
     return [
-        x `<scl-wizarding-textfield
+        x `<scl-textfield
       label="name"
       .maybeValue=${options.name}
       required
       .reservedValues="${options.reservedValues}"
       dialogInitialFocus
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="desc"
       .maybeValue=${options.desc}
       nullable
-    ></scl-wizarding-textfield>`,
+    ></scl-textfield>`,
     ];
 }
 function createAction$g(parent) {
@@ -34842,7 +35304,7 @@ function createBayWizard(parent) {
         },
     ];
 }
-function updateAction$l(element) {
+function updateAction$m(element) {
     return (inputs) => {
         const name = inputs.find(i => i.label === 'name').value;
         const desc = getValue(inputs.find(i => i.label === 'desc'));
@@ -34859,7 +35321,7 @@ function editBayWizard(element) {
             primary: {
                 icon: 'edit',
                 label: 'save',
-                action: updateAction$l(element),
+                action: updateAction$m(element),
             },
             content: renderBayWizard({
                 name: element.getAttribute('name'),
@@ -36361,7 +36823,7 @@ __decorate$1([
     i$2('.mdc-select__anchor')
 ], SelectBase.prototype, "anchorElement", void 0);
 __decorate$1([
-    e$6({ type: Boolean, attribute: 'disabled', reflect: true }),
+    n$2({ type: Boolean, attribute: 'disabled', reflect: true }),
     observer(function (value) {
         if (this.mdcFoundation) {
             this.mdcFoundation.setDisabled(value);
@@ -36369,7 +36831,7 @@ __decorate$1([
     })
 ], SelectBase.prototype, "disabled", void 0);
 __decorate$1([
-    e$6({ type: Boolean }),
+    n$2({ type: Boolean }),
     observer(function (_newVal, oldVal) {
         if (oldVal !== undefined && this.outlined !== oldVal) {
             this.layout(false);
@@ -36377,7 +36839,7 @@ __decorate$1([
     })
 ], SelectBase.prototype, "outlined", void 0);
 __decorate$1([
-    e$6({ type: String }),
+    n$2({ type: String }),
     observer(function (_newVal, oldVal) {
         if (oldVal !== undefined && this.label !== oldVal) {
             this.layout(false);
@@ -36391,7 +36853,7 @@ __decorate$1([
     t$1()
 ], SelectBase.prototype, "outlineWidth", void 0);
 __decorate$1([
-    e$6({ type: String }),
+    n$2({ type: String }),
     observer(function (value) {
         if (this.mdcFoundation) {
             const initialization = this.selected === null && !!value;
@@ -36404,37 +36866,37 @@ __decorate$1([
     })
 ], SelectBase.prototype, "value", void 0);
 __decorate$1([
-    e$6()
+    n$2()
 ], SelectBase.prototype, "name", void 0);
 __decorate$1([
     t$1()
 ], SelectBase.prototype, "selectedText", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], SelectBase.prototype, "icon", void 0);
 __decorate$1([
     t$1()
 ], SelectBase.prototype, "menuOpen", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], SelectBase.prototype, "helper", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], SelectBase.prototype, "validateOnInitialRender", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], SelectBase.prototype, "validationMessage", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], SelectBase.prototype, "required", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], SelectBase.prototype, "naturalMenuWidth", void 0);
 __decorate$1([
     t$1()
 ], SelectBase.prototype, "isUiValid", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], SelectBase.prototype, "fixedMenuPosition", void 0);
 __decorate$1([
     e$5({ capture: true })
@@ -36462,7 +36924,7 @@ Select = __decorate$1([
 /** A potentially `nullable` `Select`.
  *
  * NB: Use `maybeValue: string | null` instead of `value` if `nullable`! */
-let SclWizardingSelect = class SclWizardingSelect extends Select {
+let SclSelect = class SclSelect extends Select {
     get null() {
         return this.nullable && this.isNull;
     }
@@ -36551,26 +37013,26 @@ let SclWizardingSelect = class SclWizardingSelect extends Select {
     }
 };
 __decorate$1([
-    e$6({ type: Boolean })
-], SclWizardingSelect.prototype, "nullable", void 0);
+    n$2({ type: Boolean })
+], SclSelect.prototype, "nullable", void 0);
 __decorate$1([
     t$1()
-], SclWizardingSelect.prototype, "null", null);
+], SclSelect.prototype, "null", null);
 __decorate$1([
-    e$6({ type: String })
-], SclWizardingSelect.prototype, "maybeValue", null);
+    n$2({ type: String })
+], SclSelect.prototype, "maybeValue", null);
 __decorate$1([
-    e$6({ type: String })
-], SclWizardingSelect.prototype, "defaultValue", void 0);
+    n$2({ type: String })
+], SclSelect.prototype, "defaultValue", void 0);
 __decorate$1([
-    e$6({ type: Array })
-], SclWizardingSelect.prototype, "reservedValues", void 0);
+    n$2({ type: Array })
+], SclSelect.prototype, "reservedValues", void 0);
 __decorate$1([
     i$2('mwc-switch')
-], SclWizardingSelect.prototype, "nullSwitch", void 0);
-SclWizardingSelect = __decorate$1([
-    e$7('scl-wizarding-select')
-], SclWizardingSelect);
+], SclSelect.prototype, "nullSwitch", void 0);
+SclSelect = __decorate$1([
+    e$7('scl-select')
+], SclSelect);
 
 /**
  * @license
@@ -36747,16 +37209,16 @@ class FormfieldBase extends BaseElement {
     }
 }
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], FormfieldBase.prototype, "alignEnd", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], FormfieldBase.prototype, "spaceBetween", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], FormfieldBase.prototype, "nowrap", void 0);
 __decorate$1([
-    e$6({ type: String }),
+    n$2({ type: String }),
     observer(async function (label) {
         var _a;
         (_a = this.input) === null || _a === void 0 ? void 0 : _a.setAttribute('aria-label', label);
@@ -36984,34 +37446,34 @@ __decorate$1([
     i$2('input')
 ], CheckboxBase.prototype, "formElement", void 0);
 __decorate$1([
-    e$6({ type: Boolean, reflect: true })
+    n$2({ type: Boolean, reflect: true })
 ], CheckboxBase.prototype, "checked", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], CheckboxBase.prototype, "indeterminate", void 0);
 __decorate$1([
-    e$6({ type: Boolean, reflect: true })
+    n$2({ type: Boolean, reflect: true })
 ], CheckboxBase.prototype, "disabled", void 0);
 __decorate$1([
-    e$6({ type: String, reflect: true })
+    n$2({ type: String, reflect: true })
 ], CheckboxBase.prototype, "name", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], CheckboxBase.prototype, "value", void 0);
 __decorate$1([
     ariaProperty,
-    e$6({ type: String, attribute: 'aria-label' })
+    n$2({ type: String, attribute: 'aria-label' })
 ], CheckboxBase.prototype, "ariaLabel", void 0);
 __decorate$1([
     ariaProperty,
-    e$6({ type: String, attribute: 'aria-labelledby' })
+    n$2({ type: String, attribute: 'aria-labelledby' })
 ], CheckboxBase.prototype, "ariaLabelledBy", void 0);
 __decorate$1([
     ariaProperty,
-    e$6({ type: String, attribute: 'aria-describedby' })
+    n$2({ type: String, attribute: 'aria-describedby' })
 ], CheckboxBase.prototype, "ariaDescribedBy", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], CheckboxBase.prototype, "reducedTouchTarget", void 0);
 __decorate$1([
     t$1()
@@ -37050,7 +37512,7 @@ Checkbox = __decorate$1([
 ], Checkbox);
 
 /** A potentially `nullable` labelled checkbox. */
-let SclWizardingCheckbox = class SclWizardingCheckbox extends s$1 {
+let SclCheckbox = class SclCheckbox extends s$1 {
     constructor() {
         super(...arguments);
         this.label = '';
@@ -37164,56 +37626,58 @@ let SclWizardingCheckbox = class SclWizardingCheckbox extends s$1 {
     }
 };
 __decorate$1([
-    e$6({ type: String })
-], SclWizardingCheckbox.prototype, "label", void 0);
+    n$2({ type: String })
+], SclCheckbox.prototype, "label", void 0);
 __decorate$1([
-    e$6({ type: String })
-], SclWizardingCheckbox.prototype, "helper", void 0);
+    n$2({ type: String })
+], SclCheckbox.prototype, "helper", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
-], SclWizardingCheckbox.prototype, "nullable", void 0);
+    n$2({ type: Boolean })
+], SclCheckbox.prototype, "nullable", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
-], SclWizardingCheckbox.prototype, "defaultChecked", void 0);
+    n$2({ type: Boolean })
+], SclCheckbox.prototype, "defaultChecked", void 0);
 __decorate$1([
-    e$6({ type: String })
-], SclWizardingCheckbox.prototype, "maybeValue", null);
+    n$2({ type: String })
+], SclCheckbox.prototype, "maybeValue", null);
 __decorate$1([
-    e$6({ type: Boolean })
-], SclWizardingCheckbox.prototype, "disabled", void 0);
-__decorate$1([
-    t$1()
-], SclWizardingCheckbox.prototype, "null", null);
+    n$2({ type: Boolean })
+], SclCheckbox.prototype, "disabled", void 0);
 __decorate$1([
     t$1()
-], SclWizardingCheckbox.prototype, "checked", null);
+], SclCheckbox.prototype, "null", null);
 __decorate$1([
     t$1()
-], SclWizardingCheckbox.prototype, "deactivateCheckbox", void 0);
+], SclCheckbox.prototype, "checked", null);
 __decorate$1([
     t$1()
-], SclWizardingCheckbox.prototype, "formfieldLabel", null);
+], SclCheckbox.prototype, "deactivateCheckbox", void 0);
+__decorate$1([
+    t$1()
+], SclCheckbox.prototype, "formfieldLabel", null);
 __decorate$1([
     i$2('mwc-switch')
-], SclWizardingCheckbox.prototype, "nullSwitch", void 0);
+], SclCheckbox.prototype, "nullSwitch", void 0);
 __decorate$1([
     i$2('mwc-checkbox')
-], SclWizardingCheckbox.prototype, "checkbox", void 0);
-SclWizardingCheckbox = __decorate$1([
-    e$7('scl-wizarding-checkbox')
-], SclWizardingCheckbox);
+], SclCheckbox.prototype, "checkbox", void 0);
+SclCheckbox = __decorate$1([
+    e$7('scl-checkbox')
+], SclCheckbox);
 
 const nameStartChar = '[:_A-Za-z]|[\u00C0-\u00D6]|[\u00D8-\u00F6]|[\u00F8-\u02FF]|[\u0370-\u037D]' +
     '|[\u037F-\u1FFF]|[\u200C-\u200D]|[\u2070-\u218F]|[\u2C00-\u2FEF]' +
     '|[\u3001-\uD7FF]|[\uF900-\uFDCF]|[\uFDF0-\uFFFD]';
 const nameChar = `${nameStartChar}|[.0-9\\-]|\u00B7|[\u0300-\u036F]|[\u203F-\u2040]`;
-const name = `${nameStartChar}(${nameChar})*`;
+const name = `(${nameStartChar})(${nameChar})*`;
 const nmToken = `(${nameChar})+`;
 const patterns = {
     string: '([\u0009-\u000A]|[\u000D]|[\u0020-\u007E]|[\u0085]|[\u00A0-\uD7FF]' +
         '|[\uE000-\uFFFD])*',
     normalizedString: '([\u0020-\u007E]|[\u0085]|[\u00A0-\uD7FF]|[\uE000-\uFFFD])*',
     name,
+    tName: '([\u0020-\u007E]|[\u0085]|[\u00A0-\uD7FF]|[\uE000-\uFFFD])' +
+        '([\u0020-\u007E]|[\u0085]|[\u00A0-\uD7FF]|[\uE000-\uFFFD])*',
     nmToken,
     names: `${name}( ${name})*`,
     nmTokens: `${nmToken}( ${nmToken})*`,
@@ -37222,16 +37686,26 @@ const patterns = {
     integer: '[+\\-]?[0-9]+([0-9]*)',
     alphanumericFirstUpperCase: '[A-Z][0-9,A-Z,a-z]*',
     alphanumericFirstLowerCase: '[a-z][0-9,A-Z,a-z]*',
+    alphanumericFirst: '[A-Z,a-z][0-9,A-Z,a-z]*',
+    ldInst: '[A-Za-z0-9][0-9A-Za-z_]*',
+    prefix: '[A-Za-z][0-9A-Za-z_]*',
     lnClass: '(LLN0)|[A-Z]{4,4}',
+    lnInst: '[0-9]{1,12}',
     abstractDataAttributeName: '((T)|(Test)|(Check)|(SIUnit)|(Oper)|(SBO)|(SBOw)|(Cancel)|[a-z][0-9A-Za-z]*)',
     cdc: '(SPS)|(DPS)|(INS)|(ENS)|(ACT)|(ACD)|(SEC)|(BCR)|(HST)|(VSS)|(MV)|(CMV)|(SAV)|' +
         '(WYE)|(DEL)|(SEQ)|(HMV)|(HWYE)|(HDEL)|(SPC)|(DPC)|(INC)|(ENC)|(BSC)|(ISC)|(APC)|(BAC)|' +
         '(SPG)|(ING)|(ENG)|(ORG)|(TSG)|(CUG)|(VSG)|(ASG)|(CURVE)|(CSG)|(DPL)|(LPL)|(CSD)|(CST)|' +
         '(BTS)|(UTS)|(LTS)|(GTS)|(MTS)|(NTS)|(STS)|(CTS)|(OTS)|(VSD)',
+    uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
+    id: '\\S{1,255}',
+    path: '.+(/.+)*',
 };
 const maxLength = {
     cbName: 32,
     abstracDaName: 60,
+    ldInst: 64,
+    prefix: 11,
+    lnInst: 12,
 };
 const predefinedBasicTypeEnum = [
     'BOOLEAN',
@@ -37296,7 +37770,7 @@ function selectType(e, data, Val) {
     if (!e.target || !e.target.parentElement)
         return;
     const typeSelected = (_a = e.target.selected) === null || _a === void 0 ? void 0 : _a.value;
-    const selectedBType = (e.target.parentElement.querySelector('scl-wizarding-select[label="bType"]')).value;
+    const selectedBType = (e.target.parentElement.querySelector('scl-select[label="bType"]')).value;
     if (selectedBType !== 'Enum')
         return;
     const enumVals = Array.from(data.querySelectorAll(`EnumType[id="${typeSelected}"] > EnumVal`)).map(enumval => {
@@ -37307,13 +37781,13 @@ function selectType(e, data, Val) {
         >${(_d = enumval.textContent) === null || _d === void 0 ? void 0 : _d.trim()}</mwc-list-item
       >`;
     });
-    const selectValOptionUI = (e.target.parentElement.querySelector('scl-wizarding-select[label="Val"]'));
-    B(x `${enumVals}`, selectValOptionUI);
+    const selectValOptionUI = (e.target.parentElement.querySelector('scl-select[label="Val"]'));
+    D(x `${enumVals}`, selectValOptionUI);
     selectValOptionUI.requestUpdate();
 }
 function selectBType(e, bType, type) {
     const bTypeSelected = e.target.selected.value;
-    const typeUI = (e.target.parentElement.querySelector('scl-wizarding-select[label="type"]'));
+    const typeUI = (e.target.parentElement.querySelector('scl-select[label="type"]'));
     typeUI.disabled = !(bTypeSelected === 'Enum' || bTypeSelected === 'Struct');
     const enabledItems = [];
     Array.from(typeUI.children).forEach(child => {
@@ -37330,12 +37804,12 @@ function selectBType(e, bType, type) {
         typeUI.value = type;
     else
         typeUI.value = enabledItems.length ? enabledItems[0].value : '';
-    const selectValOptionUI = (e.target.parentElement.querySelector('scl-wizarding-select[label="Val"]'));
+    const selectValOptionUI = (e.target.parentElement.querySelector('scl-select[label="Val"]'));
     if (bTypeSelected === 'Enum')
         selectValOptionUI.style.display = '';
     else
         selectValOptionUI.style.display = 'none';
-    const textfieldValOptionUI = (e.target.parentElement.querySelector('scl-wizarding-textfield[label="Val"]'));
+    const textfieldValOptionUI = (e.target.parentElement.querySelector('scl-textfield[label="Val"]'));
     if (bTypeSelected === 'Enum' || bTypeSelected === 'Struct')
         textfieldValOptionUI.style.display = 'none';
     else
@@ -37346,7 +37820,7 @@ function selectBType(e, bType, type) {
 }
 function renderAbstractDataAttributeContent(name, desc, bType, types, type, sAddr, valKind, valImport, Val, data) {
     return [
-        x `<scl-wizarding-textfield
+        x `<scl-textfield
       label="name"
       .maybeValue=${name}
       required
@@ -37354,15 +37828,15 @@ function renderAbstractDataAttributeContent(name, desc, bType, types, type, sAdd
       maxLength="${maxLength.abstracDaName}"
       dialogInitialFocus
     >
-      ></scl-wizarding-textfield
+      ></scl-textfield
     >`,
-        x `<scl-wizarding-textfield
+        x `<scl-textfield
       label="desc"
       .maybeValue=${desc}
       nullable
       pattern="${patterns.normalizedString}"
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-select
+    ></scl-textfield>`,
+        x `<scl-select
       fixedMenuPosition
       label="bType"
       .value=${bType}
@@ -37370,9 +37844,9 @@ function renderAbstractDataAttributeContent(name, desc, bType, types, type, sAdd
       @selected=${(e) => selectBType(e, bType, type)}
       >${predefinedBasicTypeEnum.map(redefinedBType => x `<mwc-list-item value="${redefinedBType}"
             >${redefinedBType}</mwc-list-item
-          >`)}</scl-wizarding-select
+          >`)}</scl-select
     >`,
-        x `<scl-wizarding-select
+        x `<scl-select
       label="type"
       .maybeValue=${type}
       fixedMenuPosition
@@ -37381,15 +37855,15 @@ function renderAbstractDataAttributeContent(name, desc, bType, types, type, sAdd
             class="${dataType.tagName === 'EnumType' ? 'Enum' : 'Struct'}"
             value=${dataType.id}
             >${dataType.id}</mwc-list-item
-          >`)}</scl-wizarding-select
+          >`)}</scl-select
     >`,
-        x `<scl-wizarding-textfield
+        x `<scl-textfield
       label="sAddr"
       .maybeValue=${sAddr}
       nullable
       pattern="${patterns.normalizedString}"
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-select
+    ></scl-textfield>`,
+        x `<scl-select
       label="valKind"
       .maybeValue=${valKind}
       nullable
@@ -37397,27 +37871,27 @@ function renderAbstractDataAttributeContent(name, desc, bType, types, type, sAdd
       fixedMenuPosition
       >${valKindEnum.map(valKindOption => x `<mwc-list-item value="${valKindOption}"
             >${valKindOption}</mwc-list-item
-          >`)}</scl-wizarding-select
+          >`)}</scl-select
     >`,
-        x `<scl-wizarding-checkbox
+        x `<scl-checkbox
       label="valImport"
       .maybeValue=${valImport}
       nullable
       required
-    ></scl-wizarding-checkbox>`,
-        x `<scl-wizarding-select label="Val" .maybeValue=${Val} nullable
+    ></scl-checkbox>`,
+        x `<scl-select label="Val" .maybeValue=${Val} nullable
       >${Array.from(data.querySelectorAll(`EnumType > EnumVal[id="${type}"]`)).map(enumVal => {
             var _a, _b, _c;
             return x `<mwc-list-item value="${(_b = (_a = enumVal.textContent) === null || _a === void 0 ? void 0 : _a.trim()) !== null && _b !== void 0 ? _b : ''}"
             >${(_c = enumVal.textContent) === null || _c === void 0 ? void 0 : _c.trim()}</mwc-list-item
           >`;
-        })}</scl-wizarding-select
+        })}</scl-select
     >`,
-        x `<scl-wizarding-textfield
+        x `<scl-textfield
       label="Val"
       .maybeValue=${Val}
       nullable
-    ></scl-wizarding-textfield>`,
+    ></scl-textfield>`,
     ];
 }
 function getValAction(oldVal, Val, abstractda) {
@@ -37713,18 +38187,18 @@ function renderTypeSelector(option, type) {
 function renderConductingEquipmentWizard(options) {
     return [
         renderTypeSelector(options.option, options.type),
-        x `<scl-wizarding-textfield
+        x `<scl-textfield
       label="name"
       .maybeValue=${options.name}
       required
       dialogInitialFocus
       .reservedValues=${options.reservedValues}
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="desc"
       .maybeValue=${options.desc}
       nullable
-    ></scl-wizarding-textfield>`,
+    ></scl-textfield>`,
     ];
 }
 function createAction$f(parent) {
@@ -37806,7 +38280,7 @@ function createConductingEquipmentWizard(parent) {
         },
     ];
 }
-function updateAction$k(element) {
+function updateAction$l(element) {
     return (inputs) => {
         const name = getValue(inputs.find(i => i.label === 'name'));
         const desc = getValue(inputs.find(i => i.label === 'desc'));
@@ -37824,7 +38298,7 @@ function editConductingEquipmentWizard(element) {
             primary: {
                 icon: 'edit',
                 label: 'save',
-                action: updateAction$k(element),
+                action: updateAction$l(element),
             },
             content: renderConductingEquipmentWizard({
                 name: element.getAttribute('name'),
@@ -37893,10 +38367,10 @@ __decorate$1([
     i$2('mwc-checkbox')
 ], CheckListItemBase.prototype, "checkboxElement", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], CheckListItemBase.prototype, "left", void 0);
 __decorate$1([
-    e$6({ type: String, reflect: true })
+    n$2({ type: String, reflect: true })
 ], CheckListItemBase.prototype, "graphic", void 0);
 
 /**
@@ -41207,7 +41681,7 @@ function ixNamingSelector(tagName, identity, depth = -1) {
         .flatMap(parentTag => parentTag === 'SDI'
         ? ixNamingSelector(parentTag, parentIdentity, depth - 1).split(',')
         : selector(parentTag, parentIdentity).split(','))
-        // eslint-disable-next-line no-shadow
+        // eslint-disable-next-line @typescript-eslint/no-shadow
         .filter(selector => !selector.startsWith(voidSelector));
     if (parentSelectors.length === 0)
         return voidSelector;
@@ -41305,7 +41779,7 @@ function namingSelector(tagName, identity, depth = -1) {
         .flatMap(parentTag => tags[parentTag].selector === tags.Substation.selector
         ? namingSelector(parentTag, parentIdentity, depth - 1).split(',')
         : selector(parentTag, parentIdentity).split(','))
-        // eslint-disable-next-line no-shadow
+        // eslint-disable-next-line @typescript-eslint/no-shadow
         .filter(selector => !selector.startsWith(voidSelector));
     if (parentSelectors.length === 0)
         return voidSelector;
@@ -41320,7 +41794,7 @@ function singletonSelector(tagName, identity) {
         return voidSelector;
     const parentSelectors = parents
         .flatMap(parentTag => selector(parentTag, identity).split(','))
-        // eslint-disable-next-line no-shadow
+        // eslint-disable-next-line @typescript-eslint/no-shadow
         .filter(selector => !selector.startsWith(voidSelector));
     if (parentSelectors.length === 0)
         return voidSelector;
@@ -42078,13 +42552,13 @@ function contentAddress(content) {
         ?checked="${hasTypeRestriction(content.element)}"
       ></mwc-checkbox>
     </mwc-formfield>`,
-        x `${Object.entries(pChildren).map(([key, value]) => x `<scl-wizarding-textfield
+        x `${Object.entries(pChildren).map(([key, value]) => x `<scl-textfield
           label="${key}"
           ?nullable=${typeNullable[key]}
           .maybeValue=${value}
           pattern="${l$1(typePattern[key])}"
           required
-        ></scl-wizarding-textfield>`)}`,
+        ></scl-textfield>`)}`,
     ];
 }
 
@@ -42371,7 +42845,7 @@ function createConnectedApWizard(element) {
         },
     ];
 }
-function updateAction$j(element) {
+function updateAction$k(element) {
     return (inputs, wizard) => {
         var _a, _b, _c;
         const typeRestriction = (_c = (_b = (_a = wizard.shadowRoot) === null || _a === void 0 ? void 0 : _a.querySelector('#typeRestriction')) === null || _b === void 0 ? void 0 : _b.checked) !== null && _c !== void 0 ? _c : false;
@@ -42392,7 +42866,7 @@ function editConnectedApWizard(element) {
             primary: {
                 icon: 'save',
                 label: 'save',
-                action: updateAction$j(element),
+                action: updateAction$k(element),
             },
             content: [...contentAddress({ element, types: getTypes(element) })],
         },
@@ -42402,28 +42876,24 @@ function editConnectedApWizard(element) {
 /* eslint-disable import/no-extraneous-dependencies */
 function renderAdditionalDaContent(fc, dchg, qchg, dupd) {
     return [
-        x `<scl-wizarding-select
-      label="fc"
-      .maybeValue=${fc}
-      required
-      fixedMenuPosition
-      >${functionalConstraintEnum.map(fcOption => x `<mwc-list-item value="${fcOption}">${fcOption}</mwc-list-item>`)}</scl-wizarding-select
+        x `<scl-select label="fc" .maybeValue=${fc} required fixedMenuPosition
+      >${functionalConstraintEnum.map(fcOption => x `<mwc-list-item value="${fcOption}">${fcOption}</mwc-list-item>`)}</scl-select
     >`,
-        x `<scl-wizarding-checkbox
+        x `<scl-checkbox
       label="dchg"
       .maybeValue=${dchg}
       nullable
-    ></scl-wizarding-checkbox>`,
-        x `<scl-wizarding-checkbox
+    ></scl-checkbox>`,
+        x `<scl-checkbox
       label="qchg"
       .maybeValue=${qchg}
       nullable
-    ></scl-wizarding-checkbox>`,
-        x `<scl-wizarding-checkbox
+    ></scl-checkbox>`,
+        x `<scl-checkbox
       label="dupd"
       .maybeValue=${dupd}
       nullable
-    ></scl-wizarding-checkbox>`,
+    ></scl-checkbox>`,
     ];
 }
 function createDaAction(parent) {
@@ -42625,20 +43095,20 @@ function createDATypeWizard(parent) {
                 action: createDATypeAction(parent),
             },
             content: [
-                x `<scl-wizarding-textfield
+                x `<scl-textfield
           label="id"
           .maybeValue=${''}
           required
           maxlength="127"
           minlength="1"
           pattern="${patterns.nmToken}"
-        ></scl-wizarding-textfield>`,
-                x `<scl-wizarding-textfield
+        ></scl-textfield>`,
+                x `<scl-textfield
           label="desc"
           .maybeValue=${null}
           nullable
           pattern="${patterns.normalizedString}"
-        ></scl-wizarding-textfield>`,
+        ></scl-textfield>`,
             ],
         },
     ];
@@ -42647,37 +43117,37 @@ function createDATypeWizard(parent) {
 /* eslint-disable import/no-extraneous-dependencies */
 function renderContent$4(content) {
     return [
-        x `<scl-wizarding-textfield
+        x `<scl-textfield
       label="name"
       .maybeValue=${content.name}
       required
       pattern="${patterns.alphanumericFirstUpperCase}"
       dialogInitialFocus
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="desc"
       .maybeValue=${content.desc}
       nullable
       pattern="${patterns.normalizedString}"
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-select fixedMenuPosition label="type" required
+    ></scl-textfield>`,
+        x `<scl-select fixedMenuPosition label="type" required
       >${content.doTypes.map(dataType => x `<mwc-list-item
             value=${dataType.id}
             ?selected=${dataType.id === content.type}
             >${dataType.id}</mwc-list-item
-          >`)}</scl-wizarding-select
+          >`)}</scl-select
     >`,
-        x `<scl-wizarding-textfield
+        x `<scl-textfield
       label="accessControl"
       .maybeValue=${content.accessControl}
       nullable
       pattern="${patterns.normalizedString}"
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-checkbox
+    ></scl-textfield>`,
+        x `<scl-checkbox
       label="transient"
       .maybeValue="${content.transient}"
       nullable
-    ></scl-wizarding-checkbox>`,
+    ></scl-checkbox>`,
     ];
 }
 function createDoAction(parent) {
@@ -42799,25 +43269,25 @@ function createDOTypeWizard(parent) {
                 action: createDOTypeAction(parent),
             },
             content: [
-                x `<scl-wizarding-textfield
+                x `<scl-textfield
           label="id"
           .maybeValue=${''}
           required
           maxlength="127"
           minlength="1"
           pattern="${patterns.nmToken}"
-        ></scl-wizarding-textfield>`,
-                x `<scl-wizarding-textfield
+        ></scl-textfield>`,
+                x `<scl-textfield
           label="desc"
           .maybeValue=${null}
           nullable
           pattern="${patterns.normalizedString}"
-        ></scl-wizarding-textfield>`,
-                x `<scl-wizarding-textfield
+        ></scl-textfield>`,
+                x `<scl-textfield
           label="cdc"
           .maybeValue=${'ENS'}
           pattern="${patterns.cdc}"
-        ></scl-wizarding-textfield>`,
+        ></scl-textfield>`,
             ],
         },
     ];
@@ -42847,20 +43317,20 @@ function createEnumTypeWizard(parent) {
                 action: createEnumTypeAction(parent),
             },
             content: [
-                x `<scl-wizarding-textfield
+                x `<scl-textfield
           label="id"
           .maybeValue=${''}
           required
           maxlength="127"
           minlength="1"
           pattern="${patterns.nmToken}"
-        ></scl-wizarding-textfield>`,
-                x `<scl-wizarding-textfield
+        ></scl-textfield>`,
+                x `<scl-textfield
           label="desc"
           .maybeValue=${null}
           nullable
           pattern="${patterns.normalizedString}"
-        ></scl-wizarding-textfield>`,
+        ></scl-textfield>`,
             ],
         },
     ];
@@ -42868,25 +43338,25 @@ function createEnumTypeWizard(parent) {
 
 function renderContent$3(content) {
     return [
-        x `<scl-wizarding-textfield
+        x `<scl-textfield
       label="ord"
       .maybeValue=${content.ord}
       required
       type="number"
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="value"
       .maybeValue=${content.value}
       pattern="${patterns.normalizedString}"
       dialogInitialFocus
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       id="evDesc"
       label="desc"
       .maybeValue=${content.desc}
       nullable
       pattern="${patterns.normalizedString}"
-    ></scl-wizarding-textfield>`,
+    ></scl-textfield>`,
     ];
 }
 function nextOrd(parent) {
@@ -42928,7 +43398,7 @@ function createEnumValWizard(parent) {
         },
     ];
 }
-function updateAction$i(element) {
+function updateAction$j(element) {
     return (inputs) => {
         var _a;
         const value = (_a = getValue(inputs.find(i => i.label === 'value'))) !== null && _a !== void 0 ? _a : '';
@@ -42964,7 +43434,7 @@ function editEnumValWizard(element) {
             primary: {
                 icon: '',
                 label: 'Save',
-                action: updateAction$i(element),
+                action: updateAction$j(element),
             },
             content: renderContent$3({ ord, desc, value }),
         },
@@ -42974,23 +43444,23 @@ function editEnumValWizard(element) {
 /* eslint-disable import/no-extraneous-dependencies */
 function contentFunctionWizard(options) {
     return [
-        x `<scl-wizarding-textfield
+        x `<scl-textfield
       label="name"
       .maybeValue=${options.name}
       required
       .reservedValues=${options.reservedValues}
       dialogInitialFocus
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="desc"
       .maybeValue=${options.desc}
       nullable
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="type"
       .maybeValue=${options.type}
       nullable
-    ></scl-wizarding-textfield>`,
+    ></scl-textfield>`,
     ];
 }
 function createFunctionAction(parent) {
@@ -43106,7 +43576,7 @@ function createEqFunctionWizard(parent) {
         },
     ];
 }
-function updateAction$h(element) {
+function updateAction$i(element) {
     return (inputs) => {
         const attributes = {};
         const functionKeys = ['name', 'desc', 'type'];
@@ -43129,7 +43599,7 @@ function editEqFunctionWizard(element) {
             primary: {
                 icon: 'save',
                 label: 'save',
-                action: updateAction$h(element),
+                action: updateAction$i(element),
             },
             content: [
                 ...contentFunctionWizard({
@@ -43183,7 +43653,7 @@ function createEqSubFunctionWizard(parent) {
         },
     ];
 }
-function updateAction$g(element) {
+function updateAction$h(element) {
     return (inputs) => {
         const attributes = {};
         const functionKeys = ['name', 'desc', 'type'];
@@ -43206,7 +43676,7 @@ function editEqSubFunctionWizard(element) {
             primary: {
                 icon: 'save',
                 label: 'save',
-                action: updateAction$g(element),
+                action: updateAction$h(element),
             },
             content: [
                 ...contentFunctionWizard({
@@ -43223,30 +43693,30 @@ function editEqSubFunctionWizard(element) {
 /* eslint-disable import/no-extraneous-dependencies */
 function contentGeneralEquipmentWizard(options) {
     return [
-        x `<scl-wizarding-textfield
+        x `<scl-textfield
       label="name"
       .maybeValue=${options.name}
       required
       .reservedValues=${options.reservedValues}
       dialogInitialFocus
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="desc"
       .maybeValue=${options.desc}
       nullable
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="type"
       .maybeValue=${options.type}
       minLength="3"
       pattern="AXN|BAT|MOT|FAN|FIL|PMP|TNK|VLV|E[A-Z]*"
       required
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-checkbox
+    ></scl-textfield>`,
+        x `<scl-checkbox
       label="virtual"
       .maybeValue=${options.virtual}
       nullable
-    ></scl-wizarding-checkbox>`,
+    ></scl-checkbox>`,
     ];
 }
 function createAction$c(parent) {
@@ -43291,7 +43761,7 @@ function createGeneralEquipmentWizard(parent) {
         },
     ];
 }
-function updateAction$f(element) {
+function updateAction$g(element) {
     return (inputs) => {
         const attributes = {};
         const generalEquipmentKeys = ['name', 'desc', 'type', 'virtual'];
@@ -43315,7 +43785,7 @@ function editGeneralEquipmentWizard(element) {
             primary: {
                 icon: 'save',
                 label: 'save',
-                action: updateAction$f(element),
+                action: updateAction$g(element),
             },
             content: [
                 ...contentGeneralEquipmentWizard({
@@ -43363,7 +43833,7 @@ function mxxTimeUpdateAction(gse, oldMxxTime, newTimeValue, option) {
         { node: oldMxxTime },
     ];
 }
-function updateAction$e(element) {
+function updateAction$f(element) {
     return (inputs, wizard) => {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         const action = [];
@@ -43401,24 +43871,24 @@ function editGseWizard(element) {
             primary: {
                 label: 'save',
                 icon: 'save',
-                action: updateAction$e(element),
+                action: updateAction$f(element),
             },
             content: [
                 ...contentAddress({ element, types }),
-                x `<scl-wizarding-textfield
+                x `<scl-textfield
           label="MinTime"
           .maybeValue=${minTime}
           nullable
           suffix="ms"
           type="number"
-        ></scl-wizarding-textfield>`,
-                x `<scl-wizarding-textfield
+        ></scl-textfield>`,
+                x `<scl-textfield
           label="MaxTime"
           .maybeValue=${maxTime}
           nullable
           suffix="ms"
           type="number"
-        ></scl-wizarding-textfield>`,
+        ></scl-textfield>`,
             ],
         },
     ];
@@ -43427,36 +43897,36 @@ function editGseWizard(element) {
 /* eslint-disable import/no-extraneous-dependencies */
 function render$4(name, iedNames, desc, type, manufacturer, owner) {
     return [
-        x `<scl-wizarding-textfield
+        x `<scl-textfield
       label="name"
       .maybeValue=${name}
       .reservedValues=${iedNames}
       required
       dialogInitialFocus
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="desc"
       .maybeValue=${desc}
       nullable
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="type"
       .maybeValue=${type}
       disabled
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="manufacturer"
       .maybeValue=${manufacturer}
       disabled
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="owner"
       .maybeValue=${owner}
       disabled
-    ></scl-wizarding-textfield>`,
+    ></scl-textfield>`,
     ];
 }
-function updateAction$d(element) {
+function updateAction$e(element) {
     return (inputs) => {
         const name = inputs.find(i => i.label === 'name').value;
         const desc = getValue(inputs.find(i => i.label === 'desc'));
@@ -43478,7 +43948,7 @@ function iEDEditWizard(element) {
             primary: {
                 icon: 'edit',
                 label: 'save',
-                action: updateAction$d(element),
+                action: updateAction$e(element),
             },
             content: render$4((_a = element.getAttribute('name')) !== null && _a !== void 0 ? _a : '', iedNames, element.getAttribute('desc'), element.getAttribute('type'), element.getAttribute('manufacturer'), element.getAttribute('owner')),
         },
@@ -43488,20 +43958,20 @@ function iEDEditWizard(element) {
 /* eslint-disable import/no-extraneous-dependencies */
 function render$3(inst, name, ldNames) {
     return [
-        x `<scl-wizarding-textfield
+        x `<scl-textfield
       label="inst"
       .maybeValue=${inst}
       disabled
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="name"
       .maybeValue=${name}
       nullable
       .reservedValues=${ldNames}
-    ></scl-wizarding-textfield>`,
+    ></scl-textfield>`,
     ];
 }
-function updateAction$c(element) {
+function updateAction$d(element) {
     return (inputs) => {
         const name = inputs.find(i => i.label === 'name').value;
         if (name === element.getAttribute('name'))
@@ -43523,7 +43993,7 @@ function lDeviceEditWizard(element) {
             primary: {
                 icon: 'edit',
                 label: 'save',
-                action: updateAction$c(element),
+                action: updateAction$d(element),
             },
             content: render$3((_a = element.getAttribute('inst')) !== null && _a !== void 0 ? _a : '', element.getAttribute('name'), ldNames),
         },
@@ -43533,30 +44003,30 @@ function lDeviceEditWizard(element) {
 /* eslint-disable import/no-extraneous-dependencies */
 function renderContent$2(options) {
     return [
-        x `<scl-wizarding-textfield
+        x `<scl-textfield
       label="name"
       .maybeValue=${options.name}
       required
       dialogInitialFocus
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="desc"
       .maybeValue=${options.desc}
       nullable
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="type"
       .maybeValue=${options.type}
       nullable
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="nomFreq"
       .maybeValue=${options.nomFreq}
       nullable
       suffix="Hz"
       pattern="${patterns.unsigned}"
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="numPhases"
       .maybeValue=${options.numPhases}
       nullable
@@ -43564,7 +44034,7 @@ function renderContent$2(options) {
       type="number"
       min="1"
       max="255"
-    ></scl-wizarding-textfield>`,
+    ></scl-textfield>`,
     ];
 }
 function createAction$b(parent) {
@@ -43606,7 +44076,7 @@ function createLineWizard(parent) {
         },
     ];
 }
-function updateAction$b(element) {
+function updateAction$c(element) {
     return (inputs) => {
         const attributes = {};
         const lineKeys = ['name', 'desc', 'type', 'nomFreq', 'numPhases'];
@@ -43627,7 +44097,7 @@ function editLineWizard(element) {
             primary: {
                 icon: 'edit',
                 label: 'save',
-                action: updateAction$b(element),
+                action: updateAction$c(element),
             },
             content: renderContent$2({
                 name: (_a = element.getAttribute('name')) !== null && _a !== void 0 ? _a : '',
@@ -43755,25 +44225,25 @@ __decorate$1([
 ], IconButtonToggleBase.prototype, "mdcRoot", void 0);
 __decorate$1([
     ariaProperty,
-    e$6({ type: String, attribute: 'aria-label' })
+    n$2({ type: String, attribute: 'aria-label' })
 ], IconButtonToggleBase.prototype, "ariaLabel", void 0);
 __decorate$1([
-    e$6({ type: Boolean, reflect: true })
+    n$2({ type: Boolean, reflect: true })
 ], IconButtonToggleBase.prototype, "disabled", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], IconButtonToggleBase.prototype, "onIcon", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], IconButtonToggleBase.prototype, "offIcon", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], IconButtonToggleBase.prototype, "ariaLabelOn", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], IconButtonToggleBase.prototype, "ariaLabelOff", void 0);
 __decorate$1([
-    e$6({ type: Boolean, reflect: true })
+    n$2({ type: Boolean, reflect: true })
 ], IconButtonToggleBase.prototype, "on", void 0);
 __decorate$1([
     e$3('mwc-ripple')
@@ -44426,31 +44896,31 @@ __decorate$1([
     t$1()
 ], RadioBase.prototype, "useStateLayerCustomProperties", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], RadioBase.prototype, "global", void 0);
 __decorate$1([
-    e$6({ type: Boolean, reflect: true })
+    n$2({ type: Boolean, reflect: true })
 ], RadioBase.prototype, "checked", null);
 __decorate$1([
-    e$6({ type: Boolean }),
+    n$2({ type: Boolean }),
     observer(function (disabled) {
         this.mdcFoundation.setDisabled(disabled);
     })
 ], RadioBase.prototype, "disabled", void 0);
 __decorate$1([
-    e$6({ type: String }),
+    n$2({ type: String }),
     observer(function (value) {
         this._handleUpdatedValue(value);
     })
 ], RadioBase.prototype, "value", void 0);
 __decorate$1([
-    e$6({ type: String })
+    n$2({ type: String })
 ], RadioBase.prototype, "name", void 0);
 __decorate$1([
-    e$6({ type: Boolean })
+    n$2({ type: Boolean })
 ], RadioBase.prototype, "reducedTouchTarget", void 0);
 __decorate$1([
-    e$6({ type: Number })
+    n$2({ type: Number })
 ], RadioBase.prototype, "formElementTabIndex", void 0);
 __decorate$1([
     t$1()
@@ -44463,11 +44933,11 @@ __decorate$1([
 ], RadioBase.prototype, "ripple", void 0);
 __decorate$1([
     ariaProperty,
-    e$6({ attribute: 'aria-label' })
+    n$2({ attribute: 'aria-label' })
 ], RadioBase.prototype, "ariaLabel", void 0);
 __decorate$1([
     ariaProperty,
-    e$6({ attribute: 'aria-labelledby' })
+    n$2({ attribute: 'aria-labelledby' })
 ], RadioBase.prototype, "ariaLabelledBy", void 0);
 __decorate$1([
     e$5({ passive: true })
@@ -44504,14 +44974,74 @@ function compare(a, b) {
         return b.selected ? -1 : 1;
     return 0;
 }
+function renderLNodeWizard(options) {
+    const iedAssigned = options.iedName !== 'None';
+    return [
+        x `<scl-textfield
+      label="iedName"
+      .maybeValue=${options.iedName}
+      helper="Referenced IED"
+      helperPersistent
+      disabled
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="ldInst"
+      .maybeValue=${options.ldInst}
+      helper="Referenced Logical Device"
+      maxLength="${maxLength.ldInst}"
+      pattern="${patterns.ldInst}"
+      ?nullable="${!iedAssigned}"
+      ?disabled="${iedAssigned}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="prefix"
+      .maybeValue=${options.prefix}
+      helper="Logical Node Prefix"
+      maxLength="${maxLength.prefix}"
+      pattern="${patterns.prefix}"
+      ?nullable="${!iedAssigned}"
+      ?disabled="${iedAssigned}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="lnClass"
+      .maybeValue=${options.lnClass}
+      helper="Logical Node Class"
+      helperPersistent
+      required
+      disabled
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="lnInst"
+      .maybeValue=${options.lnInst}
+      helper="Logical Node Instance"
+      maxLength="${maxLength.lnInst}"
+      pattern="${patterns.lnInst}"
+      helperPersistent
+      ?disabled="${iedAssigned}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="lnType"
+      .maybeValue=${options.lnType}
+      helper="Logical Node Type"
+      helperPersistent
+      disabled
+    ></scl-textfield>`,
+    ];
+}
 function logicalNodeParameters(anyLn) {
-    var _a, _b, _c, _d, _e, _f, _g;
+    var _a, _b, _c, _d, _e, _f, _g, _h;
     const prefix = (_a = anyLn.getAttribute('prefix')) !== null && _a !== void 0 ? _a : '';
     const lnClass = (_b = anyLn.getAttribute('lnClass')) !== null && _b !== void 0 ? _b : '';
     const inst = (_c = anyLn.getAttribute('inst')) !== null && _c !== void 0 ? _c : '';
-    const iedName = (_e = (_d = anyLn.closest('IED')) === null || _d === void 0 ? void 0 : _d.getAttribute('name')) !== null && _e !== void 0 ? _e : '';
-    const ldInst = (_g = (_f = anyLn.closest('LDevice')) === null || _f === void 0 ? void 0 : _f.getAttribute('inst')) !== null && _g !== void 0 ? _g : '';
-    return { prefix, lnClass, inst, iedName, ldInst };
+    const lnType = (_d = anyLn.getAttribute('lnType')) !== null && _d !== void 0 ? _d : '';
+    const iedName = (_f = (_e = anyLn.closest('IED')) === null || _e === void 0 ? void 0 : _e.getAttribute('name')) !== null && _f !== void 0 ? _f : '';
+    const ldInst = (_h = (_g = anyLn.closest('LDevice')) === null || _g === void 0 ? void 0 : _g.getAttribute('inst')) !== null && _h !== void 0 ? _h : '';
+    return { prefix, lnClass, inst, iedName, ldInst, lnType };
 }
 function allAnyLNs(doc) {
     return Array.from(doc.querySelectorAll(':root > IED > AccessPoint > Server > LDevice > LN0, :root > IED > AccessPoint > Server > LDevice > LN'));
@@ -44557,7 +45087,7 @@ function showLogicalNodeTypes(evt, parent) {
     else
         instanceFilter.classList.add('hidden');
     const doc = parent.ownerDocument;
-    B(x `${isLogicalNodeInstance
+    D(x `${isLogicalNodeInstance
         ? // eslint-disable-next-line no-use-before-define
             renderInstances(parent)
         : renderTypicals(doc)}`, lnFilterList(button));
@@ -44592,13 +45122,14 @@ function createSingleLNode(parent, ln) {
             reference: getReference$1(parent, 'LNode'),
         };
     }
-    const { iedName, ldInst, prefix, lnClass, inst } = logicalNodeParameters(ln);
+    const { iedName, ldInst, prefix, lnClass, inst, lnType } = logicalNodeParameters(ln);
     const node = createElement(parent.ownerDocument, 'LNode', {
         iedName,
         ldInst,
         prefix,
         lnClass,
         lnInst: inst,
+        lnType,
     });
     return {
         parent,
@@ -44626,13 +45157,60 @@ function createAction$a(parent) {
             .filter(insert => insert);
     };
 }
+function updateAction$b(element) {
+    return (inputs) => {
+        const attributes = {};
+        const lNodeTypeKeys = [
+            'desc',
+            'iedName',
+            'ldInst',
+            'prefix',
+            'lnInst',
+            'lnType',
+        ];
+        lNodeTypeKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (lNodeTypeKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function mapAction(element) {
+    return (_, wizard) => {
+        var _a;
+        const list = (_a = wizard.shadowRoot) === null || _a === void 0 ? void 0 : _a.querySelector('#lnList');
+        const selectedLN = element.ownerDocument.querySelector(selector('LN', list.selected.value));
+        const { iedName, ldInst, prefix, inst, lnType } = logicalNodeParameters(selectedLN);
+        const attributes = {};
+        const lNodeTypeKeys = ['iedName', 'ldInst', 'prefix', 'lnInst', 'lnType'];
+        attributes.iedName = iedName;
+        attributes.ldInst = ldInst;
+        attributes.prefix = prefix;
+        attributes.lnInst = inst;
+        attributes.lnType = lnType;
+        if (lNodeTypeKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
 function filterIED(evt, parent) {
     const iedFilterList = evt.target;
     const ieds = iedFilterList.selected.map(selection => selection.value);
     // update global array selectedIEDs
     selectedIEDs.length = 0;
     selectedIEDs.push(...ieds);
-    B(renderInstances(parent), lnFilterList(evt.target));
+    D(renderInstances(parent), lnFilterList(evt.target));
+}
+function filterIEDLN(evt, parent) {
+    const iedFilterList = evt.target;
+    const ieds = iedFilterList.selected.map(selection => selection.value);
+    // update global array selectedIEDs
+    selectedIEDs.length = 0;
+    selectedIEDs.push(...ieds);
+    D(renderLNodeInstances(parent), lnFilterList(evt.target));
 }
 function renderListItem(value) {
     const { iedName, ldInst, prefix, lnClass, inst } = logicalNodeParameters(value.anyLn);
@@ -44659,6 +45237,19 @@ function renderInstances(parent) {
     const doc = parent.ownerDocument;
     return allAnyLNs(doc)
         .filter(anyLn => { var _a, _b; return selectedIEDs.includes((_b = (_a = anyLn.closest('IED')) === null || _a === void 0 ? void 0 : _a.getAttribute('name')) !== null && _b !== void 0 ? _b : ''); })
+        .map(anyLn => anyLnObject(parent, anyLn))
+        .sort(compare)
+        .map(renderListItem);
+}
+function renderLNodeInstances(parent) {
+    const doc = parent.ownerDocument;
+    const lnClass = parent.getAttribute('lnClass');
+    return allAnyLNs(doc)
+        .filter(anyLn => {
+        var _a, _b;
+        return anyLn.getAttribute('lnClass') === lnClass &&
+            selectedIEDs.includes((_b = (_a = anyLn.closest('IED')) === null || _a === void 0 ? void 0 : _a.getAttribute('name')) !== null && _b !== void 0 ? _b : '');
+    })
         .map(anyLn => anyLnObject(parent, anyLn))
         .sort(compare)
         .map(renderListItem);
@@ -44727,6 +45318,72 @@ function createLNodeWizard(parent) {
         },
     ];
 }
+function editLNodeWizard(element, subWizard) {
+    if (subWizard) {
+        const lnClass = element.getAttribute('lnClass');
+        return [
+            {
+                title: 'Map LN to LNode',
+                primary: {
+                    icon: 'save',
+                    label: 'save',
+                    action: mapAction(element),
+                },
+                content: [
+                    x `<div id="createLNodeWizardContent">
+            <style>
+              .hidden {
+                display: none;
+              }
+            </style>
+            <div style="display: flex; flex-direction: row;">
+              <div id="instanceFilter">
+                <mwc-icon-button-toggle
+                  ?on=${!selectedIEDs.length}
+                  style="position:absolute;top:8px;right:60px;"
+                  onicon="filter_list"
+                  officon="filter_list_off"
+                  @click="${showIEdFilterList}"
+                ></mwc-icon-button-toggle>
+                <oscd-filtered-list
+                  class="${o$1({ hidden: selectedIEDs.length })}"
+                  id="iedList"
+                  multi
+                  disableCheckAll
+                  @selected="${(evt) => filterIEDLN(evt, element)}"
+                  >${renderIEDItems(element)}</oscd-filtered-list
+                >
+              </div>
+              <oscd-filtered-list
+                id="lnList"
+                searchField.value="${lnClass}"
+              ></oscd-filtered-list>
+            </div>
+          </div>`,
+                ],
+            },
+        ];
+    }
+    return [
+        {
+            title: 'Edit LNode',
+            primary: {
+                icon: 'edit',
+                label: 'Save',
+                action: updateAction$b(element),
+            },
+            content: renderLNodeWizard({
+                desc: element.getAttribute('desc'),
+                iedName: element.getAttribute('iedName'),
+                ldInst: element.getAttribute('ldInst'),
+                prefix: element.getAttribute('prefix'),
+                lnClass: element.getAttribute('lnClass'),
+                lnInst: element.getAttribute('lnInst'),
+                lnType: element.getAttribute('lnType'),
+            }),
+        },
+    ];
+}
 
 /* eslint-disable import/no-extraneous-dependencies */
 function createLNodeTypeAction(parent) {
@@ -44752,25 +45409,25 @@ function createLNodeTypeWizard(parent) {
                 action: createLNodeTypeAction(parent),
             },
             content: [
-                x `<scl-wizarding-textfield
+                x `<scl-textfield
           label="id"
           .maybeValue=${''}
           required
           maxlength="127"
           minlength="1"
           pattern="${patterns.nmToken}"
-        ></scl-wizarding-textfield>`,
-                x `<scl-wizarding-textfield
+        ></scl-textfield>`,
+                x `<scl-textfield
           label="desc"
           .maybeValue=${null}
           nullable
           pattern="${patterns.normalizedString}"
-        ></scl-wizarding-textfield>`,
-                x `<scl-wizarding-textfield
+        ></scl-textfield>`,
+                x `<scl-textfield
           label="lnClass"
           .maybeValue=${'LLN0'}
           pattern="${patterns.lnClass}"
-        ></scl-wizarding-textfield>`,
+        ></scl-textfield>`,
             ],
         },
     ];
@@ -44780,23 +45437,23 @@ function createLNodeTypeWizard(parent) {
 const defaultPowerTransformerType = 'PTR';
 function renderPowerTransformerWizard(options) {
     return [
-        x `<scl-wizarding-textfield
+        x `<scl-textfield
       label="name"
       .maybeValue=${options.name}
       required
       dialogInitialFocus
       .reservedValues=${options.reservedValues}
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="desc"
       .maybeValue=${options.desc}
       nullable
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="type"
       .maybeValue=${options.type}
       disabled
-    ></scl-wizarding-textfield>`,
+    ></scl-textfield>`,
     ];
 }
 function createAction$9(parent) {
@@ -44865,25 +45522,98 @@ function editPowerTransformerWizard(element) {
 }
 
 /* eslint-disable import/no-extraneous-dependencies */
+function contentPrivateWizard(options) {
+    return [
+        x `<scl-textfield
+      label="type"
+      .maybeValue=${options.type}
+      required
+    ></scl-textfield>`,
+    ];
+}
+function createPrivateAction(parent) {
+    return (inputs) => {
+        const privateAttrs = {};
+        const privateKeys = ['type'];
+        privateKeys.forEach(key => {
+            privateAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const privateNode = createElement(parent.ownerDocument, 'Private', privateAttrs);
+        return [
+            { parent, node: privateNode, reference: getReference(parent, 'Private') },
+        ];
+    };
+}
+function createPrivateWizard(parent) {
+    const type = null;
+    return [
+        {
+            title: 'Add Private',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createPrivateAction(parent),
+            },
+            content: [
+                ...contentPrivateWizard({
+                    type,
+                }),
+            ],
+        },
+    ];
+}
+function updatePrivate(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['type'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editPrivateWizard(element) {
+    const type = element.getAttribute('type');
+    return [
+        {
+            title: 'Edit Private',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updatePrivate(element),
+            },
+            content: [
+                ...contentPrivateWizard({
+                    type,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
 function contentProcessWizard(content) {
     return [
-        x `<scl-wizarding-textfield
+        x `<scl-textfield
       label="name"
       .maybeValue=${content.name}
       required
       .reservedValues=${content.reservedNames}
       dialogInitialFocus
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="desc"
       .maybeValue=${content.desc}
       nullable
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="type"
       .maybeValue=${content.type}
       nullable
-    ></scl-wizarding-textfield>`,
+    ></scl-textfield>`,
     ];
 }
 function createAction$8(parent) {
@@ -44968,27 +45698,27 @@ function editProcessWizard(element) {
 /* eslint-disable import/no-extraneous-dependencies */
 function renderContent$1(content) {
     return [
-        x `<scl-wizarding-textfield
+        x `<scl-textfield
       label="name"
       .maybeValue=${content.name}
       required
       pattern="${patterns.alphanumericFirstLowerCase}"
       dialogInitialFocus
     >
-      ></scl-wizarding-textfield
+      ></scl-textfield
     >`,
-        x `<scl-wizarding-textfield
+        x `<scl-textfield
       label="desc"
       .maybeValue=${content.desc}
       nullable
       pattern="${patterns.normalizedString}"
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-select fixedMenuPosition label="type" required
+    ></scl-textfield>`,
+        x `<scl-select fixedMenuPosition label="type" required
       >${content.doTypes.map(dataType => x `<mwc-list-item
             value=${dataType.id}
             ?selected=${dataType.id === content.type}
             >${dataType.id}</mwc-list-item
-          >`)}</scl-wizarding-select
+          >`)}</scl-select
     >`,
     ];
 }
@@ -45097,19 +45827,19 @@ function editSMvWizard(element) {
 
 function contentSubEquipmentWizard(options) {
     return [
-        x `<scl-wizarding-textfield
+        x `<scl-textfield
       label="name"
       .maybeValue=${options.name}
       .reservedValues=${options.reservedValues}
       required
       dialogInitialFocus
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="desc"
       .maybeValue=${options.desc}
       nullable
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-select
+    ></scl-textfield>`,
+        x `<scl-select
       label="phase"
       fixedMenuPosition
       .maybeValue=${options.phase}
@@ -45118,12 +45848,12 @@ function contentSubEquipmentWizard(options) {
       ${['A', 'B', 'C', 'N', 'all', 'none', 'AB', 'BC', 'CA'].map(value => x `<mwc-list-item value="${value}">
             ${value.charAt(0).toUpperCase() + value.slice(1)}
           </mwc-list-item>`)}
-    </scl-wizarding-select> `,
-        x `<scl-wizarding-checkbox
+    </scl-select> `,
+        x `<scl-checkbox
       label="virtual"
       .maybeValue=${options.virtual}
       nullable
-    ></scl-wizarding-checkbox>`,
+    ></scl-checkbox>`,
     ];
 }
 function createAction$7(parent) {
@@ -45292,24 +46022,24 @@ const initial$1 = {
 };
 function renderContent(options) {
     return [
-        x `<scl-wizarding-textfield
+        x `<scl-textfield
       label="name"
       .maybeValue=${options.name}
       required
       dialogInitialFocus
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="desc"
       .maybeValue=${options.desc}
       nullable
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="type"
       .maybeValue=${options.type}
       nullable
       pattern="${patterns.normalizedString}"
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="BitRate"
       .maybeValue=${options.BitRate}
       nullable
@@ -45318,7 +46048,7 @@ function renderContent(options) {
       .multiplier=${options.multiplier}
       required
       pattern="${patterns.decimal}"
-    ></scl-wizarding-textfield>`,
+    ></scl-textfield>`,
     ];
 }
 function createAction$5(parent) {
@@ -45467,18 +46197,18 @@ function editSubNetworkWizard(element) {
 /* eslint-disable import/no-extraneous-dependencies */
 function render$2(options) {
     return [
-        x `<scl-wizarding-textfield
+        x `<scl-textfield
       label="name"
       .maybeValue=${options.name}
       required
       .reservedValues="${options.reservedValues}"
       dialogInitialFocus
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="desc"
       .maybeValue=${options.desc}
       nullable
-    ></scl-wizarding-textfield>`,
+    ></scl-textfield>`,
     ];
 }
 function createAction$4(parent) {
@@ -45548,28 +46278,28 @@ function editSubstationWizard(element) {
 /* eslint-disable import/no-extraneous-dependencies */
 function contentTapChangerWizard(options) {
     return [
-        x `<scl-wizarding-textfield
+        x `<scl-textfield
       label="name"
       .maybeValue=${options.name}
       required
       .reservedValues=${options.reservedValues}
       dialogInitialFocus
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="desc"
       .maybeValue=${options.desc}
       nullable
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="type"
       .maybeValue=${options.type}
       disabled
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-checkbox
+    ></scl-textfield>`,
+        x `<scl-checkbox
       label="virtual"
       .maybeValue=${options.virtual}
       nullable
-    ></scl-wizarding-checkbox>`,
+    ></scl-checkbox>`,
     ];
 }
 function createAction$3(parent) {
@@ -45742,13 +46472,13 @@ __decorate$1([
     i$2('textarea')
 ], TextAreaBase.prototype, "formElement", void 0);
 __decorate$1([
-    e$6({ type: Number })
+    n$2({ type: Number })
 ], TextAreaBase.prototype, "rows", void 0);
 __decorate$1([
-    e$6({ type: Number })
+    n$2({ type: Number })
 ], TextAreaBase.prototype, "cols", void 0);
 __decorate$1([
-    e$6({ converter: booleanOrStringConverter })
+    n$2({ converter: booleanOrStringConverter })
 ], TextAreaBase.prototype, "charCounter", void 0);
 
 /**
@@ -45848,28 +46578,28 @@ function editTextWizard(element) {
 /* eslint-disable import/no-extraneous-dependencies */
 function contentTransformerWindingWizard(options) {
     return [
-        x `<scl-wizarding-textfield
+        x `<scl-textfield
       label="name"
       .maybeValue=${options.name}
       required
       .reservedValues=${options.reservedValues}
       dialogInitialFocus
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="desc"
       .maybeValue=${options.desc}
       nullable
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="type"
       .maybeValue=${options.type}
       disabled
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-checkbox
+    ></scl-textfield>`,
+        x `<scl-checkbox
       label="virtual"
       .maybeValue=${options.virtual}
       nullable
-    ></scl-wizarding-checkbox>`,
+    ></scl-checkbox>`,
     ];
 }
 function createAction$1(parent) {
@@ -45961,7 +46691,7 @@ const initial = {
 };
 function render(option) {
     return [
-        x `<scl-wizarding-textfield
+        x `<scl-textfield
       label="name"
       .maybeValue=${option.name}
       helper="VoltageLevel name attribute"
@@ -45969,14 +46699,14 @@ function render(option) {
       validationMessage="Required information"
       .reservedValues="${option.reservedValues}"
       dialogInitialFocus
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="desc"
       .maybeValue=${option.desc}
       nullable
       helper="VoltageLevel name attribute"
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="nomFreq"
       .maybeValue=${option.nomFreq}
       nullable
@@ -45984,8 +46714,8 @@ function render(option) {
       suffix="Hz"
       required
       validationMessage="Number bigger than 0"
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="numPhases"
       .maybeValue=${option.numPhases}
       nullable
@@ -45996,8 +46726,8 @@ function render(option) {
       type="number"
       min="1"
       max="255"
-    ></scl-wizarding-textfield>`,
-        x `<scl-wizarding-textfield
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="Voltage"
       .maybeValue=${option.Voltage}
       nullable
@@ -46007,7 +46737,7 @@ function render(option) {
       helper="Voltage"
       required
       validationMessage="Number bigger than 0"
-    ></scl-wizarding-textfield>`,
+    ></scl-textfield>`,
     ];
 }
 function createAction(parent) {
@@ -46156,6 +46886,3137 @@ function voltageLevelEditWizard(element) {
                 multiplier: (_f = (_e = element
                     .querySelector('VoltageLevel > Voltage')) === null || _e === void 0 ? void 0 : _e.getAttribute('multiplier')) !== null && _f !== void 0 ? _f : null,
             }),
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentProcessResourcesWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createProcessResourcesAction(parent) {
+    return (inputs) => {
+        const ProcessResourcesAttrs = {};
+        const ProcessResourcesKeys = ['desc'];
+        ProcessResourcesKeys.forEach(key => {
+            ProcessResourcesAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const ProcessResourcesNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:ProcessResources', ProcessResourcesAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: ProcessResourcesNode,
+                reference: get6100Reference(parent, 'ProcessResources'),
+            },
+        ];
+    };
+}
+function createProcessResourcesWizard(parent) {
+    const desc = null;
+    return [
+        {
+            title: 'Add ProcessResources',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createProcessResourcesAction(parent),
+            },
+            content: [
+                ...contentProcessResourcesWizard({
+                    desc,
+                }),
+            ],
+        },
+    ];
+}
+function updateProcessResources(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['desc'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editProcessResourcesWizard(element) {
+    const desc = element.getAttribute('desc');
+    return [
+        {
+            title: 'Edit ProcessResources',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateProcessResources(element),
+            },
+            content: [
+                ...contentProcessResourcesWizard({
+                    desc,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentProcessResourceWizard(options) {
+    return [
+        x `<scl-textfield
+      label="name"
+      .maybeValue=${options.name}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="selector"
+      .maybeValue=${options.selector}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createProcessResourceAction(parent) {
+    return (inputs) => {
+        const ProcessResourceAttrs = {};
+        const ProcessResourceKeys = ['name', 'desc', 'selector'];
+        ProcessResourceKeys.forEach(key => {
+            ProcessResourceAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const ProcessResourceNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:ProcessResource', ProcessResourceAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: ProcessResourceNode,
+                reference: get6100Reference(parent, 'ProcessResource'),
+            },
+        ];
+    };
+}
+function createProcessResourceWizard(parent) {
+    const name = null;
+    const desc = null;
+    const selector = null;
+    return [
+        {
+            title: 'Add ProcessResource',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createProcessResourceAction(parent),
+            },
+            content: [
+                ...contentProcessResourceWizard({
+                    name,
+                    desc,
+                    selector,
+                }),
+            ],
+        },
+    ];
+}
+function updateProcessResource(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['desc'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editProcessResourceWizard(element) {
+    const name = element.getAttribute('name');
+    const desc = element.getAttribute('desc');
+    const selector = element.getAttribute('selector');
+    return [
+        {
+            title: 'Edit ProcessResource',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateProcessResource(element),
+            },
+            content: [
+                ...contentProcessResourceWizard({
+                    name,
+                    desc,
+                    selector,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentResourceWizard(options) {
+    return [
+        x `<scl-textfield
+      label="source"
+      .maybeValue=${options.source}
+      nullable
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="resInst"
+      .maybeValue=${options.resInst}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createResourceAction(parent) {
+    return (inputs) => {
+        const ResourceAttrs = {};
+        const ResourceKeys = ['source', 'resInst'];
+        ResourceKeys.forEach(key => {
+            ResourceAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const ResourceNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:Resource', ResourceAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: ResourceNode,
+                reference: get6100Reference(parent, 'Resource'),
+            },
+        ];
+    };
+}
+function createResourceWizard(parent) {
+    const source = null;
+    const resInst = null;
+    return [
+        {
+            title: 'Add Resource',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createResourceAction(parent),
+            },
+            content: [
+                ...contentResourceWizard({
+                    source,
+                    resInst,
+                }),
+            ],
+        },
+    ];
+}
+function updateResource(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['source', 'resInst'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editResourceWizard(element) {
+    const source = element.getAttribute('source');
+    const resInst = element.getAttribute('resInst');
+    return [
+        {
+            title: 'Edit Resource',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateResource(element),
+            },
+            content: [
+                ...contentResourceWizard({
+                    source,
+                    resInst,
+                }),
+            ],
+        },
+    ];
+}
+
+// Unique ID creation requires a high quality random # generator. In the browser we therefore
+// require the crypto API and do not support built-in fallback to lower quality random number
+// generators (like Math.random()).
+let getRandomValues;
+const rnds8 = new Uint8Array(16);
+function rng() {
+  // lazy load so that environments that need to polyfill have a chance to do so
+  if (!getRandomValues) {
+    // getRandomValues needs to be invoked in a context where "this" is a Crypto implementation.
+    getRandomValues = typeof crypto !== 'undefined' && crypto.getRandomValues && crypto.getRandomValues.bind(crypto);
+
+    if (!getRandomValues) {
+      throw new Error('crypto.getRandomValues() not supported. See https://github.com/uuidjs/uuid#getrandomvalues-not-supported');
+    }
+  }
+
+  return getRandomValues(rnds8);
+}
+
+/**
+ * Convert array of 16 byte values to UUID string format of the form:
+ * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+ */
+
+const byteToHex = [];
+
+for (let i = 0; i < 256; ++i) {
+  byteToHex.push((i + 0x100).toString(16).slice(1));
+}
+
+function unsafeStringify(arr, offset = 0) {
+  // Note: Be careful editing this code!  It's been tuned for performance
+  // and works in ways you may not expect. See https://github.com/uuidjs/uuid/pull/434
+  return byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + '-' + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + '-' + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + '-' + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + '-' + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]];
+}
+
+const randomUUID = typeof crypto !== 'undefined' && crypto.randomUUID && crypto.randomUUID.bind(crypto);
+var native = {
+  randomUUID
+};
+
+function v4(options, buf, offset) {
+  if (native.randomUUID && !buf && !options) {
+    return native.randomUUID();
+  }
+
+  options = options || {};
+  const rnds = options.random || (options.rng || rng)(); // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
+
+  rnds[6] = rnds[6] & 0x0f | 0x40;
+  rnds[8] = rnds[8] & 0x3f | 0x80; // Copy bytes to buffer, if provided
+
+  if (buf) {
+    offset = offset || 0;
+
+    for (let i = 0; i < 16; ++i) {
+      buf[offset + i] = rnds[i];
+    }
+
+    return buf;
+  }
+
+  return unsafeStringify(rnds);
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentAllocationRoleWizard(options) {
+    return [
+        x `<scl-textfield
+      label="name"
+      .maybeValue=${options.name}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="uuid"
+      .maybeValue=${options.uuid}
+      disabled
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="templateUuid"
+      .maybeValue=${options.templateUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="originUuid"
+      .maybeValue=${options.originUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+    ];
+}
+function createAllocationRoleAction(parent) {
+    return (inputs) => {
+        const AllocationRoleAttrs = {};
+        const AllocationRoleKeys = [
+            'name',
+            'desc',
+            'uuid',
+            'templateUuid',
+            'originUuid',
+        ];
+        AllocationRoleKeys.forEach(key => {
+            AllocationRoleAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const AllocationRoleNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:AllocationRole', AllocationRoleAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: AllocationRoleNode,
+                reference: get6100Reference(parent, 'AllocationRole'),
+            },
+        ];
+    };
+}
+function createAllocationRoleWizard(parent) {
+    const name = null;
+    const desc = null;
+    const uuid = v4();
+    const templateUuid = null;
+    const originUuid = null;
+    return [
+        {
+            title: 'Add AllocationRole',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createAllocationRoleAction(parent),
+            },
+            content: [
+                ...contentAllocationRoleWizard({
+                    name,
+                    desc,
+                    uuid,
+                    templateUuid,
+                    originUuid,
+                }),
+            ],
+        },
+    ];
+}
+function updateAllocationRole(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['name', 'desc', 'uuid', 'templateUuid', 'originUuid'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editAllocationRoleWizard(element) {
+    const name = element.getAttribute('name');
+    const desc = element.getAttribute('desc');
+    const uuid = element.getAttribute('uuid');
+    const templateUuid = element.getAttribute('templateUuid');
+    const originUuid = element.getAttribute('originUuid');
+    return [
+        {
+            title: 'Edit AllocationRole',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateAllocationRole(element),
+            },
+            content: [
+                ...contentAllocationRoleWizard({
+                    name,
+                    desc,
+                    uuid,
+                    templateUuid,
+                    originUuid,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentAnalogueWiringParametersWizard(options) {
+    return [
+        x `<scl-textfield
+      label="id"
+      .maybeValue=${options.id}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="inpRef"
+      .maybeValue=${options.inpRef}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="inpNam"
+      .maybeValue=${options.inpNam}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="dsgInp"
+      .maybeValue=${options.dsgInp}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="fctInp"
+      .maybeValue=${options.fctInp}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createAnalogueWiringParametersAction(parent) {
+    return (inputs) => {
+        const AnalogueWiringParametersAttrs = {};
+        const AnalogueWiringParametersKeys = [
+            'id',
+            'desc',
+            'inpRef',
+            'inpNam',
+            'dsgInp',
+            'fctInp',
+        ];
+        AnalogueWiringParametersKeys.forEach(key => {
+            AnalogueWiringParametersAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const AnalogueWiringParametersNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:AnalogueWiringParameters', AnalogueWiringParametersAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: AnalogueWiringParametersNode,
+                reference: get6100Reference(parent, 'AnalogueWiringParameters'),
+            },
+        ];
+    };
+}
+function createAnalogueWiringParametersWizard(parent) {
+    const id = null;
+    const desc = null;
+    const inpRef = null;
+    const inpNam = null;
+    const dsgInp = null;
+    const fctInp = null;
+    return [
+        {
+            title: 'Add AnalogueWiringParameters',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createAnalogueWiringParametersAction(parent),
+            },
+            content: [
+                ...contentAnalogueWiringParametersWizard({
+                    id,
+                    desc,
+                    inpRef,
+                    inpNam,
+                    dsgInp,
+                    fctInp,
+                }),
+            ],
+        },
+    ];
+}
+function updateAnalogueWiringParameters(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['id', 'desc', 'inpRef', 'inpNam', 'dsgInp', 'fctInp'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editAnalogueWiringParametersWizard(element) {
+    const id = element.getAttribute('id');
+    const desc = element.getAttribute('desc');
+    const inpRef = element.getAttribute('inpRef');
+    const inpNam = element.getAttribute('inpNam');
+    const dsgInp = element.getAttribute('dsgInp');
+    const fctInp = element.getAttribute('fctInp');
+    return [
+        {
+            title: 'Edit AnalogueWiringParameters',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateAnalogueWiringParameters(element),
+            },
+            content: [
+                ...contentAnalogueWiringParametersWizard({
+                    id,
+                    desc,
+                    inpRef,
+                    inpNam,
+                    dsgInp,
+                    fctInp,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentApplicationWizard(options) {
+    return [
+        x `<scl-textfield
+      label="name"
+      .maybeValue=${options.name}
+      pattern="${patterns.tName}"
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="type"
+      .maybeValue=${options.type}
+      pattern="${patterns.id}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="uuid"
+      .maybeValue=${options.uuid}
+      disabled
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="templateUuid"
+      .maybeValue=${options.templateUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="originUuid"
+      .maybeValue=${options.originUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+    ];
+}
+function createApplicationAction(parent) {
+    return (inputs) => {
+        const ApplicationAttrs = {};
+        const ApplicationKeys = [
+            'name',
+            'desc',
+            'type',
+            'uuid',
+            'templateUuid',
+            'originUuid',
+        ];
+        ApplicationKeys.forEach(key => {
+            ApplicationAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const ApplicationNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:Application', ApplicationAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: ApplicationNode,
+                reference: get6100Reference(parent, 'Application'),
+            },
+        ];
+    };
+}
+function createApplicationWizard(parent) {
+    const name = null;
+    const desc = null;
+    const type = null;
+    const uuid = v4();
+    const templateUuid = null;
+    const originUuid = null;
+    return [
+        {
+            title: 'Add Application',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createApplicationAction(parent),
+            },
+            content: [
+                ...contentApplicationWizard({
+                    name,
+                    desc,
+                    type,
+                    uuid,
+                    templateUuid,
+                    originUuid,
+                }),
+            ],
+        },
+    ];
+}
+function updateApplication(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = [
+            'name',
+            'desc',
+            'type',
+            'uuid',
+            'templateUuid',
+            'originUuid',
+        ];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editApplicationWizard(element) {
+    const name = element.getAttribute('name');
+    const desc = element.getAttribute('desc');
+    const type = element.getAttribute('type');
+    const uuid = element.getAttribute('uuid');
+    const templateUuid = element.getAttribute('templateUuid');
+    const originUuid = element.getAttribute('originUuid');
+    return [
+        {
+            title: 'Edit Application',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateApplication(element),
+            },
+            content: [
+                ...contentApplicationWizard({
+                    name,
+                    desc,
+                    type,
+                    uuid,
+                    templateUuid,
+                    originUuid,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentBehaviorDescriptionWizard(options) {
+    return [
+        x `<scl-textfield
+      label="name"
+      .maybeValue=${options.name}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-select
+      label="format"
+      .maybeValue=${options.format}
+      nullable
+      required
+      >${['IEC 61131', 'Textual', 'Graphic'].map(type => x `<mwc-list-item value="${type}">${type}</mwc-list-item>`)}</scl-select
+    >`,
+        x `<scl-textfield
+      label="fileReference"
+      .maybeValue=${options.fileReference}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="isSpecification"
+      .maybeValue=${options.isSpecification}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="isSimulation"
+      .maybeValue=${options.isSimulation}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createBehaviorDescriptionAction(parent) {
+    return (inputs) => {
+        const BehaviorDescriptionAttrs = {};
+        const BehaviorDescriptionKeys = [
+            'name',
+            'desc',
+            'fileReference',
+            'format',
+            'isSimulation',
+            'isSpecification',
+        ];
+        BehaviorDescriptionKeys.forEach(key => {
+            BehaviorDescriptionAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const BehaviorDescriptionNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:BehaviorDescription', BehaviorDescriptionAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: BehaviorDescriptionNode,
+                reference: get6100Reference(parent, 'BehaviorDescription'),
+            },
+        ];
+    };
+}
+function createBehaviorDescriptionWizard(parent) {
+    const name = null;
+    const desc = null;
+    const fileReference = null;
+    const format = null;
+    const isSimulation = null;
+    const isSpecification = null;
+    return [
+        {
+            title: 'Add BehaviorDescription',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createBehaviorDescriptionAction(parent),
+            },
+            content: [
+                ...contentBehaviorDescriptionWizard({
+                    name,
+                    desc,
+                    fileReference,
+                    format,
+                    isSimulation,
+                    isSpecification,
+                }),
+            ],
+        },
+    ];
+}
+function updateBehaviorDescription(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = [
+            'name',
+            'desc',
+            'fileReference',
+            'format',
+            'isSimulation',
+            'isSpecification',
+        ];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editBehaviorDescriptionWizard(element) {
+    const name = element.getAttribute('name');
+    const desc = element.getAttribute('desc');
+    const fileReference = element.getAttribute('fileReference');
+    const format = element.getAttribute('format');
+    const isSimulation = element.getAttribute('isSimulation');
+    const isSpecification = element.getAttribute('isSpecification');
+    return [
+        {
+            title: 'Edit BehaviorDescription',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateBehaviorDescription(element),
+            },
+            content: [
+                ...contentBehaviorDescriptionWizard({
+                    name,
+                    desc,
+                    fileReference,
+                    format,
+                    isSimulation,
+                    isSpecification,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentBehaviorDescriptionRefWizard(options) {
+    return [
+        x `<scl-textfield
+      label="behaviorDescription"
+      .maybeValue=${options.behaviorDescription}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="behaviorDescriptionUuid"
+      .maybeValue=${options.behaviorDescriptionUuid}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createBehaviorDescriptionRefAction(parent) {
+    return (inputs) => {
+        const BehaviorDescriptionRefAttrs = {};
+        const BehaviorDescriptionRefKeys = [
+            'behaviorDescription',
+            'desc',
+            'behaviorDescriptionUuid',
+        ];
+        BehaviorDescriptionRefKeys.forEach(key => {
+            BehaviorDescriptionRefAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const BehaviorDescriptionRefNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:BehaviorDescriptionRef', BehaviorDescriptionRefAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: BehaviorDescriptionRefNode,
+                reference: get6100Reference(parent, 'BehaviorDescriptionRef'),
+            },
+        ];
+    };
+}
+function createBehaviorDescriptionRefWizard(parent) {
+    const behaviorDescription = null;
+    const desc = null;
+    const behaviorDescriptionUuid = null;
+    return [
+        {
+            title: 'Add BehaviorDescriptionRef',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createBehaviorDescriptionRefAction(parent),
+            },
+            content: [
+                ...contentBehaviorDescriptionRefWizard({
+                    behaviorDescription,
+                    desc,
+                    behaviorDescriptionUuid,
+                }),
+            ],
+        },
+    ];
+}
+function updateBehaviorDescriptionRef(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = [
+            'behaviorDescription',
+            'desc',
+            'behaviorDescriptionUuid',
+        ];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editBehaviorDescriptionRefWizard(element) {
+    const behaviorDescription = element.getAttribute('behaviorDescription');
+    const desc = element.getAttribute('desc');
+    const behaviorDescriptionUuid = element.getAttribute('behaviorDescriptionUuid');
+    return [
+        {
+            title: 'Edit BehaviorDescriptionRef',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateBehaviorDescriptionRef(element),
+            },
+            content: [
+                ...contentBehaviorDescriptionRefWizard({
+                    behaviorDescription,
+                    desc,
+                    behaviorDescriptionUuid,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentProcessResourceRefWizard(options) {
+    return [
+        x `<scl-textfield
+      label="processResource"
+      .maybeValue=${options.processResource}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createProcessResourceRefAction(parent) {
+    return (inputs) => {
+        const ProcessResourceRefAttrs = {};
+        const ProcessResourceRefKeys = ['processResource', 'desc'];
+        ProcessResourceRefKeys.forEach(key => {
+            ProcessResourceRefAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const ProcessResourceRefNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:ProcessResourceRef', ProcessResourceRefAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: ProcessResourceRefNode,
+                reference: get6100Reference(parent, 'ProcessResourceRef'),
+            },
+        ];
+    };
+}
+function createProcessResourceRefWizard(parent) {
+    const processResource = null;
+    const desc = null;
+    return [
+        {
+            title: 'Add ProcessResourceRef',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createProcessResourceRefAction(parent),
+            },
+            content: [
+                ...contentProcessResourceRefWizard({
+                    processResource,
+                    desc,
+                }),
+            ],
+        },
+    ];
+}
+function updateProcessResourceRef(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['desc'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editProcessResourceRefWizard(element) {
+    const processResource = element.getAttribute('processResource');
+    const desc = element.getAttribute('desc');
+    return [
+        {
+            title: 'Edit ProcessResourceRef',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateProcessResourceRef(element),
+            },
+            content: [
+                ...contentProcessResourceRefWizard({
+                    processResource,
+                    desc,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentFunctionRefWizard(options) {
+    return [
+        x `<scl-textfield
+      label="function"
+      .maybeValue=${options.ffunction}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createFunctionRefAction(parent) {
+    return (inputs) => {
+        const FunctionRefAttrs = {};
+        const FunctionRefKeys = ['function', 'desc'];
+        FunctionRefKeys.forEach(key => {
+            FunctionRefAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const FunctionRefNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:FunctionRef', FunctionRefAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: FunctionRefNode,
+                reference: get6100Reference(parent, 'FunctionRef'),
+            },
+        ];
+    };
+}
+function createFunctionRefWizard(parent) {
+    const ffunction = null;
+    const desc = null;
+    return [
+        {
+            title: 'Add FunctionRef',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createFunctionRefAction(parent),
+            },
+            content: [
+                ...contentFunctionRefWizard({
+                    ffunction,
+                    desc,
+                }),
+            ],
+        },
+    ];
+}
+function updateFunctionRef(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['desc'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editFunctionRefWizard(element) {
+    const ffunction = element.getAttribute('function');
+    const desc = element.getAttribute('desc');
+    return [
+        {
+            title: 'Edit FunctionRef',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateFunctionRef(element),
+            },
+            content: [
+                ...contentFunctionRefWizard({
+                    ffunction,
+                    desc,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentBehaviorReferenceWizard(options) {
+    return [
+        x `<scl-textfield
+      label="behaviorReference"
+      .maybeValue=${options.behaviorReference}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createBehaviorReferenceAction(parent) {
+    return (inputs) => {
+        const BehaviorReferenceAttrs = {};
+        const BehaviorReferenceKeys = ['behaviorReference', 'desc'];
+        BehaviorReferenceKeys.forEach(key => {
+            BehaviorReferenceAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const BehaviorReferenceNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:BehaviorReference', BehaviorReferenceAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: BehaviorReferenceNode,
+                reference: get6100Reference(parent, 'BehaviorReference'),
+            },
+        ];
+    };
+}
+function createBehaviorReferenceWizard(parent) {
+    const behaviorReference = null;
+    const desc = null;
+    return [
+        {
+            title: 'Add BehaviorReference',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createBehaviorReferenceAction(parent),
+            },
+            content: [
+                ...contentBehaviorReferenceWizard({
+                    behaviorReference,
+                    desc,
+                }),
+            ],
+        },
+    ];
+}
+function updateBehaviorReference(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['desc'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editBehaviorReferenceWizard(element) {
+    const behaviorReference = element.getAttribute('behaviorReference');
+    const desc = element.getAttribute('desc');
+    return [
+        {
+            title: 'Edit BehaviorReference',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateBehaviorReference(element),
+            },
+            content: [
+                ...contentBehaviorReferenceWizard({
+                    behaviorReference,
+                    desc,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentBinaryWiringParametersWizard(options) {
+    return [
+        x `<scl-textfield
+      label="id"
+      .maybeValue=${options.id}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="inpRef"
+      .maybeValue=${options.inpRef}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="fctInp"
+      .maybeValue=${options.fctInp}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="dsgInp"
+      .maybeValue=${options.dsgInp}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="inpNam"
+      .maybeValue=${options.inpNam}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createBinaryWiringParametersAction(parent) {
+    return (inputs) => {
+        const BinaryWiringParametersAttrs = {};
+        const BinaryWiringParametersKeys = [
+            'id',
+            'desc',
+            'inpRef',
+            'fctInp',
+            'dsgInp',
+            'inpNam',
+            'debTm',
+            'vInOff',
+            'vInOn',
+            'outRef',
+            'outTyp',
+            'fastOutput',
+            'outOffDl',
+            'outOnDl',
+            'outNam',
+        ];
+        BinaryWiringParametersKeys.forEach(key => {
+            BinaryWiringParametersAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const BinaryWiringParametersNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:BinaryWiringParameters', BinaryWiringParametersAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: BinaryWiringParametersNode,
+                reference: get6100Reference(parent, 'BinaryWiringParameters'),
+            },
+        ];
+    };
+}
+function createBinaryWiringParametersWizard(parent) {
+    const id = null;
+    const desc = null;
+    const inpRef = null;
+    const fctInp = null;
+    const dsgInp = null;
+    const inpNam = null;
+    const debTm = null;
+    const vInOff = null;
+    const vInOn = null;
+    const outRef = null;
+    const outTyp = null;
+    const fastOutput = null;
+    const outOffDl = null;
+    const outOnDl = null;
+    const outNam = null;
+    return [
+        {
+            title: 'Add BinaryWiringParameters',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createBinaryWiringParametersAction(parent),
+            },
+            content: [
+                ...contentBinaryWiringParametersWizard({
+                    id,
+                    desc,
+                    inpRef,
+                    fctInp,
+                    dsgInp,
+                    inpNam,
+                    debTm,
+                    vInOff,
+                    vInOn,
+                    outRef,
+                    outTyp,
+                    fastOutput,
+                    outOffDl,
+                    outOnDl,
+                    outNam,
+                }),
+            ],
+        },
+    ];
+}
+function updateBinaryWiringParameters(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['id', 'desc', 'inpRef', 'fctInp', 'dsgInp', 'inpNam'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editBinaryWiringParametersWizard(element) {
+    const id = element.getAttribute('id');
+    const desc = element.getAttribute('desc');
+    const inpRef = element.getAttribute('inpRef');
+    const fctInp = element.getAttribute('fctInp');
+    const dsgInp = element.getAttribute('dsgInp');
+    const inpNam = element.getAttribute('inpNam');
+    const debTm = element.getAttribute('debTm');
+    const vInOff = element.getAttribute('vInOff');
+    const vInOn = element.getAttribute('vInOn');
+    const outRef = element.getAttribute('outRef');
+    const outTyp = element.getAttribute('outTyp');
+    const fastOutput = element.getAttribute('fastOutput');
+    const outOffDl = element.getAttribute('outOffDl');
+    const outOnDl = element.getAttribute('outOnDl');
+    const outNam = element.getAttribute('outNam');
+    return [
+        {
+            title: 'Edit BinaryWiringParameters',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateBinaryWiringParameters(element),
+            },
+            content: [
+                ...contentBinaryWiringParametersWizard({
+                    id,
+                    desc,
+                    inpRef,
+                    fctInp,
+                    dsgInp,
+                    inpNam,
+                    debTm,
+                    vInOff,
+                    vInOn,
+                    outRef,
+                    outTyp,
+                    fastOutput,
+                    outOffDl,
+                    outOnDl,
+                    outNam,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentServiceSpecificationsWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createServiceSpecificationsAction(parent) {
+    return (inputs) => {
+        const ServiceSpecificationsAttrs = {};
+        const ServiceSpecificationsKeys = ['desc'];
+        ServiceSpecificationsKeys.forEach(key => {
+            ServiceSpecificationsAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const ServiceSpecificationsNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:ServiceSpecifications', ServiceSpecificationsAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: ServiceSpecificationsNode,
+                reference: get6100Reference(parent, 'ServiceSpecifications'),
+            },
+        ];
+    };
+}
+function createServiceSpecificationsWizard(parent) {
+    const desc = null;
+    return [
+        {
+            title: 'Add ServiceSpecifications',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createServiceSpecificationsAction(parent),
+            },
+            content: [
+                ...contentServiceSpecificationsWizard({
+                    desc,
+                }),
+            ],
+        },
+    ];
+}
+function updateServiceSpecifications(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['desc'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editServiceSpecificationsWizard(element) {
+    const desc = element.getAttribute('desc');
+    return [
+        {
+            title: 'Edit ServiceSpecifications',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateServiceSpecifications(element),
+            },
+            content: [
+                ...contentServiceSpecificationsWizard({
+                    desc,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentCommunicationServiceSpecificationsWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createCommunicationServiceSpecificationsAction(parent) {
+    return (inputs) => {
+        const CommunicationServiceSpecificationsAttrs = {};
+        const CommunicationServiceSpecificationsKeys = ['desc'];
+        CommunicationServiceSpecificationsKeys.forEach(key => {
+            CommunicationServiceSpecificationsAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const CommunicationServiceSpecificationsNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:CommunicationServiceSpecifications', CommunicationServiceSpecificationsAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: CommunicationServiceSpecificationsNode,
+                reference: get6100Reference(parent, 'CommunicationServiceSpecifications'),
+            },
+        ];
+    };
+}
+function createCommunicationServiceSpecificationsWizard(parent) {
+    const desc = null;
+    return [
+        {
+            title: 'Add CommunicationServiceSpecifications',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createCommunicationServiceSpecificationsAction(parent),
+            },
+            content: [
+                ...contentCommunicationServiceSpecificationsWizard({
+                    desc,
+                }),
+            ],
+        },
+    ];
+}
+function updateCommunicationServiceSpecifications(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['desc'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editCommunicationServiceSpecificationsWizard(element) {
+    const desc = element.getAttribute('desc');
+    return [
+        {
+            title: 'Edit CommunicationServiceSpecifications',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateCommunicationServiceSpecifications(element),
+            },
+            content: [
+                ...contentCommunicationServiceSpecificationsWizard({
+                    desc,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentFunctionCatRefWizard(options) {
+    return [
+        x `<scl-textfield
+      label="function"
+      .maybeValue=${options.ffunction}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createFunctionCatRefAction(parent) {
+    return (inputs) => {
+        const FunctionCatRefAttrs = {};
+        const FunctionCatRefKeys = ['function', 'desc'];
+        FunctionCatRefKeys.forEach(key => {
+            FunctionCatRefAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const FunctionCatRefNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:FunctionCatRef', FunctionCatRefAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: FunctionCatRefNode,
+                reference: get6100Reference(parent, 'FunctionCatRef'),
+            },
+        ];
+    };
+}
+function createFunctionCatRefWizard(parent) {
+    const ffunction = null;
+    const desc = null;
+    return [
+        {
+            title: 'Add FunctionCatRef',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createFunctionCatRefAction(parent),
+            },
+            content: [
+                ...contentFunctionCatRefWizard({
+                    ffunction,
+                    desc,
+                }),
+            ],
+        },
+    ];
+}
+function updateFunctionCatRef(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['desc'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editFunctionCatRefWizard(element) {
+    const ffunction = element.getAttribute('function');
+    const desc = element.getAttribute('desc');
+    return [
+        {
+            title: 'Edit FunctionCatRef',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateFunctionCatRef(element),
+            },
+            content: [
+                ...contentFunctionCatRefWizard({
+                    ffunction,
+                    desc,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentFunctionCategoryWizard(options) {
+    return [
+        x `<scl-textfield
+      label="name"
+      .maybeValue=${options.name}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createFunctionCategoryAction(parent) {
+    return (inputs) => {
+        const FunctionCategoryAttrs = {};
+        const FunctionCategoryKeys = ['name', 'desc'];
+        FunctionCategoryKeys.forEach(key => {
+            FunctionCategoryAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const FunctionCategoryNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:FunctionCategory', FunctionCategoryAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: FunctionCategoryNode,
+                reference: get6100Reference(parent, 'FunctionCategory'),
+            },
+        ];
+    };
+}
+function createFunctionCategoryWizard(parent) {
+    const name = null;
+    const desc = null;
+    return [
+        {
+            title: 'Add FunctionCategory',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createFunctionCategoryAction(parent),
+            },
+            content: [
+                ...contentFunctionCategoryWizard({
+                    name,
+                    desc,
+                }),
+            ],
+        },
+    ];
+}
+function updateFunctionCategory(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['desc'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editFunctionCategoryWizard(element) {
+    const name = element.getAttribute('name');
+    const desc = element.getAttribute('desc');
+    return [
+        {
+            title: 'Edit FunctionCategory',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateFunctionCategory(element),
+            },
+            content: [
+                ...contentFunctionCategoryWizard({
+                    name,
+                    desc,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentFunctionRoleContentWizard(options) {
+    return [
+        x `<scl-textfield
+      label="roleInst"
+      .maybeValue=${options.roleInst}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createFunctionRoleContentAction(parent) {
+    return (inputs) => {
+        const FunctionRoleContentAttrs = {};
+        const FunctionRoleContentKeys = ['roleInst'];
+        FunctionRoleContentKeys.forEach(key => {
+            FunctionRoleContentAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const FunctionRoleContentNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:FunctionRoleContent', FunctionRoleContentAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: FunctionRoleContentNode,
+                reference: get6100Reference(parent, 'FunctionRoleContent'),
+            },
+        ];
+    };
+}
+function createFunctionRoleContentWizard(parent) {
+    const roleInst = null;
+    return [
+        {
+            title: 'Add FunctionRoleContent',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createFunctionRoleContentAction(parent),
+            },
+            content: [
+                ...contentFunctionRoleContentWizard({
+                    roleInst,
+                }),
+            ],
+        },
+    ];
+}
+function updateFunctionRoleContent(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['roleInst'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editFunctionRoleContentWizard(element) {
+    const roleInst = element.getAttribute('roleInst');
+    return [
+        {
+            title: 'Edit FunctionRoleContent',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateFunctionRoleContent(element),
+            },
+            content: [
+                ...contentFunctionRoleContentWizard({
+                    roleInst,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentFunctionRoleWizard(options) {
+    return [
+        x `<scl-textfield
+      label="name"
+      .maybeValue=${options.name}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="type"
+      .maybeValue=${options.type}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createFunctionRoleAction(parent) {
+    return (inputs) => {
+        const FunctionRoleAttrs = {};
+        const FunctionRoleKeys = ['name', 'type'];
+        FunctionRoleKeys.forEach(key => {
+            FunctionRoleAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const FunctionRoleNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:FunctionRole', FunctionRoleAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: FunctionRoleNode,
+                reference: get6100Reference(parent, 'FunctionRole'),
+            },
+        ];
+    };
+}
+function createFunctionRoleWizard(parent) {
+    const name = null;
+    const type = null;
+    return [
+        {
+            title: 'Add FunctionRole',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createFunctionRoleAction(parent),
+            },
+            content: [
+                ...contentFunctionRoleWizard({
+                    name,
+                    type,
+                }),
+            ],
+        },
+    ];
+}
+function updateFunctionRole(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['type'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editFunctionRoleWizard(element) {
+    const name = element.getAttribute('name');
+    const type = element.getAttribute('type');
+    return [
+        {
+            title: 'Edit FunctionRole',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateFunctionRole(element),
+            },
+            content: [
+                ...contentFunctionRoleWizard({
+                    name,
+                    type,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentGooseParametersWizard(options) {
+    return [
+        x `<scl-textfield
+      label="id"
+      .maybeValue=${options.id}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="goId"
+      .maybeValue=${options.goId}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="securityEnabled"
+      .maybeValue=${options.securityEnabled}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="minTime"
+      .maybeValue=${options.minTime}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="cbName"
+      .maybeValue=${options.cbName}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="dsName"
+      .maybeValue=${options.dsName}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="maxTime"
+      .maybeValue=${options.maxTime}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createGooseParametersAction(parent) {
+    return (inputs) => {
+        const GooseParametersAttrs = {};
+        const GooseParametersKeys = [
+            'id',
+            'desc',
+            'goId',
+            'securityEnabled',
+            'minTime',
+            'maxTime',
+            'cbName',
+            'dsName',
+        ];
+        GooseParametersKeys.forEach(key => {
+            GooseParametersAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const GooseParametersNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:GooseParameters', GooseParametersAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: GooseParametersNode,
+                reference: get6100Reference(parent, 'GooseParameters'),
+            },
+        ];
+    };
+}
+function createGooseParametersWizard(parent) {
+    const id = null;
+    const desc = null;
+    const goId = null;
+    const securityEnabled = null;
+    const minTime = null;
+    const maxTime = null;
+    const cbName = null;
+    const dsName = null;
+    return [
+        {
+            title: 'Add GooseParameters',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createGooseParametersAction(parent),
+            },
+            content: [
+                ...contentGooseParametersWizard({
+                    id,
+                    desc,
+                    goId,
+                    securityEnabled,
+                    minTime,
+                    maxTime,
+                    cbName,
+                    dsName,
+                }),
+            ],
+        },
+    ];
+}
+function updateGooseParameters(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = [
+            'id',
+            'desc',
+            'goId',
+            'securityEnabled',
+            'minTime',
+            'maxTime',
+            'cbName',
+            'dsName',
+        ];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editGooseParametersWizard(element) {
+    const id = element.getAttribute('id');
+    const desc = element.getAttribute('desc');
+    const goId = element.getAttribute('goId');
+    const securityEnabled = element.getAttribute('securityEnabled');
+    const minTime = element.getAttribute('minTime');
+    const maxTime = element.getAttribute('maxTime');
+    const cbName = element.getAttribute('cbName');
+    const dsName = element.getAttribute('dsName');
+    return [
+        {
+            title: 'Edit GooseParameters',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateGooseParameters(element),
+            },
+            content: [
+                ...contentGooseParametersWizard({
+                    id,
+                    desc,
+                    goId,
+                    securityEnabled,
+                    minTime,
+                    maxTime,
+                    cbName,
+                    dsName,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentSMVParametersWizard(options) {
+    return [
+        x `<scl-textfield
+      label="id"
+      .maybeValue=${options.id}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="smvId"
+      .maybeValue=${options.smvId}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-select
+      label="securityEnabled"
+      .maybeValue=${options.securityEnabled}
+      nullable
+      required
+      helper="Sampled Value Security Setting"
+      >${['None', 'Signature', 'SignatureAndEncryption'].map(type => x `<mwc-list-item value="${type}">${type}</mwc-list-item>`)}</scl-select
+    >`,
+        x `<scl-textfield
+      label="multicast"
+      .maybeValue=${options.multicast}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="smpRate"
+      .maybeValue=${options.smpRate}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="nofASDU"
+      .maybeValue=${options.nofASDU}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="smpMod"
+      .maybeValue=${options.smpMod}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="cbName"
+      .maybeValue=${options.cbName}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="dsName"
+      .maybeValue=${options.dsName}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createSMVParametersAction(parent) {
+    return (inputs) => {
+        const SMVParametersAttrs = {};
+        const SMVParametersKeys = [
+            'id',
+            'desc',
+            'smvId',
+            'securityEnabled',
+            'multicast',
+            'smpRate',
+            'nofASDU',
+            'smpMod',
+            'cbName',
+            'dsName',
+        ];
+        SMVParametersKeys.forEach(key => {
+            SMVParametersAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const SMVParametersNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:SMVParameters', SMVParametersAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: SMVParametersNode,
+                reference: get6100Reference(parent, 'SMVParameters'),
+            },
+        ];
+    };
+}
+function createSMVParametersWizard(parent) {
+    const id = null;
+    const desc = null;
+    const smvId = null;
+    const securityEnabled = null;
+    const multicast = null;
+    const smpRate = null;
+    const nofASDU = null;
+    const smpMod = null;
+    const cbName = null;
+    const dsName = null;
+    return [
+        {
+            title: 'Add SMVParameters',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createSMVParametersAction(parent),
+            },
+            content: [
+                ...contentSMVParametersWizard({
+                    id,
+                    desc,
+                    smvId,
+                    securityEnabled,
+                    multicast,
+                    smpRate,
+                    nofASDU,
+                    smpMod,
+                    cbName,
+                    dsName,
+                }),
+            ],
+        },
+    ];
+}
+function updateSMVParameters(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = [
+            'id',
+            'desc',
+            'smvId',
+            'securityEnabled',
+            'multicast',
+            'smpRate',
+            'cbName',
+            'dsName',
+        ];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editSMVParametersWizard(element) {
+    const id = element.getAttribute('id');
+    const desc = element.getAttribute('desc');
+    const smvId = element.getAttribute('smvId');
+    const securityEnabled = element.getAttribute('securityEnabled');
+    const multicast = element.getAttribute('multicast');
+    const smpRate = element.getAttribute('smpRate');
+    const nofASDU = element.getAttribute('nofASDU');
+    const smpMod = element.getAttribute('smpMod');
+    const cbName = element.getAttribute('cbName');
+    const dsName = element.getAttribute('dsName');
+    return [
+        {
+            title: 'Edit SMVParameters',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateSMVParameters(element),
+            },
+            content: [
+                ...contentSMVParametersWizard({
+                    id,
+                    desc,
+                    smvId,
+                    securityEnabled,
+                    multicast,
+                    smpRate,
+                    nofASDU,
+                    smpMod,
+                    cbName,
+                    dsName,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentReportParametersWizard(options) {
+    return [
+        x `<scl-textfield
+      label="id"
+      .maybeValue=${options.id}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="intgPd"
+      .maybeValue=${options.intgPd}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="buffered"
+      .maybeValue=${options.buffered}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="bufTime"
+      .maybeValue=${options.bufTime}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="cbName"
+      .maybeValue=${options.cbName}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="dsName"
+      .maybeValue=${options.dsName}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createReportParametersAction(parent) {
+    return (inputs) => {
+        const ReportParametersAttrs = {};
+        const ReportParametersKeys = [
+            'id',
+            'desc',
+            'intgPd',
+            'buffered',
+            'bufTime',
+            'cbName',
+            'dsName',
+        ];
+        ReportParametersKeys.forEach(key => {
+            ReportParametersAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const ReportParametersNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:ReportParameters', ReportParametersAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: ReportParametersNode,
+                reference: get6100Reference(parent, 'ReportParameters'),
+            },
+        ];
+    };
+}
+function createReportParametersWizard(parent) {
+    const id = null;
+    const desc = null;
+    const intgPd = null;
+    const buffered = null;
+    const bufTime = null;
+    const cbName = null;
+    const dsName = null;
+    return [
+        {
+            title: 'Add ReportParameters',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createReportParametersAction(parent),
+            },
+            content: [
+                ...contentReportParametersWizard({
+                    id,
+                    desc,
+                    intgPd,
+                    buffered,
+                    bufTime,
+                    cbName,
+                    dsName,
+                }),
+            ],
+        },
+    ];
+}
+function updateReportParameters(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = [
+            'id',
+            'desc',
+            'intgPd',
+            'buffered',
+            'bufTime',
+            'cbName',
+            'dsName',
+        ];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editReportParametersWizard(element) {
+    const id = element.getAttribute('id');
+    const desc = element.getAttribute('desc');
+    const intgPd = element.getAttribute('intgPd');
+    const buffered = element.getAttribute('buffered');
+    const bufTime = element.getAttribute('bufTime');
+    const cbName = element.getAttribute('cbName');
+    const dsName = element.getAttribute('dsName');
+    return [
+        {
+            title: 'Edit ReportParameters',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateReportParameters(element),
+            },
+            content: [
+                ...contentReportParametersWizard({
+                    id,
+                    desc,
+                    intgPd,
+                    buffered,
+                    bufTime,
+                    cbName,
+                    dsName,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentInputVarWizard(options) {
+    return [
+        x `<scl-textfield
+      label="inputName"
+      .maybeValue=${options.inputName}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="value"
+      .maybeValue=${options.value}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="dataName"
+      .maybeValue=${options.dataName}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="lnodeUuid"
+      .maybeValue=${options.lnodeUuid}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="doName"
+      .maybeValue=${options.doName}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="daName"
+      .maybeValue=${options.daName}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="varName"
+      .maybeValue=${options.varName}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createInputVarAction(parent) {
+    return (inputs) => {
+        const InputVarAttrs = {};
+        const InputVarKeys = [
+            'inputName',
+            'desc',
+            'value',
+            'dataName',
+            'lnodeUuid',
+            'doName',
+            'daName',
+            'varName',
+        ];
+        InputVarKeys.forEach(key => {
+            InputVarAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const InputVarNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:InputVar', InputVarAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: InputVarNode,
+                reference: get6100Reference(parent, 'InputVar'),
+            },
+        ];
+    };
+}
+function createInputVarWizard(parent) {
+    const inputName = null;
+    const desc = null;
+    const value = null;
+    const dataName = null;
+    const lnodeUuid = null;
+    const doName = null;
+    const daName = null;
+    const varName = null;
+    return [
+        {
+            title: 'Add InputVar',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createInputVarAction(parent),
+            },
+            content: [
+                ...contentInputVarWizard({
+                    inputName,
+                    desc,
+                    value,
+                    dataName,
+                    lnodeUuid,
+                    doName,
+                    daName,
+                    varName,
+                }),
+            ],
+        },
+    ];
+}
+function updateInputVar(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = [
+            'inputName',
+            'desc',
+            'value',
+            'dataName',
+            'lnodeUuid',
+            'doName',
+            'daName',
+            'varName',
+        ];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editInputVarWizard(element) {
+    const inputName = element.getAttribute('inputName');
+    const desc = element.getAttribute('desc');
+    const value = element.getAttribute('value');
+    const dataName = element.getAttribute('dataName');
+    const lnodeUuid = element.getAttribute('lnodeUuid');
+    const doName = element.getAttribute('doName');
+    const daName = element.getAttribute('daName');
+    const varName = element.getAttribute('varName');
+    return [
+        {
+            title: 'Edit InputVar',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateInputVar(element),
+            },
+            content: [
+                ...contentInputVarWizard({
+                    inputName,
+                    desc,
+                    value,
+                    dataName,
+                    lnodeUuid,
+                    doName,
+                    daName,
+                    varName,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentOutputVarWizard(options) {
+    return [
+        x `<scl-textfield
+      label="outputName"
+      .maybeValue=${options.outputName}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="value"
+      .maybeValue=${options.value}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="dataName"
+      .maybeValue=${options.dataName}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="lnodeUuid"
+      .maybeValue=${options.lnodeUuid}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="doName"
+      .maybeValue=${options.doName}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="daName"
+      .maybeValue=${options.daName}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="varName"
+      .maybeValue=${options.varName}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createOutputVarAction(parent) {
+    return (inputs) => {
+        const OutputVarAttrs = {};
+        const OutputVarKeys = [
+            'outputName',
+            'desc',
+            'value',
+            'dataName',
+            'lnodeUuid',
+            'doName',
+            'daName',
+            'varName',
+        ];
+        OutputVarKeys.forEach(key => {
+            OutputVarAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const OutputVarNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:OutputVar', OutputVarAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: OutputVarNode,
+                reference: get6100Reference(parent, 'OutputVar'),
+            },
+        ];
+    };
+}
+function createOutputVarWizard(parent) {
+    const outputName = null;
+    const desc = null;
+    const value = null;
+    const dataName = null;
+    const lnodeUuid = null;
+    const doName = null;
+    const daName = null;
+    const varName = null;
+    return [
+        {
+            title: 'Add OutputVar',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createOutputVarAction(parent),
+            },
+            content: [
+                ...contentOutputVarWizard({
+                    outputName,
+                    desc,
+                    value,
+                    dataName,
+                    lnodeUuid,
+                    doName,
+                    daName,
+                    varName,
+                }),
+            ],
+        },
+    ];
+}
+function updateOutputVar(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = [
+            'outputName',
+            'desc',
+            'value',
+            'dataName',
+            'lnodeUuid',
+            'doName',
+            'daName',
+            'varName',
+        ];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editOutputVarWizard(element) {
+    const outputName = element.getAttribute('outputName');
+    const desc = element.getAttribute('desc');
+    const value = element.getAttribute('value');
+    const dataName = element.getAttribute('dataName');
+    const lnodeUuid = element.getAttribute('lnodeUuid');
+    const doName = element.getAttribute('doName');
+    const daName = element.getAttribute('daName');
+    const varName = element.getAttribute('varName');
+    return [
+        {
+            title: 'Edit OutputVar',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateOutputVar(element),
+            },
+            content: [
+                ...contentOutputVarWizard({
+                    outputName,
+                    desc,
+                    value,
+                    dataName,
+                    lnodeUuid,
+                    doName,
+                    daName,
+                    varName,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentPowerSystemRelationsWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createPowerSystemRelationsAction(parent) {
+    return (inputs) => {
+        const PowerSystemRelationsAttrs = {};
+        const PowerSystemRelationsKeys = ['desc'];
+        PowerSystemRelationsKeys.forEach(key => {
+            PowerSystemRelationsAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const PowerSystemRelationsNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:PowerSystemRelations', PowerSystemRelationsAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: PowerSystemRelationsNode,
+                reference: get6100Reference(parent, 'PowerSystemRelations'),
+            },
+        ];
+    };
+}
+function createPowerSystemRelationsWizard(parent) {
+    const desc = null;
+    return [
+        {
+            title: 'Add PowerSystemRelations',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createPowerSystemRelationsAction(parent),
+            },
+            content: [
+                ...contentPowerSystemRelationsWizard({
+                    desc,
+                }),
+            ],
+        },
+    ];
+}
+function updatePowerSystemRelations(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['desc'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editPowerSystemRelationsWizard(element) {
+    const desc = element.getAttribute('desc');
+    return [
+        {
+            title: 'Edit PowerSystemRelations',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updatePowerSystemRelations(element),
+            },
+            content: [
+                ...contentPowerSystemRelationsWizard({
+                    desc,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentPowerSystemRelationWizard(options) {
+    return [
+        x `<scl-textfield
+      label="name"
+      .maybeValue=${options.name}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="relation"
+      .maybeValue=${options.relation}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createPowerSystemRelationAction(parent) {
+    return (inputs) => {
+        const PowerSystemRelationAttrs = {};
+        const PowerSystemRelationKeys = ['name', 'desc', 'relation'];
+        PowerSystemRelationKeys.forEach(key => {
+            PowerSystemRelationAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const PowerSystemRelationNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:PowerSystemRelation', PowerSystemRelationAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: PowerSystemRelationNode,
+                reference: get6100Reference(parent, 'PowerSystemRelation'),
+            },
+        ];
+    };
+}
+function createPowerSystemRelationWizard(parent) {
+    const name = null;
+    const desc = null;
+    const relation = null;
+    return [
+        {
+            title: 'Add PowerSystemRelation',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createPowerSystemRelationAction(parent),
+            },
+            content: [
+                ...contentPowerSystemRelationWizard({
+                    name,
+                    desc,
+                    relation,
+                }),
+            ],
+        },
+    ];
+}
+function updatePowerSystemRelation(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['name', 'desc', 'relation'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editPowerSystemRelationWizard(element) {
+    const name = element.getAttribute('name');
+    const desc = element.getAttribute('desc');
+    const relation = element.getAttribute('relation');
+    return [
+        {
+            title: 'Edit PowerSystemRelation',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updatePowerSystemRelation(element),
+            },
+            content: [
+                ...contentPowerSystemRelationWizard({
+                    name,
+                    desc,
+                    relation,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentVariableWizard(options) {
+    return [
+        x `<scl-textfield
+      label="name"
+      .maybeValue=${options.name}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="value"
+      .maybeValue=${options.value}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createVariableAction(parent) {
+    return (inputs) => {
+        const VariableAttrs = {};
+        const VariableKeys = ['name', 'desc', 'value'];
+        VariableKeys.forEach(key => {
+            VariableAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const VariableNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:Variable', VariableAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: VariableNode,
+                reference: get6100Reference(parent, 'Variable'),
+            },
+        ];
+    };
+}
+function createVariableWizard(parent) {
+    const name = null;
+    const desc = null;
+    const value = null;
+    return [
+        {
+            title: 'Add Variable',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createVariableAction(parent),
+            },
+            content: [
+                ...contentVariableWizard({
+                    name,
+                    desc,
+                    value,
+                }),
+            ],
+        },
+    ];
+}
+function updateVariable(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['name', 'desc', 'value'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editVariableWizard(element) {
+    const name = element.getAttribute('name');
+    const desc = element.getAttribute('desc');
+    const value = element.getAttribute('value');
+    return [
+        {
+            title: 'Edit Variable',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateVariable(element),
+            },
+            content: [
+                ...contentVariableWizard({
+                    name,
+                    desc,
+                    value,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentVariableApplyToWizard(options) {
+    return [
+        x `<scl-textfield
+      label="attribute"
+      .maybeValue=${options.attribute}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="format"
+      .maybeValue=${options.format}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="defaultValue"
+      .maybeValue=${options.defaultValue}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="sGroup"
+      .maybeValue=${options.sGroup}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="element"
+      .maybeValue=${options.eelement}
+      nullable
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="doName"
+      .maybeValue=${options.doName}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="daName"
+      .maybeValue=${options.daName}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createVariableApplyToAction(parent) {
+    return (inputs) => {
+        const VariableApplyToAttrs = {};
+        const VariableApplyToKeys = [
+            'element',
+            'desc',
+            'doName',
+            'daName',
+            'attribute',
+            'sGroup',
+            'format',
+            'defaultValue',
+        ];
+        VariableApplyToKeys.forEach(key => {
+            VariableApplyToAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const VariableApplyToNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:VariableApplyTo', VariableApplyToAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: VariableApplyToNode,
+                reference: get6100Reference(parent, 'VariableApplyTo'),
+            },
+        ];
+    };
+}
+function createVariableApplyToWizard(parent) {
+    const eelement = null;
+    const desc = null;
+    const doName = null;
+    const daName = null;
+    const attribute = null;
+    const sGroup = null;
+    const format = null;
+    const defaultValue = null;
+    return [
+        {
+            title: 'Add VariableApplyTo',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createVariableApplyToAction(parent),
+            },
+            content: [
+                ...contentVariableApplyToWizard({
+                    eelement,
+                    desc,
+                    doName,
+                    daName,
+                    attribute,
+                    sGroup,
+                    format,
+                    defaultValue,
+                }),
+            ],
+        },
+    ];
+}
+function updateVariableApplyTo(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = [
+            'element',
+            'desc',
+            'doName',
+            'daName',
+            'attribute',
+            'sGroup',
+            'format',
+            'defaultValue',
+        ];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editVariableApplyToWizard(element) {
+    const eelement = element.getAttribute('element');
+    const desc = element.getAttribute('desc');
+    const doName = element.getAttribute('doName');
+    const daName = element.getAttribute('daName');
+    const attribute = element.getAttribute('attribute');
+    const sGroup = element.getAttribute('sGroup');
+    const format = element.getAttribute('format');
+    const defaultValue = element.getAttribute('defaultValue');
+    return [
+        {
+            title: 'Edit VariableApplyTo',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateVariableApplyTo(element),
+            },
+            content: [
+                ...contentVariableApplyToWizard({
+                    eelement,
+                    desc,
+                    doName,
+                    daName,
+                    attribute,
+                    sGroup,
+                    format,
+                    defaultValue,
+                }),
+            ],
         },
     ];
 }
@@ -46408,7 +50269,10 @@ const wizards = {
         edit: emptyWizard,
         create: emptyWizard,
     },
-    LNode: { edit: emptyWizard, create: createLNodeWizard },
+    LNode: {
+        edit: editLNodeWizard,
+        create: createLNodeWizard,
+    },
     LNodeType: {
         edit: emptyWizard,
         create: createLNodeTypeWizard,
@@ -46458,8 +50322,8 @@ const wizards = {
         create: createPowerTransformerWizard,
     },
     Private: {
-        edit: emptyWizard,
-        create: emptyWizard,
+        edit: editPrivateWizard,
+        create: createPrivateWizard,
     },
     Process: {
         edit: editProcessWizard,
@@ -46625,6 +50489,114 @@ const wizards = {
         edit: voltageLevelEditWizard,
         create: voltageLevelCreateWizard,
     },
+    ProcessResources: {
+        edit: editProcessResourcesWizard,
+        create: createProcessResourcesWizard,
+    },
+    ProcessResource: {
+        edit: editProcessResourceWizard,
+        create: createProcessResourceWizard,
+    },
+    Resource: {
+        edit: editResourceWizard,
+        create: createResourceWizard,
+    },
+    AllocationRole: {
+        edit: editAllocationRoleWizard,
+        create: createAllocationRoleWizard,
+    },
+    AnalogueWiringParameters: {
+        edit: editAnalogueWiringParametersWizard,
+        create: createAnalogueWiringParametersWizard,
+    },
+    Application: {
+        edit: editApplicationWizard,
+        create: createApplicationWizard,
+    },
+    BehaviorDescription: {
+        edit: editBehaviorDescriptionWizard,
+        create: createBehaviorDescriptionWizard,
+    },
+    BehaviorDescriptionRef: {
+        edit: editBehaviorDescriptionRefWizard,
+        create: createBehaviorDescriptionRefWizard,
+    },
+    BehaviorReference: {
+        edit: editBehaviorReferenceWizard,
+        create: createBehaviorReferenceWizard,
+    },
+    BinaryWiringParameters: {
+        edit: editBinaryWiringParametersWizard,
+        create: createBinaryWiringParametersWizard,
+    },
+    CommunicationServiceSpecifications: {
+        edit: editCommunicationServiceSpecificationsWizard,
+        create: createCommunicationServiceSpecificationsWizard,
+    },
+    ServiceSpecifications: {
+        edit: editServiceSpecificationsWizard,
+        create: createServiceSpecificationsWizard,
+    },
+    FunctionCatRef: {
+        edit: editFunctionCatRefWizard,
+        create: createFunctionCatRefWizard,
+    },
+    FunctionCategory: {
+        edit: editFunctionCategoryWizard,
+        create: createFunctionCategoryWizard,
+    },
+    FunctionRef: {
+        edit: editFunctionRefWizard,
+        create: createFunctionRefWizard,
+    },
+    FunctionRoleContent: {
+        edit: editFunctionRoleContentWizard,
+        create: createFunctionRoleContentWizard,
+    },
+    FunctionRole: {
+        edit: editFunctionRoleWizard,
+        create: createFunctionRoleWizard,
+    },
+    GooseParameters: {
+        edit: editGooseParametersWizard,
+        create: createGooseParametersWizard,
+    },
+    SMVParameters: {
+        edit: editSMVParametersWizard,
+        create: createSMVParametersWizard,
+    },
+    ReportParameters: {
+        edit: editReportParametersWizard,
+        create: createReportParametersWizard,
+    },
+    InputVar: {
+        edit: editInputVarWizard,
+        create: createInputVarWizard,
+    },
+    OutputVar: {
+        edit: editOutputVarWizard,
+        create: createOutputVarWizard,
+    },
+    PowerSystemRelations: {
+        edit: editPowerSystemRelationsWizard,
+        create: createPowerSystemRelationsWizard,
+    },
+    PowerSystemRelation: {
+        edit: editPowerSystemRelationWizard,
+        create: createPowerSystemRelationWizard,
+    },
+    ProcessResourceRef: {
+        edit: editProcessResourceRefWizard,
+        create: createProcessResourceRefWizard,
+    },
+    Variable: {
+        edit: editVariableWizard,
+        create: createVariableWizard,
+    },
+    VariableApplyTo: {
+        edit: editVariableApplyToWizard,
+        create: createVariableApplyToWizard,
+    },
 };
 
 let WizardCodeForm = class WizardCodeForm extends s$1 {
@@ -46640,7 +50612,7 @@ let WizardCodeForm = class WizardCodeForm extends s$1 {
             return (_a = wizards[request.tagName]) === null || _a === void 0 ? void 0 : _a.create(request.parent);
         }
         const request = this.wizardRequest;
-        return (_b = wizards[request.element.tagName]) === null || _b === void 0 ? void 0 : _b.edit(request.element);
+        return (_b = wizards[request.element.localName]) === null || _b === void 0 ? void 0 : _b.edit(request.element, request.subWizard);
     }
     onClosed() {
         this.dispatchEvent(newCloseWizardEvent(this.wizardRequest));
@@ -46686,7 +50658,7 @@ WizardCodeForm.styles = i$5 `
     }
   `;
 __decorate$1([
-    e$6({ attribute: false })
+    n$2({ attribute: false })
 ], WizardCodeForm.prototype, "wizardRequest", void 0);
 __decorate$1([
     t$1()
