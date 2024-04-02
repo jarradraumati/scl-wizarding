@@ -21,6 +21,11 @@ export declare const patterns: {
     uuid: string;
     id: string;
     path: string;
+    mappedDoName: string;
+    vlanid: string;
+    vlanPriority: string;
+    ipv4: string;
+    ipv6: string;
 };
 export declare const maxLength: {
     cbName: number;
@@ -28,7 +33,13 @@ export declare const maxLength: {
     ldInst: number;
     prefix: number;
     lnInst: number;
+    dosName: number;
 };
 export declare const predefinedBasicTypeEnum: string[];
 export declare const valKindEnum: string[];
 export declare const functionalConstraintEnum: string[];
+export declare const attributeNameEnum: string[];
+export declare const tSpecServiceType: string[];
+export declare const tSCLFileType: string[];
+export declare const tRightEnum: string[];
+export declare const tSmpMod: string[];

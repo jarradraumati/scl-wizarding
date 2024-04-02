@@ -27291,6 +27291,47 @@ function updateIED(update) {
     ];
 }
 
+function getChildElementsByTagName(element, tag) {
+    return Array.from(element.children).filter((element) => element.tagName === tag);
+}
+/** maximum value for `lnInst` attribute */
+const maxLnInst = 99;
+const lnInstRange = Array(maxLnInst)
+    .fill(1)
+    .map((_, i) => `${i + 1}`);
+/**
+ * Generator function returning unique `inst` or `lnInst` attribute for element
+ * [[`tagName`]] within [[`parent`]].
+ * ```md
+ * Valid range for both `inst` and `lnInst` is between 1 and 99
+ * ```
+ * @param parent - The parent element to be scanned for `inst` or `lnInst`
+ * values already in use. Be sure to create a new generator every time the
+ * children of this element change in SCL.
+ * @param tagName - Tag name of the child elements containing the
+ * `lnInst` or `inst` attribute
+ * @returns a function generating increasing unused `inst` or `lnInst` values
+ * element with [[`tagName`]] within [[`parent`]] on subsequent invocations
+ */
+function lnInstGenerator(parent, tagName) {
+    const generators = new Map();
+    const generatedAttribute = tagName === "LN" ? "inst" : "lnInst";
+    return (lnClass) => {
+        if (!generators.has(lnClass)) {
+            const lnInstOrInst = new Set(getChildElementsByTagName(parent, tagName)
+                .filter((element) => element.getAttribute("lnClass") === lnClass)
+                .map((element) => element.getAttribute(generatedAttribute)));
+            generators.set(lnClass, () => {
+                const uniqueLnInstOrInst = lnInstRange.find((lnInst) => !lnInstOrInst.has(lnInst));
+                if (uniqueLnInstOrInst)
+                    lnInstOrInst.add(uniqueLnInstOrInst);
+                return uniqueLnInstOrInst;
+            });
+        }
+        return generators.get(lnClass)();
+    };
+}
+
 const maxGseMacAddress = 0x010ccd0101ff;
 const minGseMacAddress = 0x010ccd010000;
 const maxSmvMacAddress = 0x010ccd0401ff;
@@ -27380,47 +27421,6 @@ function appIdGenerator(doc, serviceType, type1A = false) {
         if (uniqueAppId)
             appIds.add(uniqueAppId);
         return uniqueAppId ?? null;
-    };
-}
-
-function getChildElementsByTagName(element, tag) {
-    return Array.from(element.children).filter((element) => element.tagName === tag);
-}
-/** maximum value for `lnInst` attribute */
-const maxLnInst = 99;
-const lnInstRange = Array(maxLnInst)
-    .fill(1)
-    .map((_, i) => `${i + 1}`);
-/**
- * Generator function returning unique `inst` or `lnInst` attribute for element
- * [[`tagName`]] within [[`parent`]].
- * ```md
- * Valid range for both `inst` and `lnInst` is between 1 and 99
- * ```
- * @param parent - The parent element to be scanned for `inst` or `lnInst`
- * values already in use. Be sure to create a new generator every time the
- * children of this element change in SCL.
- * @param tagName - Tag name of the child elements containing the
- * `lnInst` or `inst` attribute
- * @returns a function generating increasing unused `inst` or `lnInst` values
- * element with [[`tagName`]] within [[`parent`]] on subsequent invocations
- */
-function lnInstGenerator(parent, tagName) {
-    const generators = new Map();
-    const generatedAttribute = tagName === "LN" ? "inst" : "lnInst";
-    return (lnClass) => {
-        if (!generators.has(lnClass)) {
-            const lnInstOrInst = new Set(getChildElementsByTagName(parent, tagName)
-                .filter((element) => element.getAttribute("lnClass") === lnClass)
-                .map((element) => element.getAttribute(generatedAttribute)));
-            generators.set(lnClass, () => {
-                const uniqueLnInstOrInst = lnInstRange.find((lnInst) => !lnInstOrInst.has(lnInst));
-                if (uniqueLnInstOrInst)
-                    lnInstOrInst.add(uniqueLnInstOrInst);
-                return uniqueLnInstOrInst;
-            });
-        }
-        return generators.get(lnClass)();
     };
 }
 
@@ -34804,7 +34804,7 @@ const relatives = {
         children: [...tEquipmentContainerSequence, 'Voltage', 'Bay', 'Function'],
     },
 };
-const tFunctionCategory = ['SubCategory', 'FunctionCatRef'];
+const tFunctionCategory = ['FunctionCatRef', 'SubCategory'];
 const tProcessResources = ['ProcessResource'];
 const tProcessResource = ['Resource'];
 const tPowerSystemRelations = ['PowerSystemRelation'];
@@ -34824,7 +34824,7 @@ const tCommServiceSpecifications = [
     'SMVParameters',
     'ReportParameters',
 ];
-const tFunctionRef = ['SignalRole'];
+const tFunctionRef = ['FunctionalVariantRef', 'SignalRole'];
 const tFunctionRoleContent = [
     'FunctionRef',
     'BehaviorDescriptionRef',
@@ -34892,77 +34892,141 @@ const tControllingLNode = [
     'BinaryWiringParametersRef',
     'AnalogueWiringParametersRef',
 ];
+const tInputVarRef = ['FunctionalVariantRef'];
+const tLNodeDataRef = ['FunctionalVariantRef'];
+const tLNodeInputRef = ['FunctionalVariantRef'];
+const tLNodeOutputRef = ['FunctionalVariantRef'];
+const tOutputVarRef = ['FunctionalVariantRef'];
+const tGooseParameters = [
+    'L2CommParameters',
+    'L3IPv4CommParameters',
+    'L3IPv6CommParameters',
+];
+const tSMVParameters = [
+    'L2CommParameters',
+    'L3IPv4CommParameters',
+    'L3IPv6CommParameters',
+];
+const tBehaviorDescriptionRef = [
+    'FunctionalVariantRef',
+    'InputVarRef',
+    'OutputVarRef',
+];
+const tSignalRole = [
+    'FunctionalVariantRef',
+    'LNodeDataRef',
+    'LNodeInputRef',
+    'LNodeOutputRef',
+];
+const tFunctionalVariantGroup = ['FunctionalVariant'];
+const tAllocationRoleRef = ['FunctionalVariantRef'];
+const tFunctionalVariant = ['FunctionalSubVariant', 'VariableRef'];
+const tFunctionalSubVariant = ['FunctionalSubVariant', 'VariableRef'];
+const tVariableRef = ['FunctionalVariantRef'];
+const tSourceRef = [
+    'AnalogueWiringParametersRef',
+    'BinaryWiringParametersRef',
+    'GooseParametersRef',
+    'ReportParametersRef',
+    'SMVParametersRef',
+];
+const tControlRef = [
+    'AnalogueWiringParametersRef',
+    'BinaryWiringParametersRef',
+];
+const tSubCategory = ['FunctionCatRef', 'SubCategory'];
+const tApplicationSclRef = ['SclFileReference'];
+const tFunctionCategoryRef = ['FunctionalVariantRef'];
 const sCL6100Tags = [
     'Private',
-    'FunctionCategory',
-    'ProcessResources',
-    'PowerSystemRelations',
-    'LNodeInputs',
-    'LNodeOutputs',
-    'ProcessEcho',
-    'LNodeSpecNaming',
-    'DOS',
-    'FunctionSclRef',
-    'Variable',
-    'CommunicationServiceSpecifications',
-    'ServiceSpecifications',
-    'BayType',
     'AllocationRole',
     'Application',
+    'BayType',
     'BehaviorDescription',
-    'Project',
+    'CheckoutID',
+    'CommunicationServiceSpecifications',
+    'DOS',
+    'FunctionCategory',
+    'FunctionSclRef',
     'FunctionTemplate',
-    ...tFunctionCategory,
-    ...tProcessResources,
-    ...tProcessResource,
-    ...tPowerSystemRelations,
-    ...tLNodeInputs,
-    ...tLNodeOutputs,
-    ...tVariable,
-    ...tCommServiceSpecifications,
-    ...tServiceSpecifications,
-    ...tFunctionRef,
-    ...tFunctionRoleContent,
-    ...tFunctionRole,
+    'LNodeInputs',
+    'LNodeOutputs',
+    'LNodeSpecNaming',
+    'PowerSystemRelations',
+    'ProcessEcho',
+    'ProcessResources',
+    'Project',
+    'ServiceSpecifications',
+    'Variable',
     ...tAllocationRole,
     ...tApplication,
     ...tBehaviorDescription,
-    ...tProject,
-    ...tFunctionTemplate,
-    ...tSubFunctionTemplate,
-    ...tFunctionSclRef,
-    ...tDOS,
-    ...tSDS,
-    ...tDAS,
-    ...tSubscriberLNode,
+    ...tBehaviorDescriptionRef,
+    ...tCommServiceSpecifications,
     ...tControllingLNode,
+    ...tDAS,
+    ...tDOS,
+    ...tFunctionCategory,
+    ...tFunctionRef,
+    ...tFunctionRole,
+    ...tFunctionRoleContent,
+    ...tFunctionSclRef,
+    ...tFunctionTemplate,
+    ...tGooseParameters,
+    ...tLNodeInputs,
+    ...tLNodeOutputs,
+    ...tPowerSystemRelations,
+    ...tProcessResource,
+    ...tProcessResources,
+    ...tProject,
+    ...tSDS,
+    ...tServiceSpecifications,
+    ...tSignalRole,
+    ...tSMVParameters,
+    ...tSubFunctionTemplate,
+    ...tSubscriberLNode,
+    ...tVariable,
+    ...tFunctionalVariant,
+    ...tVariableRef,
+    ...tSourceRef,
+    ...tControlRef,
 ];
 const tags6100 = {
     Private: {
         parents: [],
         children: [
-            'ProcessResources',
-            'ServiceSpecifications',
-            'Application',
-            'Variable',
-            'LNodeSpecNaming',
-            'LNodeInputs',
-            'DOS',
             'AllocationRole',
+            'Application',
+            'BayType',
             'BehaviorDescription',
+            'CheckoutID',
+            'CommunicationServiceSpecifications',
+            'DOS',
+            'FunctionCategory',
+            'FunctionSclRef',
+            'FunctionTemplate',
+            'LNodeInputs',
+            'LNodeOutputs',
+            'LNodeSpecNaming',
+            'PowerSystemRelations',
+            'ProcessEcho',
+            'ProcessResources',
+            'Project',
+            'ServiceSpecifications',
+            'Variable',
         ],
     },
     SubCategory: {
-        parents: ['FunctionCategory'],
-        children: [],
+        parents: ['FunctionCategory', 'SubCategory'],
+        children: [...tSubCategory],
     },
     GooseParameters: {
         parents: ['CommunicationServiceSpecifications', 'ServiceSpecifications'],
-        children: [],
+        children: [...tGooseParameters],
     },
     SMVParameters: {
         parents: ['CommunicationServiceSpecifications', 'ServiceSpecifications'],
-        children: [],
+        children: [...tSMVParameters],
     },
     ReportParameters: {
         parents: ['CommunicationServiceSpecifications', 'ServiceSpecifications'],
@@ -34970,7 +35034,7 @@ const tags6100 = {
     },
     SignalRole: {
         parents: ['FunctionRef'],
-        children: [],
+        children: [...tSignalRole],
     },
     FunctionRef: {
         parents: ['FunctionRoleContent', 'AllocationRole'],
@@ -34978,19 +35042,19 @@ const tags6100 = {
     },
     BehaviorDescriptionRef: {
         parents: ['FunctionRoleContent'],
-        children: [],
+        children: [...tBehaviorDescriptionRef],
     },
     ProcessResourceRef: {
         parents: ['FunctionRoleContent'],
         children: [],
     },
     VariableRef: {
-        parents: ['FunctionRoleContent'],
-        children: [],
+        parents: ['FunctionRoleContent', 'FunctionalVariant'],
+        children: [...tVariableRef],
     },
     FunctionCategoryRef: {
         parents: ['FunctionRoleContent'],
-        children: [],
+        children: [...tFunctionCategoryRef],
     },
     PowerSystemRelationRef: {
         parents: ['FunctionRoleContent'],
@@ -35006,19 +35070,19 @@ const tags6100 = {
     },
     FunctionalVariant: {
         parents: ['Application'],
-        children: [],
+        children: [...tFunctionalVariant],
     },
     FunctionalVariantGroup: {
         parents: ['Application'],
-        children: [],
+        children: [...tFunctionalVariantGroup],
     },
     AllocationRoleRef: {
         parents: ['Application'],
-        children: [],
+        children: [...tAllocationRoleRef],
     },
     ApplicationSclRef: {
         parents: ['Application'],
-        children: [],
+        children: [...tApplicationSclRef],
     },
     InputVar: {
         parents: ['BehaviorDescription'],
@@ -35066,11 +35130,11 @@ const tags6100 = {
     },
     SourceRef: {
         parents: ['LNodeInputs'],
-        children: [],
+        children: [...tSourceRef],
     },
     ControlRef: {
         parents: ['LNodeOutputs'],
-        children: [],
+        children: [...tControlRef],
     },
     VariableApplyTo: {
         parents: ['Variable'],
@@ -35109,7 +35173,7 @@ const tags6100 = {
         children: [...tLNodeOutputs],
     },
     ProcessEcho: {
-        parents: ['DOS'],
+        parents: ['DOS', 'DAS', 'SDS'],
         children: [],
     },
     LNodeSpecNaming: {
@@ -35161,8 +35225,8 @@ const tags6100 = {
         children: [...tFunctionTemplate],
     },
     SclFileReference: {
-        parents: ['FunctionSclRef'],
-        children: [],
+        parents: ['ApplicationSclRef', 'FunctionSclRef'],
+        children: ['Private'],
     },
     SDS: {
         parents: ['DOS'],
@@ -35173,12 +35237,12 @@ const tags6100 = {
         children: [...tDAS],
     },
     SubscriberLNode: {
-        parents: ['DOS'],
+        parents: ['DOS', 'DAS', 'SDS'],
         children: [...tSubscriberLNode],
     },
     ControllingLNode: {
         parents: ['DOS'],
-        children: [],
+        children: [...tControllingLNode],
     },
     LogParametersRef: {
         parents: ['DOS'],
@@ -35207,6 +35271,65 @@ const tags6100 = {
     AnalogueWiringParametersRef: {
         parents: ['ControllingLNode'],
         children: [],
+    },
+    FunctionalVariantRef: {
+        parents: [
+            'AllocationRoleRef',
+            'BehaviorDescriptionRef',
+            'FunctionCategoryRef',
+            'FunctionRef',
+            'FunctionRole',
+            'InputVarRef',
+            'LNodeDataRef',
+            'LNodeInputRef',
+            'LNodeOutputRef',
+            'OutputVarRef',
+            'PowerSystemRelationRef',
+            'ProcessResourceRef',
+            'SignalRole',
+            'VariableRef',
+        ],
+        children: [],
+    },
+    InputVarRef: {
+        parents: ['BehaviorDescriptionRef'],
+        children: [...tInputVarRef],
+    },
+    LNodeDataRef: {
+        parents: ['SignalRole'],
+        children: [...tLNodeDataRef],
+    },
+    LNodeInputRef: {
+        parents: ['SignalRole'],
+        children: [...tLNodeInputRef],
+    },
+    LNodeOutputRef: {
+        parents: ['SignalRole'],
+        children: [...tLNodeOutputRef],
+    },
+    OutputVarRef: {
+        parents: ['BehaviorDescriptionRef'],
+        children: [...tOutputVarRef],
+    },
+    L2CommParameters: {
+        parents: ['GooseParameters', 'SMVParameters'],
+        children: [],
+    },
+    L3IPv4CommParameters: {
+        parents: ['GooseParameters', 'SMVParameters'],
+        children: [],
+    },
+    L3IPv6CommParameters: {
+        parents: ['GooseParameters', 'SMVParameters'],
+        children: [],
+    },
+    CheckoutID: {
+        parents: ['Private'],
+        children: [],
+    },
+    FunctionalSubVariant: {
+        parents: ['FunctionalVariant'],
+        children: [...tFunctionalSubVariant],
     },
 };
 const tagSet6100 = new Set(sCL6100Tags);
@@ -35271,7 +35394,7 @@ function renderBayWizard(options) {
     ></scl-textfield>`,
     ];
 }
-function createAction$g(parent) {
+function createAction$f(parent) {
     return (inputs) => {
         const name = getValue(inputs.find(i => i.label === 'name'));
         const desc = getValue(inputs.find(i => i.label === 'desc'));
@@ -35294,7 +35417,7 @@ function createBayWizard(parent) {
             primary: {
                 icon: '',
                 label: 'add',
-                action: createAction$g(parent),
+                action: createAction$f(parent),
             },
             content: renderBayWizard({
                 name: '',
@@ -35304,7 +35427,7 @@ function createBayWizard(parent) {
         },
     ];
 }
-function updateAction$m(element) {
+function updateAction$l(element) {
     return (inputs) => {
         const name = inputs.find(i => i.label === 'name').value;
         const desc = getValue(inputs.find(i => i.label === 'desc'));
@@ -35321,7 +35444,7 @@ function editBayWizard(element) {
             primary: {
                 icon: 'edit',
                 label: 'save',
-                action: updateAction$m(element),
+                action: updateAction$l(element),
             },
             content: renderBayWizard({
                 name: element.getAttribute('name'),
@@ -37699,6 +37822,11 @@ const patterns = {
     uuid: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
     id: '\\S{1,255}',
     path: '.+(/.+)*',
+    mappedDoName: '(([A-Za-z][0-9A-Za-z_]{0,63})/([A-Za-z][0-9A-Za-z_]{0,63})/((LLN0|([A-Za-z][0-9A-Za-z_]{0,10})?[A-Z]{4}[0-9]{1,12})).)?([A-Z][0-9A-Za-z]{0,11}(.[a-z][0-9A-Za-z]*(([0-9]+))?)?)',
+    vlanid: '[0-9A-F]{3}',
+    vlanPriority: '[0-7]',
+    ipv4: '([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5]).([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5]).([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5]).([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])',
+    ipv6: '([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}',
 };
 const maxLength = {
     cbName: 32,
@@ -37706,6 +37834,7 @@ const maxLength = {
     ldInst: 64,
     prefix: 11,
     lnInst: 12,
+    dosName: 12,
 };
 const predefinedBasicTypeEnum = [
     'BOOLEAN',
@@ -37763,6 +37892,36 @@ const functionalConstraintEnum = [
     'EX',
     'CO',
 ];
+const attributeNameEnum = [
+    'T',
+    'Test',
+    'Check',
+    'SIUnit',
+    'Oper',
+    'SBO',
+    'SBOw',
+    'Cancel',
+    'Addr',
+    'PRIORITY',
+    'VID',
+    'APPID',
+    'TransportInUse',
+    'IPClassOfTraffic',
+    'IPv6FlowLabel',
+    'IPAddressLength',
+    'IPAddress',
+];
+const tSpecServiceType = [
+    'Poll',
+    'Report',
+    'GOOSE',
+    'SMV',
+    'Wired',
+    'Internal',
+];
+const tSCLFileType = ['SED', 'SCC'];
+const tRightEnum = ['full', 'fix', 'dataflow'];
+const tSmpMod = ['SmpPerPeriod', 'SmpPerSec', 'SecPerSmp'];
 
 /* eslint-disable import/no-extraneous-dependencies */
 function selectType(e, data, Val) {
@@ -38199,20 +38358,25 @@ function renderConductingEquipmentWizard(options) {
       .maybeValue=${options.desc}
       nullable
     ></scl-textfield>`,
+        x `<scl-checkbox
+      label="virtual"
+      .maybeValue=${options.virtual}
+      nullable
+    ></scl-checkbox>`,
     ];
 }
-function createAction$f(parent) {
+function createAction$e(parent) {
     return (inputs) => {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
-        const name = getValue(inputs.find(i => i.label === 'name'));
-        const desc = getValue(inputs.find(i => i.label === 'desc'));
+        const condEquipmentAttrs = {};
+        const condEquipmentKeys = ['name', 'desc', 'virtual'];
+        condEquipmentKeys.forEach(key => {
+            condEquipmentAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
         const proxyType = getValue(inputs.find(i => i.label === 'type'));
         const type = proxyType === 'ERS' ? 'DIS' : proxyType;
-        const element = createElement(parent.ownerDocument, 'ConductingEquipment', {
-            name,
-            type,
-            desc,
-        });
+        condEquipmentAttrs.type = type;
+        const element = createElement(parent.ownerDocument, 'ConductingEquipment', condEquipmentAttrs);
         const action = {
             parent,
             node: element,
@@ -38262,48 +38426,60 @@ function createAction$f(parent) {
     };
 }
 function createConductingEquipmentWizard(parent) {
+    const name = '';
+    const desc = null;
+    const type = '';
+    const virtual = null;
     return [
         {
             title: 'Add ConductingEquipment',
             primary: {
                 icon: 'add',
                 label: 'add',
-                action: createAction$f(parent),
+                action: createAction$e(parent),
             },
-            content: renderConductingEquipmentWizard({
-                name: '',
-                desc: '',
-                option: 'create',
-                type: '',
-                reservedValues: reservedNames(parent, 'ConductingEquipment'),
-            }),
+            content: [
+                ...renderConductingEquipmentWizard({
+                    name,
+                    desc,
+                    option: 'create',
+                    type,
+                    virtual,
+                    reservedValues: reservedNames(parent, 'ConductingEquipment'),
+                }),
+            ],
         },
     ];
 }
-function updateAction$l(element) {
+function updateAction$k(element) {
     return (inputs) => {
-        const name = getValue(inputs.find(i => i.label === 'name'));
-        const desc = getValue(inputs.find(i => i.label === 'desc'));
-        if (name === element.getAttribute('name') &&
-            desc === element.getAttribute('desc')) {
-            return [];
-        }
-        return [{ element, attributes: { name, desc } }];
+        const attributes = {};
+        const subFunctionKeys = ['name', 'desc', 'virtual'];
+        subFunctionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (subFunctionKeys.some(key => attributes[key] !== element.getAttribute(key)))
+            return [{ element, attributes }];
+        return [];
     };
 }
 function editConductingEquipmentWizard(element) {
+    const name = element.getAttribute('name');
+    const desc = element.getAttribute('desc');
+    const virtual = element.getAttribute('virtual');
     return [
         {
             title: 'Edit ConductingEquipment',
             primary: {
                 icon: 'edit',
                 label: 'save',
-                action: updateAction$l(element),
+                action: updateAction$k(element),
             },
             content: renderConductingEquipmentWizard({
-                name: element.getAttribute('name'),
-                desc: element.getAttribute('desc'),
+                name,
+                desc,
                 option: 'edit',
+                virtual,
                 type: typeName(element),
                 reservedValues: reservedNames(element),
             }),
@@ -39588,7 +39764,7 @@ const parts = new WeakMap();
  *     container. Render options must *not* change between renders to the same
  *     container, as those changes will not effect previously rendered DOM.
  */
-const render$6 = (result, container, options) => {
+const render$5 = (result, container, options) => {
     let part = parts.get(container);
     if (part === undefined) {
         removeNodes(container, container.firstChild);
@@ -39893,7 +40069,7 @@ const prepareTemplateStyles = (scopeName, renderedDOM, template) => {
  * non-shorthand names (for example `border` and `border-width`) is not
  * supported.
  */
-const render$5 = (result, container, options) => {
+const render$4 = (result, container, options) => {
     if (!options || typeof options !== 'object' || !options.scopeName) {
         throw new Error('The `scopeName` option is required.');
     }
@@ -39907,7 +40083,7 @@ const render$5 = (result, container, options) => {
     // On first scope render, render into a fragment; this cannot be a single
     // fragment that is reused since nested renders can occur synchronously.
     const renderContainer = firstScopeRender ? document.createDocumentFragment() : container;
-    render$6(result, renderContainer, Object.assign({ templateFactory: shadyTemplateFactory(scopeName) }, options));
+    render$5(result, renderContainer, Object.assign({ templateFactory: shadyTemplateFactory(scopeName) }, options));
     // When performing first scope render,
     // (1) We've rendered into a fragment so that there's a chance to
     // `prepareTemplateStyles` before sub-elements hit the DOM
@@ -41108,7 +41284,7 @@ LitElement['finalized'] = true;
  *
  * @nocollapse
  */
-LitElement.render = render$5;
+LitElement.render = render$4;
 /** @nocollapse */
 LitElement.shadowRootOptions = { mode: 'open' };
 
@@ -42845,7 +43021,7 @@ function createConnectedApWizard(element) {
         },
     ];
 }
-function updateAction$k(element) {
+function updateAction$j(element) {
     return (inputs, wizard) => {
         var _a, _b, _c;
         const typeRestriction = (_c = (_b = (_a = wizard.shadowRoot) === null || _a === void 0 ? void 0 : _a.querySelector('#typeRestriction')) === null || _b === void 0 ? void 0 : _b.checked) !== null && _c !== void 0 ? _c : false;
@@ -42866,7 +43042,7 @@ function editConnectedApWizard(element) {
             primary: {
                 icon: 'save',
                 label: 'save',
-                action: updateAction$k(element),
+                action: updateAction$j(element),
             },
             content: [...contentAddress({ element, types: getTypes(element) })],
         },
@@ -43364,7 +43540,7 @@ function nextOrd(parent) {
     // eslint-disable-next-line no-restricted-globals
     return isFinite(maxOrd) ? (maxOrd + 1).toString(10) : '0';
 }
-function createAction$e(parent) {
+function createAction$d(parent) {
     return (inputs) => {
         const value = getValue(inputs.find(i => i.label === 'value'));
         const desc = getValue(inputs.find(i => i.label === 'desc'));
@@ -43392,13 +43568,13 @@ function createEnumValWizard(parent) {
             primary: {
                 icon: '',
                 label: 'Save',
-                action: createAction$e(parent),
+                action: createAction$d(parent),
             },
             content: renderContent$3({ ord, desc, value }),
         },
     ];
 }
-function updateAction$j(element) {
+function updateAction$i(element) {
     return (inputs) => {
         var _a;
         const value = (_a = getValue(inputs.find(i => i.label === 'value'))) !== null && _a !== void 0 ? _a : '';
@@ -43434,7 +43610,7 @@ function editEnumValWizard(element) {
             primary: {
                 icon: '',
                 label: 'Save',
-                action: updateAction$j(element),
+                action: updateAction$i(element),
             },
             content: renderContent$3({ ord, desc, value }),
         },
@@ -43536,7 +43712,7 @@ function editFunctionWizard(element) {
     ];
 }
 
-function createAction$d(parent) {
+function createAction$c(parent) {
     return (inputs) => {
         const attributes = {};
         const eqFunctionKeys = ['name', 'desc', 'type'];
@@ -43563,7 +43739,7 @@ function createEqFunctionWizard(parent) {
             primary: {
                 icon: 'save',
                 label: 'save',
-                action: createAction$d(parent),
+                action: createAction$c(parent),
             },
             content: [
                 ...contentFunctionWizard({
@@ -43576,7 +43752,7 @@ function createEqFunctionWizard(parent) {
         },
     ];
 }
-function updateAction$i(element) {
+function updateAction$h(element) {
     return (inputs) => {
         const attributes = {};
         const functionKeys = ['name', 'desc', 'type'];
@@ -43599,7 +43775,7 @@ function editEqFunctionWizard(element) {
             primary: {
                 icon: 'save',
                 label: 'save',
-                action: updateAction$i(element),
+                action: updateAction$h(element),
             },
             content: [
                 ...contentFunctionWizard({
@@ -43653,7 +43829,7 @@ function createEqSubFunctionWizard(parent) {
         },
     ];
 }
-function updateAction$h(element) {
+function updateAction$g(element) {
     return (inputs) => {
         const attributes = {};
         const functionKeys = ['name', 'desc', 'type'];
@@ -43676,7 +43852,7 @@ function editEqSubFunctionWizard(element) {
             primary: {
                 icon: 'save',
                 label: 'save',
-                action: updateAction$h(element),
+                action: updateAction$g(element),
             },
             content: [
                 ...contentFunctionWizard({
@@ -43719,7 +43895,7 @@ function contentGeneralEquipmentWizard(options) {
     ></scl-checkbox>`,
     ];
 }
-function createAction$c(parent) {
+function createAction$b(parent) {
     return (inputs) => {
         const attributes = {};
         const generalEquipmentKeys = ['name', 'desc', 'type', 'virtual'];
@@ -43747,7 +43923,7 @@ function createGeneralEquipmentWizard(parent) {
             primary: {
                 icon: 'save',
                 label: 'save',
-                action: createAction$c(parent),
+                action: createAction$b(parent),
             },
             content: [
                 ...contentGeneralEquipmentWizard({
@@ -43761,7 +43937,7 @@ function createGeneralEquipmentWizard(parent) {
         },
     ];
 }
-function updateAction$g(element) {
+function updateAction$f(element) {
     return (inputs) => {
         const attributes = {};
         const generalEquipmentKeys = ['name', 'desc', 'type', 'virtual'];
@@ -43785,7 +43961,7 @@ function editGeneralEquipmentWizard(element) {
             primary: {
                 icon: 'save',
                 label: 'save',
-                action: updateAction$g(element),
+                action: updateAction$f(element),
             },
             content: [
                 ...contentGeneralEquipmentWizard({
@@ -43833,7 +44009,7 @@ function mxxTimeUpdateAction(gse, oldMxxTime, newTimeValue, option) {
         { node: oldMxxTime },
     ];
 }
-function updateAction$f(element) {
+function updateAction$e(element) {
     return (inputs, wizard) => {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         const action = [];
@@ -43871,7 +44047,7 @@ function editGseWizard(element) {
             primary: {
                 label: 'save',
                 icon: 'save',
-                action: updateAction$f(element),
+                action: updateAction$e(element),
             },
             content: [
                 ...contentAddress({ element, types }),
@@ -43895,7 +44071,7 @@ function editGseWizard(element) {
 }
 
 /* eslint-disable import/no-extraneous-dependencies */
-function render$4(name, iedNames, desc, type, manufacturer, owner) {
+function render$3(name, iedNames, desc, type, manufacturer, owner) {
     return [
         x `<scl-textfield
       label="name"
@@ -43926,7 +44102,7 @@ function render$4(name, iedNames, desc, type, manufacturer, owner) {
     ></scl-textfield>`,
     ];
 }
-function updateAction$e(element) {
+function updateAction$d(element) {
     return (inputs) => {
         const name = inputs.find(i => i.label === 'name').value;
         const desc = getValue(inputs.find(i => i.label === 'desc'));
@@ -43948,15 +44124,15 @@ function iEDEditWizard(element) {
             primary: {
                 icon: 'edit',
                 label: 'save',
-                action: updateAction$e(element),
+                action: updateAction$d(element),
             },
-            content: render$4((_a = element.getAttribute('name')) !== null && _a !== void 0 ? _a : '', iedNames, element.getAttribute('desc'), element.getAttribute('type'), element.getAttribute('manufacturer'), element.getAttribute('owner')),
+            content: render$3((_a = element.getAttribute('name')) !== null && _a !== void 0 ? _a : '', iedNames, element.getAttribute('desc'), element.getAttribute('type'), element.getAttribute('manufacturer'), element.getAttribute('owner')),
         },
     ];
 }
 
 /* eslint-disable import/no-extraneous-dependencies */
-function render$3(inst, name, ldNames) {
+function render$2(inst, name, ldNames) {
     return [
         x `<scl-textfield
       label="inst"
@@ -43971,7 +44147,7 @@ function render$3(inst, name, ldNames) {
     ></scl-textfield>`,
     ];
 }
-function updateAction$d(element) {
+function updateAction$c(element) {
     return (inputs) => {
         const name = inputs.find(i => i.label === 'name').value;
         if (name === element.getAttribute('name'))
@@ -43993,9 +44169,9 @@ function lDeviceEditWizard(element) {
             primary: {
                 icon: 'edit',
                 label: 'save',
-                action: updateAction$d(element),
+                action: updateAction$c(element),
             },
-            content: render$3((_a = element.getAttribute('inst')) !== null && _a !== void 0 ? _a : '', element.getAttribute('name'), ldNames),
+            content: render$2((_a = element.getAttribute('inst')) !== null && _a !== void 0 ? _a : '', element.getAttribute('name'), ldNames),
         },
     ];
 }
@@ -44037,7 +44213,7 @@ function renderContent$2(options) {
     ></scl-textfield>`,
     ];
 }
-function createAction$b(parent) {
+function createAction$a(parent) {
     return (inputs) => {
         const attributes = {};
         const lineKeys = ['name', 'desc', 'type', 'nomFreq', 'numPhases'];
@@ -44061,7 +44237,7 @@ function createLineWizard(parent) {
             primary: {
                 icon: 'save',
                 label: 'save',
-                action: createAction$b(parent),
+                action: createAction$a(parent),
             },
             content: [
                 ...renderContent$2({
@@ -44076,7 +44252,7 @@ function createLineWizard(parent) {
         },
     ];
 }
-function updateAction$c(element) {
+function updateAction$b(element) {
     return (inputs) => {
         const attributes = {};
         const lineKeys = ['name', 'desc', 'type', 'nomFreq', 'numPhases'];
@@ -44097,7 +44273,7 @@ function editLineWizard(element) {
             primary: {
                 icon: 'edit',
                 label: 'save',
-                action: updateAction$c(element),
+                action: updateAction$b(element),
             },
             content: renderContent$2({
                 name: (_a = element.getAttribute('name')) !== null && _a !== void 0 ? _a : '',
@@ -45137,7 +45313,7 @@ function createSingleLNode(parent, ln) {
         reference: getReference$1(parent, 'LNode'),
     };
 }
-function createAction$a(parent) {
+function createAction$9(parent) {
     return (_, wizard) => {
         var _a;
         const list = (_a = wizard.shadowRoot) === null || _a === void 0 ? void 0 : _a.querySelector('#lnList');
@@ -45145,7 +45321,7 @@ function createAction$a(parent) {
             .filter(item => !item.disabled)
             .map(item => item.value)
             .map(id => {
-            if (id.endsWith('LLN0'))
+            if (id.endsWith('LN0'))
                 return parent.ownerDocument.querySelector(selector('LN0', id));
             if (id.startsWith('#'))
                 return parent.ownerDocument.querySelector(selector('LNodeType', id));
@@ -45157,7 +45333,7 @@ function createAction$a(parent) {
             .filter(insert => insert);
     };
 }
-function updateAction$b(element) {
+function updateAction$a(element) {
     return (inputs) => {
         const attributes = {};
         const lNodeTypeKeys = [
@@ -45214,8 +45390,12 @@ function filterIEDLN(evt, parent) {
 }
 function renderListItem(value) {
     const { iedName, ldInst, prefix, lnClass, inst } = logicalNodeParameters(value.anyLn);
+    let ln = identity$1(value.anyLn);
+    if (lnClass === 'LLN0') {
+        ln += '>>LN0';
+    }
     return x `<mwc-check-list-item
-    value="${identity$1(value.anyLn)}"
+    value="${ln}"
     twoline
     ?disabled=${value.selected}
     ?selected=${value.childLNode}
@@ -45278,7 +45458,7 @@ function createLNodeWizard(parent) {
             primary: {
                 icon: 'save',
                 label: 'save',
-                action: createAction$a(parent),
+                action: createAction$9(parent),
             },
             content: [
                 x `<div id="createLNodeWizardContent">
@@ -45370,7 +45550,7 @@ function editLNodeWizard(element, subWizard) {
             primary: {
                 icon: 'edit',
                 label: 'Save',
-                action: updateAction$b(element),
+                action: updateAction$a(element),
             },
             content: renderLNodeWizard({
                 desc: element.getAttribute('desc'),
@@ -45454,17 +45634,21 @@ function renderPowerTransformerWizard(options) {
       .maybeValue=${options.type}
       disabled
     ></scl-textfield>`,
+        x `<scl-checkbox
+      label="virtual"
+      .maybeValue=${options.virtual}
+      nullable
+    ></scl-checkbox>`,
     ];
 }
-function createAction$9(parent) {
+function createAction$8(parent) {
     return (inputs) => {
-        const name = getValue(inputs.find(i => i.label === 'name'));
-        const desc = getValue(inputs.find(i => i.label === 'desc'));
-        const powerTransformer = createElement(parent.ownerDocument, 'PowerTransformer', {
-            name,
-            desc,
-            type: defaultPowerTransformerType,
+        const powerTransformerAttrs = {};
+        const powerTransformerKeys = ['name', 'desc', 'virtual'];
+        powerTransformerKeys.forEach(key => {
+            powerTransformerAttrs[key] = getValue(inputs.find(i => i.label === key));
         });
+        const powerTransformer = createElement(parent.ownerDocument, 'PowerTransformer', powerTransformerAttrs);
         return [
             {
                 parent,
@@ -45475,181 +45659,25 @@ function createAction$9(parent) {
     };
 }
 function createPowerTransformerWizard(parent) {
+    const name = '';
+    const desc = null;
+    const virtual = null;
+    const type = defaultPowerTransformerType;
     return [
         {
             title: 'Add PowerTransformer',
             primary: {
                 icon: '',
                 label: 'add',
-                action: createAction$9(parent),
-            },
-            content: renderPowerTransformerWizard({
-                name: '',
-                reservedValues: reservedNames(parent, 'PowerTransformer'),
-                desc: null,
-                type: defaultPowerTransformerType,
-            }),
-        },
-    ];
-}
-function updateAction$a(element) {
-    return (inputs) => {
-        const name = inputs.find(i => i.label === 'name').value;
-        const desc = getValue(inputs.find(i => i.label === 'desc'));
-        if (name === element.getAttribute('name') &&
-            desc === element.getAttribute('desc'))
-            return [];
-        return [{ element, attributes: { name, desc } }];
-    };
-}
-function editPowerTransformerWizard(element) {
-    return [
-        {
-            title: 'Edit PowerTransformer',
-            primary: {
-                icon: 'edit',
-                label: 'save',
-                action: updateAction$a(element),
-            },
-            content: renderPowerTransformerWizard({
-                name: element.getAttribute('name'),
-                reservedValues: reservedNames(element),
-                desc: element.getAttribute('desc'),
-                type: element.getAttribute('type'),
-            }),
-        },
-    ];
-}
-
-/* eslint-disable import/no-extraneous-dependencies */
-function contentPrivateWizard(options) {
-    return [
-        x `<scl-textfield
-      label="type"
-      .maybeValue=${options.type}
-      required
-    ></scl-textfield>`,
-    ];
-}
-function createPrivateAction(parent) {
-    return (inputs) => {
-        const privateAttrs = {};
-        const privateKeys = ['type'];
-        privateKeys.forEach(key => {
-            privateAttrs[key] = getValue(inputs.find(i => i.label === key));
-        });
-        const privateNode = createElement(parent.ownerDocument, 'Private', privateAttrs);
-        return [
-            { parent, node: privateNode, reference: getReference(parent, 'Private') },
-        ];
-    };
-}
-function createPrivateWizard(parent) {
-    const type = null;
-    return [
-        {
-            title: 'Add Private',
-            primary: {
-                icon: 'add',
-                label: 'add',
-                action: createPrivateAction(parent),
-            },
-            content: [
-                ...contentPrivateWizard({
-                    type,
-                }),
-            ],
-        },
-    ];
-}
-function updatePrivate(element) {
-    return (inputs) => {
-        const attributes = {};
-        const functionKeys = ['type'];
-        functionKeys.forEach(key => {
-            attributes[key] = getValue(inputs.find(i => i.label === key));
-        });
-        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
-            return [{ element, attributes }];
-        }
-        return [];
-    };
-}
-function editPrivateWizard(element) {
-    const type = element.getAttribute('type');
-    return [
-        {
-            title: 'Edit Private',
-            primary: {
-                icon: 'edit',
-                label: 'save',
-                action: updatePrivate(element),
-            },
-            content: [
-                ...contentPrivateWizard({
-                    type,
-                }),
-            ],
-        },
-    ];
-}
-
-/* eslint-disable import/no-extraneous-dependencies */
-function contentProcessWizard(content) {
-    return [
-        x `<scl-textfield
-      label="name"
-      .maybeValue=${content.name}
-      required
-      .reservedValues=${content.reservedNames}
-      dialogInitialFocus
-    ></scl-textfield>`,
-        x `<scl-textfield
-      label="desc"
-      .maybeValue=${content.desc}
-      nullable
-    ></scl-textfield>`,
-        x `<scl-textfield
-      label="type"
-      .maybeValue=${content.type}
-      nullable
-    ></scl-textfield>`,
-    ];
-}
-function createAction$8(parent) {
-    return (inputs) => {
-        const attributes = {};
-        const processKeys = ['name', 'desc', 'type'];
-        processKeys.forEach(key => {
-            attributes[key] = getValue(inputs.find(i => i.label === key));
-        });
-        const process = createElement(parent.ownerDocument, 'Process', attributes);
-        return [
-            { parent, node: process, reference: getReference(parent, 'Process') },
-        ];
-    };
-}
-function createProcessWizard(parent) {
-    const name = '';
-    const desc = '';
-    const type = '';
-    const reservedNames = getChildElementsByTagName$1(parent.parentElement, 'Process')
-        .filter(sibling => sibling !== parent)
-        .map(sibling => sibling.getAttribute('name'));
-    return [
-        {
-            title: 'Add Process',
-            primary: {
-                icon: 'save',
-                label: 'save',
                 action: createAction$8(parent),
             },
             content: [
-                ...contentProcessWizard({
+                ...renderPowerTransformerWizard({
                     name,
                     desc,
+                    virtual,
+                    reservedValues: reservedNames(parent, 'PowerTransformer'),
                     type,
-                    reservedNames,
                 }),
             ],
         },
@@ -45658,726 +45686,35 @@ function createProcessWizard(parent) {
 function updateAction$9(element) {
     return (inputs) => {
         const attributes = {};
-        const tapProcessKeys = ['name', 'desc', 'type'];
-        tapProcessKeys.forEach(key => {
+        const powerTransformerKeys = ['name', 'desc', 'virtual'];
+        powerTransformerKeys.forEach(key => {
             attributes[key] = getValue(inputs.find(i => i.label === key));
         });
-        if (tapProcessKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+        if (powerTransformerKeys.some(key => attributes[key] !== element.getAttribute(key)))
             return [{ element, attributes }];
-        }
         return [];
     };
 }
-function editProcessWizard(element) {
+function editPowerTransformerWizard(element) {
     const name = element.getAttribute('name');
     const desc = element.getAttribute('desc');
     const type = element.getAttribute('type');
-    const reservedNames = getChildElementsByTagName$1(element.parentElement, 'Process')
-        .filter(sibling => sibling !== element)
-        .map(sibling => sibling.getAttribute('name'));
+    const virtual = element.getAttribute('virtual');
     return [
         {
-            title: 'Edit Process',
+            title: 'Edit PowerTransformer',
             primary: {
-                icon: 'save',
+                icon: 'edit',
                 label: 'save',
                 action: updateAction$9(element),
             },
-            content: [
-                ...contentProcessWizard({
-                    name,
-                    desc,
-                    type,
-                    reservedNames,
-                }),
-            ],
-        },
-    ];
-}
-
-/* eslint-disable import/no-extraneous-dependencies */
-function renderContent$1(content) {
-    return [
-        x `<scl-textfield
-      label="name"
-      .maybeValue=${content.name}
-      required
-      pattern="${patterns.alphanumericFirstLowerCase}"
-      dialogInitialFocus
-    >
-      ></scl-textfield
-    >`,
-        x `<scl-textfield
-      label="desc"
-      .maybeValue=${content.desc}
-      nullable
-      pattern="${patterns.normalizedString}"
-    ></scl-textfield>`,
-        x `<scl-select fixedMenuPosition label="type" required
-      >${content.doTypes.map(dataType => x `<mwc-list-item
-            value=${dataType.id}
-            ?selected=${dataType.id === content.type}
-            >${dataType.id}</mwc-list-item
-          >`)}</scl-select
-    >`,
-    ];
-}
-function createSDoAction(parent) {
-    return (inputs) => {
-        const name = getValue(inputs.find(i => i.label === 'name'));
-        const desc = getValue(inputs.find(i => i.label === 'desc'));
-        const type = getValue(inputs.find(i => i.label === 'type'));
-        const actions = [];
-        const element = createElement(parent.ownerDocument, 'SDO', {
-            name,
-            desc,
-            type,
-        });
-        actions.push({
-            parent,
-            node: element,
-            reference: getReference(parent, 'SDO'),
-        });
-        return actions;
-    };
-}
-function createSDoWizard(parent) {
-    const [type, name, desc] = [null, '', null];
-    const doTypes = Array.from(parent.ownerDocument.querySelectorAll('DOType')).filter(doType => doType.getAttribute('id'));
-    return [
-        {
-            title: 'Add SDO',
-            primary: { icon: '', label: 'save', action: createSDoAction(parent) },
-            content: renderContent$1({
+            content: renderPowerTransformerWizard({
                 name,
                 desc,
                 type,
-                doTypes,
-            }),
-        },
-    ];
-}
-function updateSDoAction(element) {
-    return (inputs) => {
-        const name = getValue(inputs.find(i => i.label === 'name'));
-        const desc = getValue(inputs.find(i => i.label === 'desc'));
-        const type = getValue(inputs.find(i => i.label === 'type'));
-        if (name === element.getAttribute('name') &&
-            desc === element.getAttribute('desc') &&
-            type === element.getAttribute('type')) {
-            return [];
-        }
-        return [{ element, attributes: { name, desc, type } }];
-    };
-}
-function editSDoWizard(element) {
-    const [type, name, desc] = [
-        element.getAttribute('type'),
-        element.getAttribute('name'),
-        element.getAttribute('desc'),
-    ];
-    const doTypes = Array.from(element.ownerDocument.querySelectorAll('DOType')).filter(doType => doType.getAttribute('id'));
-    return [
-        {
-            title: 'Edit SDO',
-            primary: { icon: '', label: 'save', action: updateSDoAction(element) },
-            content: renderContent$1({
-                name,
-                desc,
-                type,
-                doTypes,
-            }),
-        },
-    ];
-}
-
-function updateAction$8(element) {
-    return (inputs, wizard) => {
-        var _a, _b;
-        const action = [];
-        const instType = (_b = (((_a = wizard.shadowRoot) === null || _a === void 0 ? void 0 : _a.querySelector('#instType')))) === null || _b === void 0 ? void 0 : _b.checked;
-        const addressContent = {};
-        addressContent['MAC-Address'] = getValue(inputs.find(i => i.label === 'MAC-Address'));
-        addressContent.APPID = getValue(inputs.find(i => i.label === 'APPID'));
-        addressContent['VLAN-ID'] = getValue(inputs.find(i => i.label === 'VLAN-ID'));
-        addressContent['VLAN-PRIORITY'] = getValue(inputs.find(i => i.label === 'VLAN-PRIORITY'));
-        const addressActions = updateAddress(element, addressContent, instType);
-        if (!addressActions.length)
-            return [];
-        addressActions.forEach(addressAction => {
-            action.push(addressAction);
-        });
-        return [action];
-    };
-}
-function editSMvWizard(element) {
-    const types = ['MAC-Address', 'APPID', 'VLAN-ID', 'VLAN-PRIORITY'];
-    return [
-        {
-            title: 'Edit SMV',
-            primary: {
-                label: 'save',
-                icon: 'edit',
-                action: updateAction$8(element),
-            },
-            content: [...contentAddress({ element, types })],
-        },
-    ];
-}
-
-function contentSubEquipmentWizard(options) {
-    return [
-        x `<scl-textfield
-      label="name"
-      .maybeValue=${options.name}
-      .reservedValues=${options.reservedValues}
-      required
-      dialogInitialFocus
-    ></scl-textfield>`,
-        x `<scl-textfield
-      label="desc"
-      .maybeValue=${options.desc}
-      nullable
-    ></scl-textfield>`,
-        x `<scl-select
-      label="phase"
-      fixedMenuPosition
-      .maybeValue=${options.phase}
-      nullable
-    >
-      ${['A', 'B', 'C', 'N', 'all', 'none', 'AB', 'BC', 'CA'].map(value => x `<mwc-list-item value="${value}">
-            ${value.charAt(0).toUpperCase() + value.slice(1)}
-          </mwc-list-item>`)}
-    </scl-select> `,
-        x `<scl-checkbox
-      label="virtual"
-      .maybeValue=${options.virtual}
-      nullable
-    ></scl-checkbox>`,
-    ];
-}
-function createAction$7(parent) {
-    return (inputs) => {
-        const subEquipmentAttrs = {};
-        const subEquipmentKeys = ['name', 'desc', 'phase', 'virtual'];
-        subEquipmentKeys.forEach(key => {
-            subEquipmentAttrs[key] = getValue(inputs.find(i => i.label === key));
-        });
-        const subEquipment = createElement(parent.ownerDocument, 'SubEquipment', subEquipmentAttrs);
-        return [
-            {
-                parent,
-                node: subEquipment,
-                reference: getReference(parent, 'SubEquipment'),
-            },
-        ];
-    };
-}
-function createSubEquipmentWizard(parent) {
-    const name = '';
-    const desc = null;
-    const phase = null;
-    const virtual = null;
-    return [
-        {
-            title: 'Add SubEquipment',
-            primary: {
-                icon: 'save',
-                label: 'save',
-                action: createAction$7(parent),
-            },
-            content: [
-                ...contentSubEquipmentWizard({
-                    name,
-                    desc,
-                    phase,
-                    virtual,
-                    reservedValues: reservedNames(parent, 'SubEquipment'),
-                }),
-            ],
-        },
-    ];
-}
-function updateAction$7(element) {
-    return (inputs) => {
-        const attributes = {};
-        const subFunctionKeys = ['name', 'desc', 'phase', 'virtual'];
-        subFunctionKeys.forEach(key => {
-            attributes[key] = getValue(inputs.find(i => i.label === key));
-        });
-        if (subFunctionKeys.some(key => attributes[key] !== element.getAttribute(key)))
-            return [{ element, attributes }];
-        return [];
-    };
-}
-function editSubEquipmentWizard(element) {
-    const name = element.getAttribute('name');
-    const desc = element.getAttribute('desc');
-    const phase = element.getAttribute('phase');
-    const virtual = element.getAttribute('virtual');
-    return [
-        {
-            title: 'Edit SubEquipment',
-            primary: {
-                icon: 'save',
-                label: 'save',
-                action: updateAction$7(element),
-            },
-            content: [
-                ...contentSubEquipmentWizard({
-                    name,
-                    desc,
-                    phase,
-                    virtual,
-                    reservedValues: reservedNames(element),
-                }),
-            ],
-        },
-    ];
-}
-
-function createAction$6(parent) {
-    return (inputs) => {
-        const attributes = {};
-        const subFunctionKeys = ['name', 'desc', 'type'];
-        subFunctionKeys.forEach(key => {
-            attributes[key] = getValue(inputs.find(i => i.label === key));
-        });
-        const subFunction = createElement(parent.ownerDocument, 'SubFunction', attributes);
-        return [
-            {
-                parent,
-                node: subFunction,
-                reference: getReference(parent, 'SubFunction'),
-            },
-        ];
-    };
-}
-function createSubFunctionWizard(parent) {
-    const name = '';
-    const desc = null;
-    const type = null;
-    return [
-        {
-            title: 'Add SubFunction',
-            primary: {
-                icon: 'save',
-                label: 'save',
-                action: createAction$6(parent),
-            },
-            content: [
-                ...contentFunctionWizard({
-                    name,
-                    desc,
-                    type,
-                    reservedValues: reservedNames(parent, 'SubFunction'),
-                }),
-            ],
-        },
-    ];
-}
-function updateAction$6(element) {
-    return (inputs) => {
-        const attributes = {};
-        const subFunctionKeys = ['name', 'desc', 'type'];
-        subFunctionKeys.forEach(key => {
-            attributes[key] = getValue(inputs.find(i => i.label === key));
-        });
-        if (subFunctionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
-            return [{ element, attributes }];
-        }
-        return [];
-    };
-}
-function editSubFunctionWizard(element) {
-    const name = element.getAttribute('name');
-    const desc = element.getAttribute('desc');
-    const type = element.getAttribute('type');
-    return [
-        {
-            title: 'Edit SubFunction',
-            primary: {
-                icon: 'save',
-                label: 'save',
-                action: updateAction$6(element),
-            },
-            content: [
-                ...contentFunctionWizard({
-                    name,
-                    desc,
-                    type,
-                    reservedValues: reservedNames(element),
-                }),
-            ],
-        },
-    ];
-}
-
-/* eslint-disable import/no-extraneous-dependencies */
-/** Initial attribute values suggested for `SubNetwork` creation */
-const initial$1 = {
-    type: '8-MMS',
-    bitrate: '100',
-    multiplier: 'M',
-};
-function renderContent(options) {
-    return [
-        x `<scl-textfield
-      label="name"
-      .maybeValue=${options.name}
-      required
-      dialogInitialFocus
-    ></scl-textfield>`,
-        x `<scl-textfield
-      label="desc"
-      .maybeValue=${options.desc}
-      nullable
-    ></scl-textfield>`,
-        x `<scl-textfield
-      label="type"
-      .maybeValue=${options.type}
-      nullable
-      pattern="${patterns.normalizedString}"
-    ></scl-textfield>`,
-        x `<scl-textfield
-      label="BitRate"
-      .maybeValue=${options.BitRate}
-      nullable
-      unit="b/s"
-      .multipliers=${[null, 'M']}
-      .multiplier=${options.multiplier}
-      required
-      pattern="${patterns.decimal}"
-    ></scl-textfield>`,
-    ];
-}
-function createAction$5(parent) {
-    return (inputs) => {
-        const name = getValue(inputs.find(i => i.label === 'name'));
-        const desc = getValue(inputs.find(i => i.label === 'desc'));
-        const type = getValue(inputs.find(i => i.label === 'type'));
-        const BitRate = getValue(inputs.find(i => i.label === 'BitRate'));
-        const multiplier = getMultiplier(inputs.find(i => i.label === 'BitRate'));
-        const element = createElement(parent.ownerDocument, 'SubNetwork', {
-            name,
-            desc,
-            type,
-        });
-        if (BitRate !== null) {
-            const bitRateElement = createElement(parent.ownerDocument, 'BitRate', {
-                unit: 'b/s',
-                multiplier,
-            });
-            bitRateElement.textContent = BitRate;
-            element.appendChild(bitRateElement);
-        }
-        const action = {
-            parent,
-            node: element,
-            reference: getReference(parent, 'SubNetwork'),
-        };
-        return [action];
-    };
-}
-function createSubNetworkWizard(parent) {
-    return [
-        {
-            title: 'Add SubNetwork',
-            primary: {
-                icon: 'add',
-                label: 'add',
-                action: createAction$5(parent),
-            },
-            content: renderContent({
-                name: '',
-                reservedValues: reservedNames(parent, 'SubNetwork'),
-                desc: '',
-                type: initial$1.type,
-                BitRate: initial$1.bitrate,
-                multiplier: initial$1.multiplier,
-            }),
-        },
-    ];
-}
-function getBitRateAction(oldBitRate, BitRate, multiplier, SubNetwork) {
-    if (oldBitRate === null) {
-        const bitRateElement = createElement(SubNetwork.ownerDocument, 'BitRate', {
-            unit: 'b/s',
-        });
-        if (multiplier)
-            bitRateElement.setAttribute('multiplier', multiplier);
-        if (BitRate)
-            bitRateElement.textContent = BitRate;
-        return {
-            parent: SubNetwork,
-            node: bitRateElement,
-            reference: getReference(SubNetwork, 'BitRate'),
-        };
-    }
-    if (BitRate === null)
-        return {
-            parent: SubNetwork,
-            node: oldBitRate,
-            reference: oldBitRate.nextSibling,
-        };
-    const newBitRate = cloneElement(oldBitRate, { multiplier });
-    newBitRate.textContent = BitRate;
-    return [
-        {
-            parent: oldBitRate.parentElement,
-            node: newBitRate,
-            reference: getReference(oldBitRate.parentElement, 'BitRate'),
-        },
-        { node: oldBitRate },
-    ];
-}
-function updateAction$5(element) {
-    return (inputs) => {
-        var _a, _b, _c, _d, _e, _f;
-        const name = inputs.find(i => i.label === 'name').value;
-        const desc = getValue(inputs.find(i => i.label === 'desc'));
-        const type = getValue(inputs.find(i => i.label === 'type'));
-        const BitRate = getValue(inputs.find(i => i.label === 'BitRate'));
-        const multiplier = getMultiplier(inputs.find(i => i.label === 'BitRate'));
-        let subNetworkAction;
-        let bitRateAction;
-        if (name === element.getAttribute('name') &&
-            desc === element.getAttribute('desc') &&
-            type === element.getAttribute('type')) {
-            subNetworkAction = null;
-        }
-        else
-            subNetworkAction = { element, attributes: { name, desc, type } };
-        if (BitRate ===
-            ((_c = (_b = (_a = element.querySelector('SubNetwork > BitRate')) === null || _a === void 0 ? void 0 : _a.textContent) === null || _b === void 0 ? void 0 : _b.trim()) !== null && _c !== void 0 ? _c : null) &&
-            multiplier ===
-                ((_e = (_d = element
-                    .querySelector('SubNetwork > BitRate')) === null || _d === void 0 ? void 0 : _d.getAttribute('multiplier')) !== null && _e !== void 0 ? _e : null)) {
-            bitRateAction = null;
-        }
-        else {
-            bitRateAction = getBitRateAction(element.querySelector('SubNetwork > BitRate'), BitRate, multiplier, (_f = subNetworkAction === null || subNetworkAction === void 0 ? void 0 : subNetworkAction.element) !== null && _f !== void 0 ? _f : element);
-        }
-        const actions = [];
-        if (subNetworkAction)
-            actions.push(subNetworkAction);
-        if (bitRateAction)
-            actions.push(bitRateAction);
-        return actions;
-    };
-}
-function editSubNetworkWizard(element) {
-    var _a, _b, _c, _d, _e;
-    const name = element.getAttribute('name');
-    const desc = element.getAttribute('desc');
-    const type = element.getAttribute('type');
-    const BitRate = (_c = (_b = (_a = element.querySelector('SubNetwork > BitRate')) === null || _a === void 0 ? void 0 : _a.textContent) === null || _b === void 0 ? void 0 : _b.trim()) !== null && _c !== void 0 ? _c : null;
-    const multiplier = (_e = (_d = element.querySelector('SubNetwork > BitRate')) === null || _d === void 0 ? void 0 : _d.getAttribute('multiplier')) !== null && _e !== void 0 ? _e : null;
-    const reservedValues = reservedNames(element);
-    return [
-        {
-            title: 'Edit SubNetwork',
-            primary: {
-                icon: 'save',
-                label: 'save',
-                action: updateAction$5(element),
-            },
-            content: renderContent({
-                name,
-                reservedValues,
-                desc,
-                type,
-                BitRate,
-                multiplier,
-            }),
-        },
-    ];
-}
-
-/* eslint-disable import/no-extraneous-dependencies */
-function render$2(options) {
-    return [
-        x `<scl-textfield
-      label="name"
-      .maybeValue=${options.name}
-      required
-      .reservedValues="${options.reservedValues}"
-      dialogInitialFocus
-    ></scl-textfield>`,
-        x `<scl-textfield
-      label="desc"
-      .maybeValue=${options.desc}
-      nullable
-    ></scl-textfield>`,
-    ];
-}
-function createAction$4(parent) {
-    return (inputs) => {
-        const name = getValue(inputs.find(i => i.label === 'name'));
-        const desc = getValue(inputs.find(i => i.label === 'desc'));
-        parent.ownerDocument.createElement('Substation');
-        const substation = createElement(parent.ownerDocument, 'Substation', {
-            name,
-            desc,
-        });
-        return [
-            {
-                parent,
-                node: substation,
-                reference: getReference(parent, 'Substation'),
-            },
-        ];
-    };
-}
-function createSubstationWizard(parent) {
-    return [
-        {
-            title: 'Create Substation',
-            primary: {
-                icon: 'add',
-                label: 'add',
-                action: createAction$4(parent),
-            },
-            content: render$2({
-                name: '',
-                reservedValues: reservedNames(parent, 'Substation'),
-                desc: '',
-            }),
-        },
-    ];
-}
-function updateAction$4(element) {
-    return (inputs) => {
-        const name = inputs.find(i => i.label === 'name').value;
-        const desc = getValue(inputs.find(i => i.label === 'desc'));
-        if (name === element.getAttribute('name') &&
-            desc === element.getAttribute('desc'))
-            return [];
-        return updateSubstation({ element, attributes: { name, desc } });
-    };
-}
-function editSubstationWizard(element) {
-    var _a;
-    return [
-        {
-            title: 'Edit Substation',
-            primary: {
-                icon: 'edit',
-                label: 'save',
-                action: updateAction$4(element),
-            },
-            content: render$2({
-                name: (_a = element.getAttribute('name')) !== null && _a !== void 0 ? _a : '',
                 reservedValues: reservedNames(element),
-                desc: element.getAttribute('desc'),
+                virtual,
             }),
-        },
-    ];
-}
-
-/* eslint-disable import/no-extraneous-dependencies */
-function contentTapChangerWizard(options) {
-    return [
-        x `<scl-textfield
-      label="name"
-      .maybeValue=${options.name}
-      required
-      .reservedValues=${options.reservedValues}
-      dialogInitialFocus
-    ></scl-textfield>`,
-        x `<scl-textfield
-      label="desc"
-      .maybeValue=${options.desc}
-      nullable
-    ></scl-textfield>`,
-        x `<scl-textfield
-      label="type"
-      .maybeValue=${options.type}
-      disabled
-    ></scl-textfield>`,
-        x `<scl-checkbox
-      label="virtual"
-      .maybeValue=${options.virtual}
-      nullable
-    ></scl-checkbox>`,
-    ];
-}
-function createAction$3(parent) {
-    return (inputs) => {
-        const tapChangerAttrs = {};
-        const tapChangerKeys = ['name', 'desc', 'type', 'virtual'];
-        tapChangerKeys.forEach(key => {
-            tapChangerAttrs[key] = getValue(inputs.find(i => i.label === key));
-        });
-        const tapChanger = createElement(parent.ownerDocument, 'TapChanger', tapChangerAttrs);
-        return [
-            {
-                parent,
-                node: tapChanger,
-                reference: getReference(parent, 'TapChanger'),
-            },
-        ];
-    };
-}
-function createTapChangerWizard(parent) {
-    const name = '';
-    const desc = null;
-    const type = 'LTC';
-    const virtual = null;
-    return [
-        {
-            title: 'Add TapChanger',
-            primary: {
-                icon: 'save',
-                label: 'save',
-                action: createAction$3(parent),
-            },
-            content: [
-                ...contentTapChangerWizard({
-                    name,
-                    desc,
-                    type,
-                    virtual,
-                    reservedValues: reservedNames(parent, 'TapChanger'),
-                }),
-            ],
-        },
-    ];
-}
-function updateAction$3(element) {
-    return (inputs) => {
-        const attributes = {};
-        const tapChangerKeys = ['name', 'desc', 'type', 'virtual'];
-        tapChangerKeys.forEach(key => {
-            attributes[key] = getValue(inputs.find(i => i.label === key));
-        });
-        if (tapChangerKeys.some(key => attributes[key] !== element.getAttribute(key)))
-            return [{ element, attributes }];
-        return [];
-    };
-}
-function editTapChangerWizard(element) {
-    const name = element.getAttribute('name');
-    const desc = element.getAttribute('desc');
-    const type = element.getAttribute('type');
-    const virtual = element.getAttribute('virtual');
-    return [
-        {
-            title: 'Edit TapChanger',
-            primary: {
-                icon: 'save',
-                label: 'save',
-                action: updateAction$3(element),
-            },
-            content: [
-                ...contentTapChangerWizard({
-                    name,
-                    desc,
-                    type,
-                    virtual,
-                    reservedValues: reservedNames(element),
-                }),
-            ],
         },
     ];
 }
@@ -46502,18 +45839,889 @@ TextArea = __decorate$1([
 ], TextArea);
 
 /* eslint-disable import/no-extraneous-dependencies */
-function render$1({ content }) {
+function contentPrivateWizard(options) {
+    return [
+        x `<scl-textfield
+        label="type"
+        .maybeValue=${options.type}
+        required
+        dialogInitialFocus
+      ></scl-textfield>
+      <scl-textfield
+        label="source"
+        .maybeValue=${options.source}
+        nullable
+      ></scl-textfield>`,
+    ];
+}
+function createPrivateAction(parent) {
+    return (inputs) => {
+        const privateAttrs = {};
+        const privateKeys = ['type', 'source'];
+        privateKeys.forEach(key => {
+            privateAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const privateNode = createElement(parent.ownerDocument, 'Private', privateAttrs);
+        return [
+            { parent, node: privateNode, reference: getReference(parent, 'Private') },
+        ];
+    };
+}
+function createPrivateWizard(parent) {
+    const type = null;
+    const source = 'OpenSCD';
+    return [
+        {
+            title: 'Add Private',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createPrivateAction(parent),
+            },
+            content: [
+                ...contentPrivateWizard({
+                    type,
+                    source,
+                }),
+            ],
+        },
+    ];
+}
+function updatePrivate(element) {
+    return (inputs) => {
+        const attributes = {};
+        const privateKeys = ['type', 'source'];
+        privateKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (privateKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editPrivateWizard(element) {
+    const type = element.getAttribute('type');
+    const source = element.getAttribute('source');
+    return [
+        {
+            title: 'Edit Private',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updatePrivate(element),
+            },
+            content: [
+                ...contentPrivateWizard({
+                    type,
+                    source,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentProcessWizard(content) {
+    return [
+        x `<scl-textfield
+      label="name"
+      .maybeValue=${content.name}
+      required
+      .reservedValues=${content.reservedNames}
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${content.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="type"
+      .maybeValue=${content.type}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createAction$7(parent) {
+    return (inputs) => {
+        const attributes = {};
+        const processKeys = ['name', 'desc', 'type'];
+        processKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const process = createElement(parent.ownerDocument, 'Process', attributes);
+        return [
+            { parent, node: process, reference: getReference(parent, 'Process') },
+        ];
+    };
+}
+function createProcessWizard(parent) {
+    const name = '';
+    const desc = '';
+    const type = '';
+    const reservedNames = getChildElementsByTagName$1(parent.parentElement, 'Process')
+        .filter(sibling => sibling !== parent)
+        .map(sibling => sibling.getAttribute('name'));
+    return [
+        {
+            title: 'Add Process',
+            primary: {
+                icon: 'save',
+                label: 'save',
+                action: createAction$7(parent),
+            },
+            content: [
+                ...contentProcessWizard({
+                    name,
+                    desc,
+                    type,
+                    reservedNames,
+                }),
+            ],
+        },
+    ];
+}
+function updateAction$8(element) {
+    return (inputs) => {
+        const attributes = {};
+        const tapProcessKeys = ['name', 'desc', 'type'];
+        tapProcessKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (tapProcessKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editProcessWizard(element) {
+    const name = element.getAttribute('name');
+    const desc = element.getAttribute('desc');
+    const type = element.getAttribute('type');
+    const reservedNames = getChildElementsByTagName$1(element.parentElement, 'Process')
+        .filter(sibling => sibling !== element)
+        .map(sibling => sibling.getAttribute('name'));
+    return [
+        {
+            title: 'Edit Process',
+            primary: {
+                icon: 'save',
+                label: 'save',
+                action: updateAction$8(element),
+            },
+            content: [
+                ...contentProcessWizard({
+                    name,
+                    desc,
+                    type,
+                    reservedNames,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function renderContent$1(content) {
+    return [
+        x `<scl-textfield
+      label="name"
+      .maybeValue=${content.name}
+      required
+      pattern="${patterns.alphanumericFirstLowerCase}"
+      dialogInitialFocus
+    >
+      ></scl-textfield
+    >`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${content.desc}
+      nullable
+      pattern="${patterns.normalizedString}"
+    ></scl-textfield>`,
+        x `<scl-select fixedMenuPosition label="type" required
+      >${content.doTypes.map(dataType => x `<mwc-list-item
+            value=${dataType.id}
+            ?selected=${dataType.id === content.type}
+            >${dataType.id}</mwc-list-item
+          >`)}</scl-select
+    >`,
+    ];
+}
+function createSDoAction(parent) {
+    return (inputs) => {
+        const name = getValue(inputs.find(i => i.label === 'name'));
+        const desc = getValue(inputs.find(i => i.label === 'desc'));
+        const type = getValue(inputs.find(i => i.label === 'type'));
+        const actions = [];
+        const element = createElement(parent.ownerDocument, 'SDO', {
+            name,
+            desc,
+            type,
+        });
+        actions.push({
+            parent,
+            node: element,
+            reference: getReference(parent, 'SDO'),
+        });
+        return actions;
+    };
+}
+function createSDoWizard(parent) {
+    const [type, name, desc] = [null, '', null];
+    const doTypes = Array.from(parent.ownerDocument.querySelectorAll('DOType')).filter(doType => doType.getAttribute('id'));
+    return [
+        {
+            title: 'Add SDO',
+            primary: { icon: '', label: 'save', action: createSDoAction(parent) },
+            content: renderContent$1({
+                name,
+                desc,
+                type,
+                doTypes,
+            }),
+        },
+    ];
+}
+function updateSDoAction(element) {
+    return (inputs) => {
+        const name = getValue(inputs.find(i => i.label === 'name'));
+        const desc = getValue(inputs.find(i => i.label === 'desc'));
+        const type = getValue(inputs.find(i => i.label === 'type'));
+        if (name === element.getAttribute('name') &&
+            desc === element.getAttribute('desc') &&
+            type === element.getAttribute('type')) {
+            return [];
+        }
+        return [{ element, attributes: { name, desc, type } }];
+    };
+}
+function editSDoWizard(element) {
+    const [type, name, desc] = [
+        element.getAttribute('type'),
+        element.getAttribute('name'),
+        element.getAttribute('desc'),
+    ];
+    const doTypes = Array.from(element.ownerDocument.querySelectorAll('DOType')).filter(doType => doType.getAttribute('id'));
+    return [
+        {
+            title: 'Edit SDO',
+            primary: { icon: '', label: 'save', action: updateSDoAction(element) },
+            content: renderContent$1({
+                name,
+                desc,
+                type,
+                doTypes,
+            }),
+        },
+    ];
+}
+
+function updateAction$7(element) {
+    return (inputs, wizard) => {
+        var _a, _b;
+        const action = [];
+        const instType = (_b = (((_a = wizard.shadowRoot) === null || _a === void 0 ? void 0 : _a.querySelector('#instType')))) === null || _b === void 0 ? void 0 : _b.checked;
+        const addressContent = {};
+        addressContent['MAC-Address'] = getValue(inputs.find(i => i.label === 'MAC-Address'));
+        addressContent.APPID = getValue(inputs.find(i => i.label === 'APPID'));
+        addressContent['VLAN-ID'] = getValue(inputs.find(i => i.label === 'VLAN-ID'));
+        addressContent['VLAN-PRIORITY'] = getValue(inputs.find(i => i.label === 'VLAN-PRIORITY'));
+        const addressActions = updateAddress(element, addressContent, instType);
+        if (!addressActions.length)
+            return [];
+        addressActions.forEach(addressAction => {
+            action.push(addressAction);
+        });
+        return [action];
+    };
+}
+function editSMvWizard(element) {
+    const types = ['MAC-Address', 'APPID', 'VLAN-ID', 'VLAN-PRIORITY'];
+    return [
+        {
+            title: 'Edit SMV',
+            primary: {
+                label: 'save',
+                icon: 'edit',
+                action: updateAction$7(element),
+            },
+            content: [...contentAddress({ element, types })],
+        },
+    ];
+}
+
+function contentSubEquipmentWizard(options) {
+    return [
+        x `<scl-textfield
+      label="name"
+      .maybeValue=${options.name}
+      .reservedValues=${options.reservedValues}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-select
+      label="phase"
+      fixedMenuPosition
+      .maybeValue=${options.phase}
+      nullable
+    >
+      ${['A', 'B', 'C', 'N', 'all', 'none', 'AB', 'BC', 'CA'].map(value => x `<mwc-list-item value="${value}">
+            ${value.charAt(0).toUpperCase() + value.slice(1)}
+          </mwc-list-item>`)}
+    </scl-select> `,
+        x `<scl-checkbox
+      label="virtual"
+      .maybeValue=${options.virtual}
+      nullable
+    ></scl-checkbox>`,
+    ];
+}
+function createAction$6(parent) {
+    return (inputs) => {
+        const subEquipmentAttrs = {};
+        const subEquipmentKeys = ['name', 'desc', 'phase', 'virtual'];
+        subEquipmentKeys.forEach(key => {
+            subEquipmentAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const subEquipment = createElement(parent.ownerDocument, 'SubEquipment', subEquipmentAttrs);
+        return [
+            {
+                parent,
+                node: subEquipment,
+                reference: getReference(parent, 'SubEquipment'),
+            },
+        ];
+    };
+}
+function createSubEquipmentWizard(parent) {
+    const name = '';
+    const desc = null;
+    const phase = null;
+    const virtual = null;
+    return [
+        {
+            title: 'Add SubEquipment',
+            primary: {
+                icon: 'save',
+                label: 'save',
+                action: createAction$6(parent),
+            },
+            content: [
+                ...contentSubEquipmentWizard({
+                    name,
+                    desc,
+                    phase,
+                    virtual,
+                    reservedValues: reservedNames(parent, 'SubEquipment'),
+                }),
+            ],
+        },
+    ];
+}
+function updateAction$6(element) {
+    return (inputs) => {
+        const attributes = {};
+        const subFunctionKeys = ['name', 'desc', 'phase', 'virtual'];
+        subFunctionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (subFunctionKeys.some(key => attributes[key] !== element.getAttribute(key)))
+            return [{ element, attributes }];
+        return [];
+    };
+}
+function editSubEquipmentWizard(element) {
+    const name = element.getAttribute('name');
+    const desc = element.getAttribute('desc');
+    const phase = element.getAttribute('phase');
+    const virtual = element.getAttribute('virtual');
+    return [
+        {
+            title: 'Edit SubEquipment',
+            primary: {
+                icon: 'save',
+                label: 'save',
+                action: updateAction$6(element),
+            },
+            content: [
+                ...contentSubEquipmentWizard({
+                    name,
+                    desc,
+                    phase,
+                    virtual,
+                    reservedValues: reservedNames(element),
+                }),
+            ],
+        },
+    ];
+}
+
+function createAction$5(parent) {
+    return (inputs) => {
+        const attributes = {};
+        const subFunctionKeys = ['name', 'desc', 'type'];
+        subFunctionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const subFunction = createElement(parent.ownerDocument, 'SubFunction', attributes);
+        return [
+            {
+                parent,
+                node: subFunction,
+                reference: getReference(parent, 'SubFunction'),
+            },
+        ];
+    };
+}
+function createSubFunctionWizard(parent) {
+    const name = '';
+    const desc = null;
+    const type = null;
+    return [
+        {
+            title: 'Add SubFunction',
+            primary: {
+                icon: 'save',
+                label: 'save',
+                action: createAction$5(parent),
+            },
+            content: [
+                ...contentFunctionWizard({
+                    name,
+                    desc,
+                    type,
+                    reservedValues: reservedNames(parent, 'SubFunction'),
+                }),
+            ],
+        },
+    ];
+}
+function updateAction$5(element) {
+    return (inputs) => {
+        const attributes = {};
+        const subFunctionKeys = ['name', 'desc', 'type'];
+        subFunctionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (subFunctionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editSubFunctionWizard(element) {
+    const name = element.getAttribute('name');
+    const desc = element.getAttribute('desc');
+    const type = element.getAttribute('type');
+    return [
+        {
+            title: 'Edit SubFunction',
+            primary: {
+                icon: 'save',
+                label: 'save',
+                action: updateAction$5(element),
+            },
+            content: [
+                ...contentFunctionWizard({
+                    name,
+                    desc,
+                    type,
+                    reservedValues: reservedNames(element),
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+/** Initial attribute values suggested for `SubNetwork` creation */
+const initial$1 = {
+    type: '8-MMS',
+    bitrate: '100',
+    multiplier: 'M',
+};
+function renderContent(options) {
+    return [
+        x `<scl-textfield
+      label="name"
+      .maybeValue=${options.name}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="type"
+      .maybeValue=${options.type}
+      nullable
+      pattern="${patterns.normalizedString}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="BitRate"
+      .maybeValue=${options.BitRate}
+      nullable
+      unit="b/s"
+      .multipliers=${[null, 'M']}
+      .multiplier=${options.multiplier}
+      required
+      pattern="${patterns.decimal}"
+    ></scl-textfield>`,
+    ];
+}
+function createAction$4(parent) {
+    return (inputs) => {
+        const name = getValue(inputs.find(i => i.label === 'name'));
+        const desc = getValue(inputs.find(i => i.label === 'desc'));
+        const type = getValue(inputs.find(i => i.label === 'type'));
+        const BitRate = getValue(inputs.find(i => i.label === 'BitRate'));
+        const multiplier = getMultiplier(inputs.find(i => i.label === 'BitRate'));
+        const element = createElement(parent.ownerDocument, 'SubNetwork', {
+            name,
+            desc,
+            type,
+        });
+        if (BitRate !== null) {
+            const bitRateElement = createElement(parent.ownerDocument, 'BitRate', {
+                unit: 'b/s',
+                multiplier,
+            });
+            bitRateElement.textContent = BitRate;
+            element.appendChild(bitRateElement);
+        }
+        const action = {
+            parent,
+            node: element,
+            reference: getReference(parent, 'SubNetwork'),
+        };
+        return [action];
+    };
+}
+function createSubNetworkWizard(parent) {
+    return [
+        {
+            title: 'Add SubNetwork',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createAction$4(parent),
+            },
+            content: renderContent({
+                name: '',
+                reservedValues: reservedNames(parent, 'SubNetwork'),
+                desc: '',
+                type: initial$1.type,
+                BitRate: initial$1.bitrate,
+                multiplier: initial$1.multiplier,
+            }),
+        },
+    ];
+}
+function getBitRateAction(oldBitRate, BitRate, multiplier, SubNetwork) {
+    if (oldBitRate === null) {
+        const bitRateElement = createElement(SubNetwork.ownerDocument, 'BitRate', {
+            unit: 'b/s',
+        });
+        if (multiplier)
+            bitRateElement.setAttribute('multiplier', multiplier);
+        if (BitRate)
+            bitRateElement.textContent = BitRate;
+        return {
+            parent: SubNetwork,
+            node: bitRateElement,
+            reference: getReference(SubNetwork, 'BitRate'),
+        };
+    }
+    if (BitRate === null)
+        return {
+            parent: SubNetwork,
+            node: oldBitRate,
+            reference: oldBitRate.nextSibling,
+        };
+    const newBitRate = cloneElement(oldBitRate, { multiplier });
+    newBitRate.textContent = BitRate;
+    return [
+        {
+            parent: oldBitRate.parentElement,
+            node: newBitRate,
+            reference: getReference(oldBitRate.parentElement, 'BitRate'),
+        },
+        { node: oldBitRate },
+    ];
+}
+function updateAction$4(element) {
+    return (inputs) => {
+        var _a, _b, _c, _d, _e, _f;
+        const name = inputs.find(i => i.label === 'name').value;
+        const desc = getValue(inputs.find(i => i.label === 'desc'));
+        const type = getValue(inputs.find(i => i.label === 'type'));
+        const BitRate = getValue(inputs.find(i => i.label === 'BitRate'));
+        const multiplier = getMultiplier(inputs.find(i => i.label === 'BitRate'));
+        let subNetworkAction;
+        let bitRateAction;
+        if (name === element.getAttribute('name') &&
+            desc === element.getAttribute('desc') &&
+            type === element.getAttribute('type')) {
+            subNetworkAction = null;
+        }
+        else
+            subNetworkAction = { element, attributes: { name, desc, type } };
+        if (BitRate ===
+            ((_c = (_b = (_a = element.querySelector('SubNetwork > BitRate')) === null || _a === void 0 ? void 0 : _a.textContent) === null || _b === void 0 ? void 0 : _b.trim()) !== null && _c !== void 0 ? _c : null) &&
+            multiplier ===
+                ((_e = (_d = element
+                    .querySelector('SubNetwork > BitRate')) === null || _d === void 0 ? void 0 : _d.getAttribute('multiplier')) !== null && _e !== void 0 ? _e : null)) {
+            bitRateAction = null;
+        }
+        else {
+            bitRateAction = getBitRateAction(element.querySelector('SubNetwork > BitRate'), BitRate, multiplier, (_f = subNetworkAction === null || subNetworkAction === void 0 ? void 0 : subNetworkAction.element) !== null && _f !== void 0 ? _f : element);
+        }
+        const actions = [];
+        if (subNetworkAction)
+            actions.push(subNetworkAction);
+        if (bitRateAction)
+            actions.push(bitRateAction);
+        return actions;
+    };
+}
+function editSubNetworkWizard(element) {
+    var _a, _b, _c, _d, _e;
+    const name = element.getAttribute('name');
+    const desc = element.getAttribute('desc');
+    const type = element.getAttribute('type');
+    const BitRate = (_c = (_b = (_a = element.querySelector('SubNetwork > BitRate')) === null || _a === void 0 ? void 0 : _a.textContent) === null || _b === void 0 ? void 0 : _b.trim()) !== null && _c !== void 0 ? _c : null;
+    const multiplier = (_e = (_d = element.querySelector('SubNetwork > BitRate')) === null || _d === void 0 ? void 0 : _d.getAttribute('multiplier')) !== null && _e !== void 0 ? _e : null;
+    const reservedValues = reservedNames(element);
+    return [
+        {
+            title: 'Edit SubNetwork',
+            primary: {
+                icon: 'save',
+                label: 'save',
+                action: updateAction$4(element),
+            },
+            content: renderContent({
+                name,
+                reservedValues,
+                desc,
+                type,
+                BitRate,
+                multiplier,
+            }),
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function render$1(options) {
+    return [
+        x `<scl-textfield
+      label="name"
+      .maybeValue=${options.name}
+      required
+      .reservedValues="${options.reservedValues}"
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createAction$3(parent) {
+    return (inputs) => {
+        const name = getValue(inputs.find(i => i.label === 'name'));
+        const desc = getValue(inputs.find(i => i.label === 'desc'));
+        parent.ownerDocument.createElement('Substation');
+        const substation = createElement(parent.ownerDocument, 'Substation', {
+            name,
+            desc,
+        });
+        return [
+            {
+                parent,
+                node: substation,
+                reference: getReference(parent, 'Substation'),
+            },
+        ];
+    };
+}
+function createSubstationWizard(parent) {
+    return [
+        {
+            title: 'Create Substation',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createAction$3(parent),
+            },
+            content: render$1({
+                name: '',
+                reservedValues: reservedNames(parent, 'Substation'),
+                desc: '',
+            }),
+        },
+    ];
+}
+function updateAction$3(element) {
+    return (inputs) => {
+        const name = inputs.find(i => i.label === 'name').value;
+        const desc = getValue(inputs.find(i => i.label === 'desc'));
+        if (name === element.getAttribute('name') &&
+            desc === element.getAttribute('desc'))
+            return [];
+        return updateSubstation({ element, attributes: { name, desc } });
+    };
+}
+function editSubstationWizard(element) {
+    var _a;
+    return [
+        {
+            title: 'Edit Substation',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateAction$3(element),
+            },
+            content: render$1({
+                name: (_a = element.getAttribute('name')) !== null && _a !== void 0 ? _a : '',
+                reservedValues: reservedNames(element),
+                desc: element.getAttribute('desc'),
+            }),
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentTapChangerWizard(options) {
+    return [
+        x `<scl-textfield
+      label="name"
+      .maybeValue=${options.name}
+      required
+      .reservedValues=${options.reservedValues}
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="type"
+      .maybeValue=${options.type}
+      disabled
+    ></scl-textfield>`,
+        x `<scl-checkbox
+      label="virtual"
+      .maybeValue=${options.virtual}
+      nullable
+    ></scl-checkbox>`,
+    ];
+}
+function createAction$2(parent) {
+    return (inputs) => {
+        const tapChangerAttrs = {};
+        const tapChangerKeys = ['name', 'desc', 'type', 'virtual'];
+        tapChangerKeys.forEach(key => {
+            tapChangerAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const tapChanger = createElement(parent.ownerDocument, 'TapChanger', tapChangerAttrs);
+        return [
+            {
+                parent,
+                node: tapChanger,
+                reference: getReference(parent, 'TapChanger'),
+            },
+        ];
+    };
+}
+function createTapChangerWizard(parent) {
+    const name = '';
+    const desc = null;
+    const type = 'LTC';
+    const virtual = null;
+    return [
+        {
+            title: 'Add TapChanger',
+            primary: {
+                icon: 'save',
+                label: 'save',
+                action: createAction$2(parent),
+            },
+            content: [
+                ...contentTapChangerWizard({
+                    name,
+                    desc,
+                    type,
+                    virtual,
+                    reservedValues: reservedNames(parent, 'TapChanger'),
+                }),
+            ],
+        },
+    ];
+}
+function updateAction$2(element) {
+    return (inputs) => {
+        const attributes = {};
+        const tapChangerKeys = ['name', 'desc', 'type', 'virtual'];
+        tapChangerKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (tapChangerKeys.some(key => attributes[key] !== element.getAttribute(key)))
+            return [{ element, attributes }];
+        return [];
+    };
+}
+function editTapChangerWizard(element) {
+    const name = element.getAttribute('name');
+    const desc = element.getAttribute('desc');
+    const type = element.getAttribute('type');
+    const virtual = element.getAttribute('virtual');
+    return [
+        {
+            title: 'Edit TapChanger',
+            primary: {
+                icon: 'save',
+                label: 'save',
+                action: updateAction$2(element),
+            },
+            content: [
+                ...contentTapChangerWizard({
+                    name,
+                    desc,
+                    type,
+                    virtual,
+                    reservedValues: reservedNames(element),
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentTextWizard(options) {
     return [
         x `<mwc-textarea
       label="content"
-      value="${content}"
+      value="${options.content}"
       rows="10"
       cols="80"
       dialogInitialFocus
     ></mwc-textarea>`,
     ];
 }
-function createAction$2(parent) {
+function createTextAction(parent) {
     return (inputs) => {
         const content = getValue(inputs.find(i => i.label === 'content'));
         parent.ownerDocument.createElement('Text');
@@ -46535,15 +46743,17 @@ function createTextWizard(parent) {
             primary: {
                 icon: 'add',
                 label: 'add',
-                action: createAction$2(parent),
+                action: createTextAction(parent),
             },
-            content: render$1({
-                content: '',
-            }),
+            content: [
+                ...contentTextWizard({
+                    content: '',
+                }),
+            ],
         },
     ];
 }
-function updateAction$2(element) {
+function updateText(element) {
     return (inputs) => {
         var _a;
         const content = inputs.find(i => i.label === 'content').value;
@@ -46560,22 +46770,26 @@ function updateAction$2(element) {
     };
 }
 function editTextWizard(element) {
+    const content = element.textContent || '';
     return [
         {
             title: 'Edit Text',
             primary: {
                 icon: 'edit',
                 label: 'save',
-                action: updateAction$2(element),
+                action: updateText(element),
             },
-            content: render$1({
-                content: element.textContent || '',
-            }),
+            content: [
+                ...contentTextWizard({
+                    content,
+                }),
+            ],
         },
     ];
 }
 
 /* eslint-disable import/no-extraneous-dependencies */
+const defaultTransformerWindingType = 'PTW';
 function contentTransformerWindingWizard(options) {
     return [
         x `<scl-textfield
@@ -46622,8 +46836,8 @@ function createAction$1(parent) {
 function createTransformerWindingWizard(parent) {
     const name = '';
     const desc = null;
-    const type = null;
     const virtual = null;
+    const type = defaultTransformerWindingType;
     return [
         {
             title: 'Add TransformerWinding',
@@ -46967,189 +47181,6 @@ function editProcessResourcesWizard(element) {
     ];
 }
 
-/* eslint-disable import/no-extraneous-dependencies */
-function contentProcessResourceWizard(options) {
-    return [
-        x `<scl-textfield
-      label="name"
-      .maybeValue=${options.name}
-      required
-      dialogInitialFocus
-    ></scl-textfield>`,
-        x `<scl-textfield
-      label="desc"
-      .maybeValue=${options.desc}
-      nullable
-    ></scl-textfield>`,
-        x `<scl-textfield
-      label="selector"
-      .maybeValue=${options.selector}
-      nullable
-    ></scl-textfield>`,
-    ];
-}
-function createProcessResourceAction(parent) {
-    return (inputs) => {
-        const ProcessResourceAttrs = {};
-        const ProcessResourceKeys = ['name', 'desc', 'selector'];
-        ProcessResourceKeys.forEach(key => {
-            ProcessResourceAttrs[key] = getValue(inputs.find(i => i.label === key));
-        });
-        const ProcessResourceNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:ProcessResource', ProcessResourceAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
-        return [
-            {
-                parent,
-                node: ProcessResourceNode,
-                reference: get6100Reference(parent, 'ProcessResource'),
-            },
-        ];
-    };
-}
-function createProcessResourceWizard(parent) {
-    const name = null;
-    const desc = null;
-    const selector = null;
-    return [
-        {
-            title: 'Add ProcessResource',
-            primary: {
-                icon: 'add',
-                label: 'add',
-                action: createProcessResourceAction(parent),
-            },
-            content: [
-                ...contentProcessResourceWizard({
-                    name,
-                    desc,
-                    selector,
-                }),
-            ],
-        },
-    ];
-}
-function updateProcessResource(element) {
-    return (inputs) => {
-        const attributes = {};
-        const functionKeys = ['desc'];
-        functionKeys.forEach(key => {
-            attributes[key] = getValue(inputs.find(i => i.label === key));
-        });
-        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
-            return [{ element, attributes }];
-        }
-        return [];
-    };
-}
-function editProcessResourceWizard(element) {
-    const name = element.getAttribute('name');
-    const desc = element.getAttribute('desc');
-    const selector = element.getAttribute('selector');
-    return [
-        {
-            title: 'Edit ProcessResource',
-            primary: {
-                icon: 'edit',
-                label: 'save',
-                action: updateProcessResource(element),
-            },
-            content: [
-                ...contentProcessResourceWizard({
-                    name,
-                    desc,
-                    selector,
-                }),
-            ],
-        },
-    ];
-}
-
-/* eslint-disable import/no-extraneous-dependencies */
-function contentResourceWizard(options) {
-    return [
-        x `<scl-textfield
-      label="source"
-      .maybeValue=${options.source}
-      nullable
-      dialogInitialFocus
-    ></scl-textfield>`,
-        x `<scl-textfield
-      label="resInst"
-      .maybeValue=${options.resInst}
-      nullable
-    ></scl-textfield>`,
-    ];
-}
-function createResourceAction(parent) {
-    return (inputs) => {
-        const ResourceAttrs = {};
-        const ResourceKeys = ['source', 'resInst'];
-        ResourceKeys.forEach(key => {
-            ResourceAttrs[key] = getValue(inputs.find(i => i.label === key));
-        });
-        const ResourceNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:Resource', ResourceAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
-        return [
-            {
-                parent,
-                node: ResourceNode,
-                reference: get6100Reference(parent, 'Resource'),
-            },
-        ];
-    };
-}
-function createResourceWizard(parent) {
-    const source = null;
-    const resInst = null;
-    return [
-        {
-            title: 'Add Resource',
-            primary: {
-                icon: 'add',
-                label: 'add',
-                action: createResourceAction(parent),
-            },
-            content: [
-                ...contentResourceWizard({
-                    source,
-                    resInst,
-                }),
-            ],
-        },
-    ];
-}
-function updateResource(element) {
-    return (inputs) => {
-        const attributes = {};
-        const functionKeys = ['source', 'resInst'];
-        functionKeys.forEach(key => {
-            attributes[key] = getValue(inputs.find(i => i.label === key));
-        });
-        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
-            return [{ element, attributes }];
-        }
-        return [];
-    };
-}
-function editResourceWizard(element) {
-    const source = element.getAttribute('source');
-    const resInst = element.getAttribute('resInst');
-    return [
-        {
-            title: 'Edit Resource',
-            primary: {
-                icon: 'edit',
-                label: 'save',
-                action: updateResource(element),
-            },
-            content: [
-                ...contentResourceWizard({
-                    source,
-                    resInst,
-                }),
-            ],
-        },
-    ];
-}
-
 // Unique ID creation requires a high quality random # generator. In the browser we therefore
 // require the crypto API and do not support built-in fallback to lower quality random number
 // generators (like Math.random()).
@@ -47213,6 +47244,285 @@ function v4(options, buf, offset) {
   }
 
   return unsafeStringify(rnds);
+}
+
+const cardinalities = {
+    optionalNoMulti: '0..1',
+    mandatoryNoMulti: '1..1',
+    optionalMulti: '0..n',
+    mandatoryMulti: '1..n',
+};
+function getCardinality(cardinality) {
+    const cardinal = Object.keys(cardinalities).find(key => cardinalities[key] === cardinality);
+    return cardinal !== null && cardinal !== void 0 ? cardinal : null;
+}
+function renderCardinalitySelector(cardinality) {
+    return x `<scl-select
+    style="--mdc-menu-max-height: 196px;"
+    label="cardinality"
+    .maybeValue=${getCardinality(cardinality)}
+    nullable
+  >
+    ${Object.keys(cardinalities).map(v => x `<mwc-list-item value="${v}">${cardinalities[v]}</mwc-list-item>`)}
+  </scl-select>`;
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentProcessResourceWizard(options) {
+    return [
+        x `<scl-textfield
+      label="name"
+      .maybeValue=${options.name}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="selector"
+      .maybeValue=${options.selector}
+      nullable
+    ></scl-textfield>`,
+        renderCardinalitySelector(options.cardinality),
+        x `<scl-textfield
+      label="max"
+      .maybeValue=${options.max}
+      nullable
+      type="number"
+      min="2"
+      validationMessage="Number bigger than 1"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="uuid"
+      .maybeValue=${options.uuid}
+      disabled
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="templateUuid"
+      .maybeValue=${options.templateUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="originUuid"
+      .maybeValue=${options.originUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+    ];
+}
+function createProcessResourceAction(parent) {
+    return (inputs) => {
+        const ProcessResourceAttrs = {};
+        const ProcessResourceKeys = [
+            'name',
+            'desc',
+            'selector',
+            'cardinality',
+            'max',
+            'uuid',
+            'templateUuid',
+            'originUuid',
+        ];
+        ProcessResourceKeys.forEach(key => {
+            ProcessResourceAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const ProcessResourceNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:ProcessResource', ProcessResourceAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: ProcessResourceNode,
+                reference: get6100Reference(parent, 'ProcessResource'),
+            },
+        ];
+    };
+}
+function createProcessResourceWizard(parent) {
+    const name = null;
+    const desc = null;
+    const selector = null;
+    const cardinality = null;
+    const max = null;
+    const uuid = v4();
+    const templateUuid = null;
+    const originUuid = null;
+    return [
+        {
+            title: 'Add ProcessResource',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createProcessResourceAction(parent),
+            },
+            content: [
+                ...contentProcessResourceWizard({
+                    name,
+                    desc,
+                    selector,
+                    cardinality,
+                    max,
+                    uuid,
+                    templateUuid,
+                    originUuid,
+                }),
+            ],
+        },
+    ];
+}
+function updateProcessResource(element) {
+    return (inputs) => {
+        const attributes = {};
+        const processResourceKeys = [
+            'name',
+            'desc',
+            'selector',
+            'cardinality',
+            'max',
+            'uuid',
+            'templateUuid',
+            'originUuid',
+        ];
+        processResourceKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (processResourceKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editProcessResourceWizard(element) {
+    const name = element.getAttribute('name');
+    const desc = element.getAttribute('desc');
+    const selector = element.getAttribute('selector');
+    const cardinality = element.getAttribute('cardinality');
+    const max = element.getAttribute('max');
+    const uuid = element.getAttribute('uuid');
+    const templateUuid = element.getAttribute('templateUuid');
+    const originUuid = element.getAttribute('originUuid');
+    return [
+        {
+            title: 'Edit ProcessResource',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateProcessResource(element),
+            },
+            content: [
+                ...contentProcessResourceWizard({
+                    name,
+                    desc,
+                    selector,
+                    cardinality,
+                    max,
+                    uuid,
+                    templateUuid,
+                    originUuid,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentResourceWizard(options) {
+    return [
+        x `<scl-textfield
+      label="source"
+      .maybeValue=${options.source}
+      nullable
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="resInst"
+      .maybeValue=${options.resInst}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="sourceUuid"
+      .maybeValue=${options.sourceUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+    ];
+}
+function createResourceAction(parent) {
+    return (inputs) => {
+        const ResourceAttrs = {};
+        const ResourceKeys = ['source', 'resInst', 'sourceUuid'];
+        ResourceKeys.forEach(key => {
+            ResourceAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const ResourceNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:Resource', ResourceAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: ResourceNode,
+                reference: get6100Reference(parent, 'Resource'),
+            },
+        ];
+    };
+}
+function createResourceWizard(parent) {
+    const source = null;
+    const resInst = null;
+    const sourceUuid = null;
+    return [
+        {
+            title: 'Add Resource',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createResourceAction(parent),
+            },
+            content: [
+                ...contentResourceWizard({
+                    source,
+                    resInst,
+                    sourceUuid,
+                }),
+            ],
+        },
+    ];
+}
+function updateResource(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['source', 'resInst', 'sourceUuid'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editResourceWizard(element) {
+    const source = element.getAttribute('source');
+    const resInst = element.getAttribute('resInst');
+    const sourceUuid = element.getAttribute('sourceUuid');
+    return [
+        {
+            title: 'Edit Resource',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateResource(element),
+            },
+            content: [
+                ...contentResourceWizard({
+                    source,
+                    resInst,
+                    sourceUuid,
+                }),
+            ],
+        },
+    ];
 }
 
 /* eslint-disable import/no-extraneous-dependencies */
@@ -47629,11 +47939,7 @@ function contentBehaviorDescriptionWizard(options) {
       .maybeValue=${options.desc}
       nullable
     ></scl-textfield>`,
-        x `<scl-select
-      label="format"
-      .maybeValue=${options.format}
-      nullable
-      required
+        x `<scl-select label="format" .maybeValue=${options.format} nullable
       >${['IEC 61131', 'Textual', 'Graphic'].map(type => x `<mwc-list-item value="${type}">${type}</mwc-list-item>`)}</scl-select
     >`,
         x `<scl-textfield
@@ -47641,15 +47947,33 @@ function contentBehaviorDescriptionWizard(options) {
       .maybeValue=${options.fileReference}
       nullable
     ></scl-textfield>`,
-        x `<scl-textfield
+        x `<scl-checkbox
       label="isSpecification"
       .maybeValue=${options.isSpecification}
       nullable
-    ></scl-textfield>`,
-        x `<scl-textfield
+    ></scl-checkbox>`,
+        x `<scl-checkbox
       label="isSimulation"
       .maybeValue=${options.isSimulation}
       nullable
+    ></scl-checkbox>`,
+        x `<scl-textfield
+      label="uuid"
+      .maybeValue=${options.uuid}
+      disabled
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="templateUuid"
+      .maybeValue=${options.templateUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="originUuid"
+      .maybeValue=${options.originUuid}
+      nullable
+      pattern="${patterns.uuid}"
     ></scl-textfield>`,
     ];
 }
@@ -47663,6 +47987,9 @@ function createBehaviorDescriptionAction(parent) {
             'format',
             'isSimulation',
             'isSpecification',
+            'uuid',
+            'templateUuid',
+            'originUuid',
         ];
         BehaviorDescriptionKeys.forEach(key => {
             BehaviorDescriptionAttrs[key] = getValue(inputs.find(i => i.label === key));
@@ -47684,6 +48011,9 @@ function createBehaviorDescriptionWizard(parent) {
     const format = null;
     const isSimulation = null;
     const isSpecification = null;
+    const uuid = v4();
+    const templateUuid = null;
+    const originUuid = null;
     return [
         {
             title: 'Add BehaviorDescription',
@@ -47700,6 +48030,9 @@ function createBehaviorDescriptionWizard(parent) {
                     format,
                     isSimulation,
                     isSpecification,
+                    uuid,
+                    templateUuid,
+                    originUuid,
                 }),
             ],
         },
@@ -47715,6 +48048,9 @@ function updateBehaviorDescription(element) {
             'format',
             'isSimulation',
             'isSpecification',
+            'uuid',
+            'templateUuid',
+            'originUuid',
         ];
         functionKeys.forEach(key => {
             attributes[key] = getValue(inputs.find(i => i.label === key));
@@ -47732,6 +48068,9 @@ function editBehaviorDescriptionWizard(element) {
     const format = element.getAttribute('format');
     const isSimulation = element.getAttribute('isSimulation');
     const isSpecification = element.getAttribute('isSpecification');
+    const uuid = element.getAttribute('uuid');
+    const templateUuid = element.getAttribute('templateUuid');
+    const originUuid = element.getAttribute('originUuid');
     return [
         {
             title: 'Edit BehaviorDescription',
@@ -47748,6 +48087,9 @@ function editBehaviorDescriptionWizard(element) {
                     format,
                     isSimulation,
                     isSpecification,
+                    uuid,
+                    templateUuid,
+                    originUuid,
                 }),
             ],
         },
@@ -47758,15 +48100,15 @@ function editBehaviorDescriptionWizard(element) {
 function contentBehaviorDescriptionRefWizard(options) {
     return [
         x `<scl-textfield
-      label="behaviorDescription"
-      .maybeValue=${options.behaviorDescription}
-      required
-      dialogInitialFocus
-    ></scl-textfield>`,
-        x `<scl-textfield
       label="desc"
       .maybeValue=${options.desc}
       nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="behaviorDescription"
+      .maybeValue=${options.behaviorDescription}
+      nullable
+      dialogInitialFocus
     ></scl-textfield>`,
         x `<scl-textfield
       label="behaviorDescriptionUuid"
@@ -47862,22 +48204,32 @@ function editBehaviorDescriptionRefWizard(element) {
 function contentProcessResourceRefWizard(options) {
     return [
         x `<scl-textfield
-      label="processResource"
-      .maybeValue=${options.processResource}
-      required
-      dialogInitialFocus
-    ></scl-textfield>`,
-        x `<scl-textfield
       label="desc"
       .maybeValue=${options.desc}
       nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="processResource"
+      .maybeValue=${options.processResource}
+      nullable
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="processResourceUuid"
+      .maybeValue=${options.processResourceUuid}
+      nullable
+      pattern="${patterns.uuid}"
     ></scl-textfield>`,
     ];
 }
 function createProcessResourceRefAction(parent) {
     return (inputs) => {
         const ProcessResourceRefAttrs = {};
-        const ProcessResourceRefKeys = ['processResource', 'desc'];
+        const ProcessResourceRefKeys = [
+            'desc',
+            'processResource',
+            'processResourceUuid',
+        ];
         ProcessResourceRefKeys.forEach(key => {
             ProcessResourceRefAttrs[key] = getValue(inputs.find(i => i.label === key));
         });
@@ -47892,8 +48244,9 @@ function createProcessResourceRefAction(parent) {
     };
 }
 function createProcessResourceRefWizard(parent) {
-    const processResource = null;
     const desc = null;
+    const processResource = null;
+    const processResourceUuid = null;
     return [
         {
             title: 'Add ProcessResourceRef',
@@ -47904,8 +48257,9 @@ function createProcessResourceRefWizard(parent) {
             },
             content: [
                 ...contentProcessResourceRefWizard({
-                    processResource,
                     desc,
+                    processResource,
+                    processResourceUuid,
                 }),
             ],
         },
@@ -47914,7 +48268,7 @@ function createProcessResourceRefWizard(parent) {
 function updateProcessResourceRef(element) {
     return (inputs) => {
         const attributes = {};
-        const functionKeys = ['desc'];
+        const functionKeys = ['desc', 'processResource', 'processResourceUuid'];
         functionKeys.forEach(key => {
             attributes[key] = getValue(inputs.find(i => i.label === key));
         });
@@ -47925,8 +48279,9 @@ function updateProcessResourceRef(element) {
     };
 }
 function editProcessResourceRefWizard(element) {
-    const processResource = element.getAttribute('processResource');
     const desc = element.getAttribute('desc');
+    const processResource = element.getAttribute('processResource');
+    const processResourceUuid = element.getAttribute('processResourceUuid');
     return [
         {
             title: 'Edit ProcessResourceRef',
@@ -47937,8 +48292,9 @@ function editProcessResourceRefWizard(element) {
             },
             content: [
                 ...contentProcessResourceRefWizard({
-                    processResource,
                     desc,
+                    processResource,
+                    processResourceUuid,
                 }),
             ],
         },
@@ -47949,22 +48305,28 @@ function editProcessResourceRefWizard(element) {
 function contentFunctionRefWizard(options) {
     return [
         x `<scl-textfield
-      label="function"
-      .maybeValue=${options.ffunction}
-      required
-      dialogInitialFocus
-    ></scl-textfield>`,
-        x `<scl-textfield
       label="desc"
       .maybeValue=${options.desc}
       nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="function"
+      .maybeValue=${options.ffunction}
+      nullable
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="functionUuid"
+      .maybeValue=${options.functionUuid}
+      nullable
+      pattern="${patterns.uuid}"
     ></scl-textfield>`,
     ];
 }
 function createFunctionRefAction(parent) {
     return (inputs) => {
         const FunctionRefAttrs = {};
-        const FunctionRefKeys = ['function', 'desc'];
+        const FunctionRefKeys = ['desc', 'function', 'functionUuid'];
         FunctionRefKeys.forEach(key => {
             FunctionRefAttrs[key] = getValue(inputs.find(i => i.label === key));
         });
@@ -47979,8 +48341,9 @@ function createFunctionRefAction(parent) {
     };
 }
 function createFunctionRefWizard(parent) {
-    const ffunction = null;
     const desc = null;
+    const ffunction = null;
+    const functionUuid = null;
     return [
         {
             title: 'Add FunctionRef',
@@ -47991,8 +48354,9 @@ function createFunctionRefWizard(parent) {
             },
             content: [
                 ...contentFunctionRefWizard({
-                    ffunction,
                     desc,
+                    ffunction,
+                    functionUuid,
                 }),
             ],
         },
@@ -48001,7 +48365,7 @@ function createFunctionRefWizard(parent) {
 function updateFunctionRef(element) {
     return (inputs) => {
         const attributes = {};
-        const functionKeys = ['desc'];
+        const functionKeys = ['desc', 'function', 'functionUuid'];
         functionKeys.forEach(key => {
             attributes[key] = getValue(inputs.find(i => i.label === key));
         });
@@ -48012,8 +48376,9 @@ function updateFunctionRef(element) {
     };
 }
 function editFunctionRefWizard(element) {
-    const ffunction = element.getAttribute('function');
     const desc = element.getAttribute('desc');
+    const ffunction = element.getAttribute('function');
+    const functionUuid = element.getAttribute('functionUuid');
     return [
         {
             title: 'Edit FunctionRef',
@@ -48024,8 +48389,9 @@ function editFunctionRefWizard(element) {
             },
             content: [
                 ...contentFunctionRefWizard({
-                    ffunction,
                     desc,
+                    ffunction,
+                    functionUuid,
                 }),
             ],
         },
@@ -48139,18 +48505,51 @@ function contentBinaryWiringParametersWizard(options) {
       nullable
     ></scl-textfield>`,
         x `<scl-textfield
-      label="fctInp"
-      .maybeValue=${options.fctInp}
-      nullable
-    ></scl-textfield>`,
-        x `<scl-textfield
-      label="dsgInp"
-      .maybeValue=${options.dsgInp}
-      nullable
-    ></scl-textfield>`,
-        x `<scl-textfield
       label="inpNam"
       .maybeValue=${options.inpNam}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="debTm"
+      .maybeValue=${options.debTm}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="vInOff"
+      .maybeValue=${options.vInOff}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="vInOn"
+      .maybeValue=${options.vInOn}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="outRef"
+      .maybeValue=${options.outRef}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-select label="outTyp" .maybeValue=${options.outTyp} nullable
+      >${['Normally open', 'Normally closed', 'Change over'].map(type => x `<mwc-list-item value="${type}">${type}</mwc-list-item>`)}</scl-select
+    >`,
+        x `<scl-checkbox
+      label="fastOutput"
+      .maybeValue=${options.fastOutput}
+      nullable
+    ></scl-checkbox>`,
+        x `<scl-textfield
+      label="outOffDl"
+      .maybeValue=${options.outOffDl}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="outOnDl"
+      .maybeValue=${options.outOnDl}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="outNam"
+      .maybeValue=${options.outNam}
       nullable
     ></scl-textfield>`,
     ];
@@ -48162,8 +48561,6 @@ function createBinaryWiringParametersAction(parent) {
             'id',
             'desc',
             'inpRef',
-            'fctInp',
-            'dsgInp',
             'inpNam',
             'debTm',
             'vInOff',
@@ -48192,8 +48589,6 @@ function createBinaryWiringParametersWizard(parent) {
     const id = null;
     const desc = null;
     const inpRef = null;
-    const fctInp = null;
-    const dsgInp = null;
     const inpNam = null;
     const debTm = null;
     const vInOff = null;
@@ -48217,8 +48612,6 @@ function createBinaryWiringParametersWizard(parent) {
                     id,
                     desc,
                     inpRef,
-                    fctInp,
-                    dsgInp,
                     inpNam,
                     debTm,
                     vInOff,
@@ -48237,7 +48630,21 @@ function createBinaryWiringParametersWizard(parent) {
 function updateBinaryWiringParameters(element) {
     return (inputs) => {
         const attributes = {};
-        const functionKeys = ['id', 'desc', 'inpRef', 'fctInp', 'dsgInp', 'inpNam'];
+        const functionKeys = [
+            'id',
+            'desc',
+            'inpRef',
+            'inpNam',
+            'debTm',
+            'vInOff',
+            'vInOn',
+            'outRef',
+            'outTyp',
+            'fastOutput',
+            'outOffDl',
+            'outOnDl',
+            'outNam',
+        ];
         functionKeys.forEach(key => {
             attributes[key] = getValue(inputs.find(i => i.label === key));
         });
@@ -48251,8 +48658,6 @@ function editBinaryWiringParametersWizard(element) {
     const id = element.getAttribute('id');
     const desc = element.getAttribute('desc');
     const inpRef = element.getAttribute('inpRef');
-    const fctInp = element.getAttribute('fctInp');
-    const dsgInp = element.getAttribute('dsgInp');
     const inpNam = element.getAttribute('inpNam');
     const debTm = element.getAttribute('debTm');
     const vInOff = element.getAttribute('vInOff');
@@ -48276,8 +48681,6 @@ function editBinaryWiringParametersWizard(element) {
                     id,
                     desc,
                     inpRef,
-                    fctInp,
-                    dsgInp,
                     inpNam,
                     debTm,
                     vInOff,
@@ -48452,22 +48855,28 @@ function editCommunicationServiceSpecificationsWizard(element) {
 function contentFunctionCatRefWizard(options) {
     return [
         x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="function"
       .maybeValue=${options.ffunction}
       required
       dialogInitialFocus
     ></scl-textfield>`,
         x `<scl-textfield
-      label="desc"
-      .maybeValue=${options.desc}
+      label="functionUuid"
+      .maybeValue=${options.functionUuid}
       nullable
+      pattern="${patterns.uuid}"
     ></scl-textfield>`,
     ];
 }
 function createFunctionCatRefAction(parent) {
     return (inputs) => {
         const FunctionCatRefAttrs = {};
-        const FunctionCatRefKeys = ['function', 'desc'];
+        const FunctionCatRefKeys = ['desc', 'function', 'functionUuid'];
         FunctionCatRefKeys.forEach(key => {
             FunctionCatRefAttrs[key] = getValue(inputs.find(i => i.label === key));
         });
@@ -48482,8 +48891,9 @@ function createFunctionCatRefAction(parent) {
     };
 }
 function createFunctionCatRefWizard(parent) {
-    const ffunction = null;
     const desc = null;
+    const ffunction = null;
+    const functionUuid = null;
     return [
         {
             title: 'Add FunctionCatRef',
@@ -48494,8 +48904,9 @@ function createFunctionCatRefWizard(parent) {
             },
             content: [
                 ...contentFunctionCatRefWizard({
-                    ffunction,
                     desc,
+                    ffunction,
+                    functionUuid,
                 }),
             ],
         },
@@ -48504,7 +48915,7 @@ function createFunctionCatRefWizard(parent) {
 function updateFunctionCatRef(element) {
     return (inputs) => {
         const attributes = {};
-        const functionKeys = ['desc'];
+        const functionKeys = ['desc', 'function', 'functionUuid'];
         functionKeys.forEach(key => {
             attributes[key] = getValue(inputs.find(i => i.label === key));
         });
@@ -48515,8 +48926,9 @@ function updateFunctionCatRef(element) {
     };
 }
 function editFunctionCatRefWizard(element) {
-    const ffunction = element.getAttribute('function');
     const desc = element.getAttribute('desc');
+    const ffunction = element.getAttribute('function');
+    const functionUuid = element.getAttribute('functionUuid');
     return [
         {
             title: 'Edit FunctionCatRef',
@@ -48527,8 +48939,9 @@ function editFunctionCatRefWizard(element) {
             },
             content: [
                 ...contentFunctionCatRefWizard({
-                    ffunction,
                     desc,
+                    ffunction,
+                    functionUuid,
                 }),
             ],
         },
@@ -48549,12 +48962,36 @@ function contentFunctionCategoryWizard(options) {
       .maybeValue=${options.desc}
       nullable
     ></scl-textfield>`,
+        x `<scl-textfield
+      label="uuid"
+      .maybeValue=${options.uuid}
+      disabled
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="templateUuid"
+      .maybeValue=${options.templateUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="originUuid"
+      .maybeValue=${options.originUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
     ];
 }
 function createFunctionCategoryAction(parent) {
     return (inputs) => {
         const FunctionCategoryAttrs = {};
-        const FunctionCategoryKeys = ['name', 'desc'];
+        const FunctionCategoryKeys = [
+            'name',
+            'desc',
+            'uuid',
+            'templateUuid',
+            'originUuid',
+        ];
         FunctionCategoryKeys.forEach(key => {
             FunctionCategoryAttrs[key] = getValue(inputs.find(i => i.label === key));
         });
@@ -48571,6 +49008,9 @@ function createFunctionCategoryAction(parent) {
 function createFunctionCategoryWizard(parent) {
     const name = null;
     const desc = null;
+    const uuid = v4();
+    const templateUuid = null;
+    const originUuid = null;
     return [
         {
             title: 'Add FunctionCategory',
@@ -48583,6 +49023,9 @@ function createFunctionCategoryWizard(parent) {
                 ...contentFunctionCategoryWizard({
                     name,
                     desc,
+                    uuid,
+                    templateUuid,
+                    originUuid,
                 }),
             ],
         },
@@ -48591,7 +49034,7 @@ function createFunctionCategoryWizard(parent) {
 function updateFunctionCategory(element) {
     return (inputs) => {
         const attributes = {};
-        const functionKeys = ['desc'];
+        const functionKeys = ['desc', 'uuid', 'templateUuid', 'originUuid'];
         functionKeys.forEach(key => {
             attributes[key] = getValue(inputs.find(i => i.label === key));
         });
@@ -48604,6 +49047,9 @@ function updateFunctionCategory(element) {
 function editFunctionCategoryWizard(element) {
     const name = element.getAttribute('name');
     const desc = element.getAttribute('desc');
+    const uuid = element.getAttribute('uuid');
+    const templateUuid = element.getAttribute('templateUuid');
+    const originUuid = element.getAttribute('originUuid');
     return [
         {
             title: 'Edit FunctionCategory',
@@ -48616,6 +49062,9 @@ function editFunctionCategoryWizard(element) {
                 ...contentFunctionCategoryWizard({
                     name,
                     desc,
+                    uuid,
+                    templateUuid,
+                    originUuid,
                 }),
             ],
         },
@@ -48629,6 +49078,9 @@ function contentFunctionRoleContentWizard(options) {
       label="roleInst"
       .maybeValue=${options.roleInst}
       nullable
+      type="number"
+      min="1"
+      default="1"
     ></scl-textfield>`,
     ];
 }
@@ -48709,18 +49161,72 @@ function contentFunctionRoleWizard(options) {
       dialogInitialFocus
     ></scl-textfield>`,
         x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="type"
       .maybeValue=${options.type}
       nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="selector"
+      .maybeValue=${options.selector}
+      nullable
+    ></scl-textfield>`,
+        renderCardinalitySelector(options.cardinality),
+        x `<scl-textfield
+      label="max"
+      .maybeValue=${options.max}
+      nullable
+      type="number"
+      min="2"
+      validationMessage="Number bigger than 1"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="uuid"
+      .maybeValue=${options.uuid}
+      disabled
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="templateUuid"
+      .maybeValue=${options.templateUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="originUuid"
+      .maybeValue=${options.originUuid}
+      nullable
+      pattern="${patterns.uuid}"
     ></scl-textfield>`,
     ];
 }
 function createFunctionRoleAction(parent) {
     return (inputs) => {
         const FunctionRoleAttrs = {};
-        const FunctionRoleKeys = ['name', 'type'];
+        const FunctionRoleKeys = [
+            'name',
+            'desc',
+            'type',
+            'selector',
+            'cardinality',
+            'max',
+            'uuid',
+            'templateUuid',
+            'originUuid',
+        ];
         FunctionRoleKeys.forEach(key => {
-            FunctionRoleAttrs[key] = getValue(inputs.find(i => i.label === key));
+            var _a, _b;
+            if (key === 'cardinality') {
+                const cardinal = (_a = getValue(inputs.find(i => i.label === key))) !== null && _a !== void 0 ? _a : 'none';
+                FunctionRoleAttrs[key] = (_b = cardinalities[cardinal]) !== null && _b !== void 0 ? _b : null;
+            }
+            else {
+                FunctionRoleAttrs[key] = getValue(inputs.find(i => i.label === key));
+            }
         });
         const FunctionRoleNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:FunctionRole', FunctionRoleAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
         return [
@@ -48734,7 +49240,14 @@ function createFunctionRoleAction(parent) {
 }
 function createFunctionRoleWizard(parent) {
     const name = null;
+    const desc = null;
     const type = null;
+    const selector = null;
+    const cardinality = null;
+    const max = null;
+    const uuid = v4();
+    const templateUuid = null;
+    const originUuid = null;
     return [
         {
             title: 'Add FunctionRole',
@@ -48746,7 +49259,14 @@ function createFunctionRoleWizard(parent) {
             content: [
                 ...contentFunctionRoleWizard({
                     name,
+                    desc,
                     type,
+                    selector,
+                    cardinality,
+                    max,
+                    uuid,
+                    templateUuid,
+                    originUuid,
                 }),
             ],
         },
@@ -48755,9 +49275,26 @@ function createFunctionRoleWizard(parent) {
 function updateFunctionRole(element) {
     return (inputs) => {
         const attributes = {};
-        const functionKeys = ['type'];
+        const functionKeys = [
+            'name',
+            'desc',
+            'type',
+            'selector',
+            'cardinality',
+            'max',
+            'uuid',
+            'templateUuid',
+            'originUuid',
+        ];
         functionKeys.forEach(key => {
-            attributes[key] = getValue(inputs.find(i => i.label === key));
+            var _a, _b;
+            if (key === 'cardinality') {
+                const cardinal = (_a = getValue(inputs.find(i => i.label === key))) !== null && _a !== void 0 ? _a : 'none';
+                attributes[key] = (_b = cardinalities[cardinal]) !== null && _b !== void 0 ? _b : null;
+            }
+            else {
+                attributes[key] = getValue(inputs.find(i => i.label === key));
+            }
         });
         if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
             return [{ element, attributes }];
@@ -48767,7 +49304,14 @@ function updateFunctionRole(element) {
 }
 function editFunctionRoleWizard(element) {
     const name = element.getAttribute('name');
+    const desc = element.getAttribute('desc');
     const type = element.getAttribute('type');
+    const selector = element.getAttribute('selector');
+    const cardinality = element.getAttribute('cardinality');
+    const max = element.getAttribute('max');
+    const uuid = element.getAttribute('uuid');
+    const templateUuid = element.getAttribute('templateUuid');
+    const originUuid = element.getAttribute('originUuid');
     return [
         {
             title: 'Edit FunctionRole',
@@ -48779,7 +49323,14 @@ function editFunctionRoleWizard(element) {
             content: [
                 ...contentFunctionRoleWizard({
                     name,
+                    desc,
                     type,
+                    selector,
+                    cardinality,
+                    max,
+                    uuid,
+                    templateUuid,
+                    originUuid,
                 }),
             ],
         },
@@ -48805,11 +49356,11 @@ function contentGooseParametersWizard(options) {
       .maybeValue=${options.goId}
       nullable
     ></scl-textfield>`,
-        x `<scl-textfield
+        x `<scl-checkbox
       label="securityEnabled"
       .maybeValue=${options.securityEnabled}
       nullable
-    ></scl-textfield>`,
+    ></scl-checkbox>`,
         x `<scl-textfield
       label="minTime"
       .maybeValue=${options.minTime}
@@ -48964,19 +49515,16 @@ function contentSMVParametersWizard(options) {
       .maybeValue=${options.smvId}
       nullable
     ></scl-textfield>`,
-        x `<scl-select
+        x `<scl-checkbox
       label="securityEnabled"
       .maybeValue=${options.securityEnabled}
       nullable
-      required
-      helper="Sampled Value Security Setting"
-      >${['None', 'Signature', 'SignatureAndEncryption'].map(type => x `<mwc-list-item value="${type}">${type}</mwc-list-item>`)}</scl-select
-    >`,
-        x `<scl-textfield
+    ></scl-checkbox>`,
+        x `<scl-checkbox
       label="multicast"
       .maybeValue=${options.multicast}
       nullable
-    ></scl-textfield>`,
+    ></scl-checkbox>`,
         x `<scl-textfield
       label="smpRate"
       .maybeValue=${options.smpRate}
@@ -48987,11 +49535,9 @@ function contentSMVParametersWizard(options) {
       .maybeValue=${options.nofASDU}
       nullable
     ></scl-textfield>`,
-        x `<scl-textfield
-      label="smpMod"
-      .maybeValue=${options.smpMod}
-      nullable
-    ></scl-textfield>`,
+        x `<scl-select label="smpMod" .maybeValue=${options.smpMod} nullable
+      >${tSmpMod.map(type => x `<mwc-list-item value="${type}">${type}</mwc-list-item>`)}</scl-select
+    >`,
         x `<scl-textfield
       label="cbName"
       .maybeValue=${options.cbName}
@@ -49146,11 +49692,11 @@ function contentReportParametersWizard(options) {
       .maybeValue=${options.intgPd}
       nullable
     ></scl-textfield>`,
-        x `<scl-textfield
+        x `<scl-checkbox
       label="buffered"
       .maybeValue=${options.buffered}
       nullable
-    ></scl-textfield>`,
+    ></scl-checkbox>`,
         x `<scl-textfield
       label="bufTime"
       .maybeValue=${options.bufTime}
@@ -49317,7 +49863,7 @@ function contentInputVarWizard(options) {
         x `<scl-textfield
       label="varName"
       .maybeValue=${options.varName}
-      nullable
+      required
     ></scl-textfield>`,
     ];
 }
@@ -49476,7 +50022,7 @@ function contentOutputVarWizard(options) {
         x `<scl-textfield
       label="varName"
       .maybeValue=${options.varName}
-      nullable
+      required
     ></scl-textfield>`,
     ];
 }
@@ -49685,16 +50231,54 @@ function contentPowerSystemRelationWizard(options) {
       nullable
     ></scl-textfield>`,
         x `<scl-textfield
+      label="selector"
+      .maybeValue=${options.selector}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
       label="relation"
       .maybeValue=${options.relation}
       nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="relationUuid"
+      .maybeValue=${options.relationUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="uuid"
+      .maybeValue=${options.uuid}
+      disabled
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="templateUuid"
+      .maybeValue=${options.templateUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="originUuid"
+      .maybeValue=${options.originUuid}
+      nullable
+      pattern="${patterns.uuid}"
     ></scl-textfield>`,
     ];
 }
 function createPowerSystemRelationAction(parent) {
     return (inputs) => {
         const PowerSystemRelationAttrs = {};
-        const PowerSystemRelationKeys = ['name', 'desc', 'relation'];
+        const PowerSystemRelationKeys = [
+            'name',
+            'desc',
+            'selector',
+            'relation',
+            'relationUuid',
+            'uuid',
+            'templateUuid',
+            'originUuid',
+        ];
         PowerSystemRelationKeys.forEach(key => {
             PowerSystemRelationAttrs[key] = getValue(inputs.find(i => i.label === key));
         });
@@ -49711,7 +50295,12 @@ function createPowerSystemRelationAction(parent) {
 function createPowerSystemRelationWizard(parent) {
     const name = null;
     const desc = null;
+    const selector = null;
     const relation = null;
+    const relationUuid = null;
+    const uuid = v4();
+    const templateUuid = null;
+    const originUuid = null;
     return [
         {
             title: 'Add PowerSystemRelation',
@@ -49724,7 +50313,12 @@ function createPowerSystemRelationWizard(parent) {
                 ...contentPowerSystemRelationWizard({
                     name,
                     desc,
+                    selector,
                     relation,
+                    relationUuid,
+                    uuid,
+                    templateUuid,
+                    originUuid,
                 }),
             ],
         },
@@ -49733,7 +50327,16 @@ function createPowerSystemRelationWizard(parent) {
 function updatePowerSystemRelation(element) {
     return (inputs) => {
         const attributes = {};
-        const functionKeys = ['name', 'desc', 'relation'];
+        const functionKeys = [
+            'name',
+            'desc',
+            'selector',
+            'relation',
+            'relationUuid',
+            'uuid',
+            'templateUuid',
+            'originUuid',
+        ];
         functionKeys.forEach(key => {
             attributes[key] = getValue(inputs.find(i => i.label === key));
         });
@@ -49746,7 +50349,12 @@ function updatePowerSystemRelation(element) {
 function editPowerSystemRelationWizard(element) {
     const name = element.getAttribute('name');
     const desc = element.getAttribute('desc');
+    const selector = element.getAttribute('selector');
     const relation = element.getAttribute('relation');
+    const relationUuid = element.getAttribute('relationUuid');
+    const uuid = element.getAttribute('uuid');
+    const templateUuid = element.getAttribute('templateUuid');
+    const originUuid = element.getAttribute('originUuid');
     return [
         {
             title: 'Edit PowerSystemRelation',
@@ -49759,7 +50367,12 @@ function editPowerSystemRelationWizard(element) {
                 ...contentPowerSystemRelationWizard({
                     name,
                     desc,
+                    selector,
                     relation,
+                    relationUuid,
+                    uuid,
+                    templateUuid,
+                    originUuid,
                 }),
             ],
         },
@@ -49785,12 +50398,37 @@ function contentVariableWizard(options) {
       .maybeValue=${options.value}
       nullable
     ></scl-textfield>`,
+        x `<scl-textfield
+      label="uuid"
+      .maybeValue=${options.uuid}
+      disabled
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="templateUuid"
+      .maybeValue=${options.templateUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="originUuid"
+      .maybeValue=${options.originUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
     ];
 }
 function createVariableAction(parent) {
     return (inputs) => {
         const VariableAttrs = {};
-        const VariableKeys = ['name', 'desc', 'value'];
+        const VariableKeys = [
+            'name',
+            'desc',
+            'value',
+            'uuid',
+            'templateUuid',
+            'originUuid',
+        ];
         VariableKeys.forEach(key => {
             VariableAttrs[key] = getValue(inputs.find(i => i.label === key));
         });
@@ -49808,6 +50446,9 @@ function createVariableWizard(parent) {
     const name = null;
     const desc = null;
     const value = null;
+    const uuid = v4();
+    const templateUuid = null;
+    const originUuid = null;
     return [
         {
             title: 'Add Variable',
@@ -49821,6 +50462,9 @@ function createVariableWizard(parent) {
                     name,
                     desc,
                     value,
+                    uuid,
+                    templateUuid,
+                    originUuid,
                 }),
             ],
         },
@@ -49829,7 +50473,14 @@ function createVariableWizard(parent) {
 function updateVariable(element) {
     return (inputs) => {
         const attributes = {};
-        const functionKeys = ['name', 'desc', 'value'];
+        const functionKeys = [
+            'name',
+            'desc',
+            'value',
+            'uuid',
+            'templateUuid',
+            'originUuid',
+        ];
         functionKeys.forEach(key => {
             attributes[key] = getValue(inputs.find(i => i.label === key));
         });
@@ -49843,6 +50494,9 @@ function editVariableWizard(element) {
     const name = element.getAttribute('name');
     const desc = element.getAttribute('desc');
     const value = element.getAttribute('value');
+    const uuid = element.getAttribute('uuid');
+    const templateUuid = element.getAttribute('templateUuid');
+    const originUuid = element.getAttribute('originUuid');
     return [
         {
             title: 'Edit Variable',
@@ -49856,6 +50510,9 @@ function editVariableWizard(element) {
                     name,
                     desc,
                     value,
+                    uuid,
+                    templateUuid,
+                    originUuid,
                 }),
             ],
         },
@@ -49889,6 +50546,8 @@ function contentVariableApplyToWizard(options) {
       label="sGroup"
       .maybeValue=${options.sGroup}
       nullable
+      type="number"
+      min="0"
     ></scl-textfield>`,
         x `<scl-textfield
       label="element"
@@ -49906,6 +50565,12 @@ function contentVariableApplyToWizard(options) {
       .maybeValue=${options.daName}
       nullable
     ></scl-textfield>`,
+        x `<scl-textfield
+      label="elementUuid"
+      .maybeValue=${options.elementUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
     ];
 }
 function createVariableApplyToAction(parent) {
@@ -49920,6 +50585,7 @@ function createVariableApplyToAction(parent) {
             'sGroup',
             'format',
             'defaultValue',
+            'elementUuid',
         ];
         VariableApplyToKeys.forEach(key => {
             VariableApplyToAttrs[key] = getValue(inputs.find(i => i.label === key));
@@ -49943,6 +50609,7 @@ function createVariableApplyToWizard(parent) {
     const sGroup = null;
     const format = null;
     const defaultValue = null;
+    const elementUuid = null;
     return [
         {
             title: 'Add VariableApplyTo',
@@ -49961,6 +50628,7 @@ function createVariableApplyToWizard(parent) {
                     sGroup,
                     format,
                     defaultValue,
+                    elementUuid,
                 }),
             ],
         },
@@ -49978,6 +50646,7 @@ function updateVariableApplyTo(element) {
             'sGroup',
             'format',
             'defaultValue',
+            'elementUuid',
         ];
         functionKeys.forEach(key => {
             attributes[key] = getValue(inputs.find(i => i.label === key));
@@ -49997,6 +50666,7 @@ function editVariableApplyToWizard(element) {
     const sGroup = element.getAttribute('sGroup');
     const format = element.getAttribute('format');
     const defaultValue = element.getAttribute('defaultValue');
+    const elementUuid = element.getAttribute('elementUuid');
     return [
         {
             title: 'Edit VariableApplyTo',
@@ -50015,6 +50685,4922 @@ function editVariableApplyToWizard(element) {
                     sGroup,
                     format,
                     defaultValue,
+                    elementUuid,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentLNodeInputsWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createLNodeInputsAction(parent) {
+    return (inputs) => {
+        const LNodeInputsAttrs = {};
+        const LNodeInputsKeys = ['desc'];
+        LNodeInputsKeys.forEach(key => {
+            LNodeInputsAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const LNodeInputsNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:LNodeInputs', LNodeInputsAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: LNodeInputsNode,
+                reference: get6100Reference(parent, 'LNodeInputs'),
+            },
+        ];
+    };
+}
+function createLNodeInputsWizard(parent) {
+    const desc = null;
+    return [
+        {
+            title: 'Add LNodeInputs',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createLNodeInputsAction(parent),
+            },
+            content: [
+                ...contentLNodeInputsWizard({
+                    desc,
+                }),
+            ],
+        },
+    ];
+}
+function updateLNodeInputs(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['desc'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editLNodeInputsWizard(element) {
+    const desc = element.getAttribute('desc');
+    return [
+        {
+            title: 'Edit LNodeInputs',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateLNodeInputs(element),
+            },
+            content: [
+                ...contentLNodeInputsWizard({
+                    desc,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentLNodeOutputsWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createLNodeOutputsAction(parent) {
+    return (inputs) => {
+        const LNodeOutputsAttrs = {};
+        const LNodeOutputsKeys = ['desc'];
+        LNodeOutputsKeys.forEach(key => {
+            LNodeOutputsAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const LNodeOutputsNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:LNodeOutputs', LNodeOutputsAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: LNodeOutputsNode,
+                reference: get6100Reference(parent, 'LNodeOutputs'),
+            },
+        ];
+    };
+}
+function createLNodeOutputsWizard(parent) {
+    const desc = null;
+    return [
+        {
+            title: 'Add LNodeOutputs',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createLNodeOutputsAction(parent),
+            },
+            content: [
+                ...contentLNodeOutputsWizard({
+                    desc,
+                }),
+            ],
+        },
+    ];
+}
+function updateLNodeOutputs(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['desc'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editLNodeOutputsWizard(element) {
+    const desc = element.getAttribute('desc');
+    return [
+        {
+            title: 'Edit LNodeOutputs',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateLNodeOutputs(element),
+            },
+            content: [
+                ...contentLNodeOutputsWizard({
+                    desc,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentLNodeSpecNamingWizard(options) {
+    return [
+        x `<scl-textfield
+      label="sIedName"
+      .maybeValue=${options.sIedName}
+      nullable
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="sLdInst"
+      .maybeValue=${options.sLdInst}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="sPrefix"
+      .maybeValue=${options.sPrefix}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="sLnClass"
+      .maybeValue=${options.sLnClass}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="sLnInst"
+      .maybeValue=${options.sLnInst}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createLNodeSpecNamingAction(parent) {
+    return (inputs) => {
+        const LNodeSpecNamingAttrs = {};
+        const LNodeSpecNamingKeys = [
+            'sIedName',
+            'sLdInst',
+            'sPrefix',
+            'sLnInst',
+            'sLnClass',
+        ];
+        LNodeSpecNamingKeys.forEach(key => {
+            LNodeSpecNamingAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const LNodeSpecNamingNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:LNodeSpecNaming', LNodeSpecNamingAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: LNodeSpecNamingNode,
+                reference: get6100Reference(parent, 'LNodeSpecNaming'),
+            },
+        ];
+    };
+}
+function createLNodeSpecNamingWizard(parent) {
+    const sIedName = null;
+    const sLdInst = null;
+    const sPrefix = null;
+    const sLnInst = null;
+    const sLnClass = null;
+    return [
+        {
+            title: 'Add LNodeSpecNaming',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createLNodeSpecNamingAction(parent),
+            },
+            content: [
+                ...contentLNodeSpecNamingWizard({
+                    sIedName,
+                    sLdInst,
+                    sPrefix,
+                    sLnInst,
+                    sLnClass,
+                }),
+            ],
+        },
+    ];
+}
+function updateLNodeSpecNaming(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = [
+            'sIedName',
+            'sLdInst',
+            'sPrefix',
+            'sLnInst',
+            'sLnClass',
+        ];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editLNodeSpecNamingWizard(element) {
+    const sIedName = element.getAttribute('sIedName');
+    const sLdInst = element.getAttribute('sLdInst');
+    const sPrefix = element.getAttribute('sPrefix');
+    const sLnInst = element.getAttribute('sLnInst');
+    const sLnClass = element.getAttribute('sLnClass');
+    return [
+        {
+            title: 'Edit LNodeSpecNaming',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateLNodeSpecNaming(element),
+            },
+            content: [
+                ...contentLNodeSpecNamingWizard({
+                    sIedName,
+                    sLdInst,
+                    sPrefix,
+                    sLnInst,
+                    sLnClass,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentSourceRefWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="pLN"
+      .maybeValue=${options.pLN}
+      pattern="${patterns.normalizedString}"
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="pDO"
+      .maybeValue=${options.pDO}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="resourceName"
+      .maybeValue=${options.resourceName}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="resourceUuid"
+      .maybeValue=${options.resourceUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="pDA"
+      .maybeValue=${options.pDA}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="source"
+      .maybeValue=${options.source}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="sourceLNodeUuid"
+      .maybeValue=${options.sourceLNodeUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="sourceDoName"
+      .maybeValue=${options.sourceDoName}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="sourceDaName"
+      .maybeValue=${options.sourceDaName}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="service"
+      .maybeValue=${options.service}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="input"
+      .maybeValue=${options.input}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="inputInst"
+      .maybeValue=${options.inputInst}
+      pattern="${patterns.lnInst}"
+      type="number"
+      min="1"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="extRefAddr"
+      .maybeValue=${options.extRefAddr}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="extRefUuid"
+      .maybeValue=${options.extRefUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="uuid"
+      .maybeValue=${options.uuid}
+      disabled
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="templateUuid"
+      .maybeValue=${options.templateUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="originUuid"
+      .maybeValue=${options.originUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+    ];
+}
+function createSourceRefAction(parent) {
+    return (inputs) => {
+        const SourceRefAttrs = {};
+        const SourceRefKeys = [
+            'pLN',
+            'desc',
+            'pDO',
+            'resourceName',
+            'resourceUuid',
+            'pDA',
+            'source',
+            'sourceLNodeUuid',
+            'sourceDoName',
+            'sourceDaName',
+            'service',
+            'input',
+            'inputInst',
+            'extRefAddr',
+            'extRefUuid',
+            'uuid',
+            'templateUuid',
+            'originUuid',
+        ];
+        SourceRefKeys.forEach(key => {
+            SourceRefAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const SourceRefNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:SourceRef', SourceRefAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: SourceRefNode,
+                reference: get6100Reference(parent, 'SourceRef'),
+            },
+        ];
+    };
+}
+function createSourceRefWizard(parent) {
+    const pLN = null;
+    const desc = null;
+    const pDO = null;
+    const resourceName = null;
+    const resourceUuid = null;
+    const pDA = null;
+    const source = null;
+    const sourceLNodeUuid = null;
+    const sourceDoName = null;
+    const sourceDaName = null;
+    const service = null;
+    const input = null;
+    const inputInst = null;
+    const extRefAddr = null;
+    const extRefUuid = null;
+    const uuid = v4();
+    const templateUuid = null;
+    const originUuid = null;
+    return [
+        {
+            title: 'Add SourceRef',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createSourceRefAction(parent),
+            },
+            content: [
+                ...contentSourceRefWizard({
+                    pLN,
+                    desc,
+                    pDO,
+                    resourceName,
+                    resourceUuid,
+                    pDA,
+                    source,
+                    sourceLNodeUuid,
+                    sourceDoName,
+                    sourceDaName,
+                    service,
+                    input,
+                    inputInst,
+                    extRefAddr,
+                    extRefUuid,
+                    uuid,
+                    templateUuid,
+                    originUuid,
+                }),
+            ],
+        },
+    ];
+}
+function updateSourceRef(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = [
+            'pLN',
+            'desc',
+            'pDO',
+            'resourceName',
+            'resourceUuid',
+            'pDA',
+            'source',
+            'sourceLNodeUuid',
+            'sourceDoName',
+            'sourceDaName',
+            'service',
+            'input',
+            'inputInst',
+            'extRefAddr',
+            'extRefUuid',
+            'uuid',
+            'templateUuid',
+            'originUuid',
+        ];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editSourceRefWizard(element) {
+    const pLN = element.getAttribute('pLN');
+    const desc = element.getAttribute('desc');
+    const pDO = element.getAttribute('pDO');
+    const resourceName = element.getAttribute('resourceName');
+    const resourceUuid = element.getAttribute('resourceUuid');
+    const pDA = element.getAttribute('pDA');
+    const source = element.getAttribute('source');
+    const sourceLNodeUuid = element.getAttribute('sourceLNodeUuid');
+    const sourceDoName = element.getAttribute('sourceDoName');
+    const sourceDaName = element.getAttribute('sourceDaName');
+    const service = element.getAttribute('service');
+    const input = element.getAttribute('input');
+    const inputInst = element.getAttribute('inputInst');
+    const extRefAddr = element.getAttribute('extRefAddr');
+    const extRefUuid = element.getAttribute('extRefUuid');
+    const uuid = element.getAttribute('uuid');
+    const templateUuid = element.getAttribute('templateUuid');
+    const originUuid = element.getAttribute('originUuid');
+    return [
+        {
+            title: 'Edit SourceRef',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateSourceRef(element),
+            },
+            content: [
+                ...contentSourceRefWizard({
+                    pLN,
+                    desc,
+                    pDO,
+                    resourceName,
+                    resourceUuid,
+                    pDA,
+                    source,
+                    sourceLNodeUuid,
+                    sourceDoName,
+                    sourceDaName,
+                    service,
+                    input,
+                    inputInst,
+                    extRefAddr,
+                    extRefUuid,
+                    uuid,
+                    templateUuid,
+                    originUuid,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentBayTypeWizard(options) {
+    return [
+        x `<mwc-textarea
+      label="content"
+      value="${options.content}"
+      rows="1"
+      cols="80"
+      dialogInitialFocus
+    ></mwc-textarea>`,
+    ];
+}
+function createBayTypeAction(parent) {
+    return (inputs) => {
+        const content = getValue(inputs.find(i => i.label === 'content'));
+        const BayType = createElement(parent.ownerDocument, 'eIEC61850-6-100:BayType', {}, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        BayType.textContent = content;
+        return [
+            {
+                parent,
+                node: BayType,
+                reference: get6100Reference(parent, 'BayType'),
+            },
+        ];
+    };
+}
+function createBayTypeWizard(parent) {
+    return [
+        {
+            title: 'Create BayType',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createBayTypeAction(parent),
+            },
+            content: [
+                ...contentBayTypeWizard({
+                    content: '',
+                }),
+            ],
+        },
+    ];
+}
+function updateBayType(element) {
+    return (inputs) => {
+        var _a;
+        const content = inputs.find(i => i.label === 'content').value;
+        if ((_a = content === element.textContent) !== null && _a !== void 0 ? _a : '')
+            return [];
+        const node = element.cloneNode();
+        node.textContent = content;
+        Array.from(element.querySelectorAll('Private')).forEach(priv => node.prepend(priv.cloneNode(true)));
+        const reference = element.nextElementSibling;
+        const parent = element.parentElement;
+        if (!parent)
+            return [];
+        return [{ node: element }, { parent, node, reference }];
+    };
+}
+function editBayTypeWizard(element) {
+    const content = element.textContent || '';
+    return [
+        {
+            title: 'Edit BayType',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateBayType(element),
+            },
+            content: [
+                ...contentBayTypeWizard({
+                    content,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentDOSWizard(options) {
+    return [
+        x `<scl-textfield
+      label="name"
+      .maybeValue=${options.name}
+      pattern="${patterns.alphanumericFirstUpperCase}"
+      maxLength="${maxLength.dosName}"
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="mappedDoName"
+      .maybeValue=${options.mappedDoName}
+      pattern="${patterns.mappedDoName}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="mappedLnUuid"
+      .maybeValue=${options.mappedLnUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+    ];
+}
+function createDOSAction(parent) {
+    return (inputs) => {
+        const DOSAttrs = {};
+        const DOSKeys = ['name', 'desc', 'mappedDoName', 'mappedLnUuid'];
+        DOSKeys.forEach(key => {
+            DOSAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const DOSNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:DOS', DOSAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: DOSNode,
+                reference: get6100Reference(parent, 'DOS'),
+            },
+        ];
+    };
+}
+function createDOSWizard(parent) {
+    const name = null;
+    const desc = null;
+    const mappedDoName = null;
+    const mappedLnUuid = null;
+    return [
+        {
+            title: 'Add DOS',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createDOSAction(parent),
+            },
+            content: [
+                ...contentDOSWizard({
+                    name,
+                    desc,
+                    mappedDoName,
+                    mappedLnUuid,
+                }),
+            ],
+        },
+    ];
+}
+function updateDOS(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['name', 'desc', 'mappedDoName', 'mappedLnUuid'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editDOSWizard(element) {
+    const name = element.getAttribute('name');
+    const desc = element.getAttribute('desc');
+    const mappedDoName = element.getAttribute('mappedDoName');
+    const mappedLnUuid = element.getAttribute('mappedLnUuid');
+    return [
+        {
+            title: 'Edit DOS',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateDOS(element),
+            },
+            content: [
+                ...contentDOSWizard({
+                    name,
+                    desc,
+                    mappedDoName,
+                    mappedLnUuid,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentFunctionTemplateWizard(options) {
+    return [
+        x `<scl-textfield
+      label="name"
+      .maybeValue=${options.name}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="type"
+      .maybeValue=${options.type}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="uuid"
+      .maybeValue=${options.uuid}
+      disabled
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="templateUuid"
+      .maybeValue=${options.templateUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="originUuid"
+      .maybeValue=${options.originUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+    ];
+}
+function createFunctionTemplateAction(parent) {
+    return (inputs) => {
+        const FunctionTemplateAttrs = {};
+        const FunctionTemplateKeys = [
+            'name',
+            'desc',
+            'type',
+            'uuid',
+            'templateUuid',
+            'originUuid',
+        ];
+        FunctionTemplateKeys.forEach(key => {
+            FunctionTemplateAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const FunctionTemplateNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:FunctionTemplate', FunctionTemplateAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: FunctionTemplateNode,
+                reference: get6100Reference(parent, 'FunctionTemplate'),
+            },
+        ];
+    };
+}
+function createFunctionTemplateWizard(parent) {
+    const name = null;
+    const desc = null;
+    const type = null;
+    const uuid = v4();
+    const templateUuid = null;
+    const originUuid = null;
+    return [
+        {
+            title: 'Add FunctionTemplate',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createFunctionTemplateAction(parent),
+            },
+            content: [
+                ...contentFunctionTemplateWizard({
+                    name,
+                    desc,
+                    type,
+                    uuid,
+                    templateUuid,
+                    originUuid,
+                }),
+            ],
+        },
+    ];
+}
+function updateFunctionTemplate(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = [
+            'name',
+            'desc',
+            'type',
+            'uuid',
+            'templateUuid',
+            'originUuid',
+        ];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editFunctionTemplateWizard(element) {
+    const name = element.getAttribute('name');
+    const desc = element.getAttribute('desc');
+    const type = element.getAttribute('type');
+    const uuid = element.getAttribute('uuid');
+    const templateUuid = element.getAttribute('templateUuid');
+    const originUuid = element.getAttribute('originUuid');
+    return [
+        {
+            title: 'Edit FunctionTemplate',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateFunctionTemplate(element),
+            },
+            content: [
+                ...contentFunctionTemplateWizard({
+                    name,
+                    desc,
+                    type,
+                    uuid,
+                    templateUuid,
+                    originUuid,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentProcessEchoWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="source"
+      .maybeValue=${options.source}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="sourceLNodeUuid"
+      .maybeValue=${options.sourceLNodeUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="sourceDoName"
+      .maybeValue=${options.sourceDoName}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="sourceDaName"
+      .maybeValue=${options.sourceDaName}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createProcessEchoAction(parent) {
+    return (inputs) => {
+        const ProcessEchoAttrs = {};
+        const ProcessEchoKeys = [
+            'desc',
+            'source',
+            'sourceLNodeUuid',
+            'sourceDoName',
+            'sourceDaName',
+        ];
+        ProcessEchoKeys.forEach(key => {
+            ProcessEchoAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const ProcessEchoNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:ProcessEcho', ProcessEchoAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: ProcessEchoNode,
+                reference: get6100Reference(parent, 'ProcessEcho'),
+            },
+        ];
+    };
+}
+function createProcessEchoWizard(parent) {
+    const desc = null;
+    const source = null;
+    const sourceLNodeUuid = null;
+    const sourceDoName = null;
+    const sourceDaName = null;
+    return [
+        {
+            title: 'Add ProcessEcho',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createProcessEchoAction(parent),
+            },
+            content: [
+                ...contentProcessEchoWizard({
+                    desc,
+                    source,
+                    sourceLNodeUuid,
+                    sourceDoName,
+                    sourceDaName,
+                }),
+            ],
+        },
+    ];
+}
+function updateProcessEcho(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = [
+            'desc',
+            'source',
+            'sourceLNodeUuid',
+            'sourceDoName',
+            'sourceDaName',
+        ];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editProcessEchoWizard(element) {
+    const desc = element.getAttribute('desc');
+    const source = element.getAttribute('source');
+    const sourceLNodeUuid = element.getAttribute('sourceLNodeUuid');
+    const sourceDoName = element.getAttribute('sourceDoName');
+    const sourceDaName = element.getAttribute('sourceDaName');
+    return [
+        {
+            title: 'Edit ProcessEcho',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateProcessEcho(element),
+            },
+            content: [
+                ...contentProcessEchoWizard({
+                    desc,
+                    source,
+                    sourceLNodeUuid,
+                    sourceDoName,
+                    sourceDaName,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentProjectWizard(options) {
+    return [
+        x `<scl-textfield
+      label="name"
+      .maybeValue=${options.name}
+      pattern="${patterns.tName}"
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="uuid"
+      .maybeValue=${options.uuid}
+      disabled
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+    ];
+}
+function createProjectAction(parent) {
+    return (inputs) => {
+        const ProjectAttrs = {};
+        const ProjectKeys = ['name', 'desc', 'uuid'];
+        ProjectKeys.forEach(key => {
+            ProjectAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const ProjectNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:Project', ProjectAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: ProjectNode,
+                reference: get6100Reference(parent, 'Project'),
+            },
+        ];
+    };
+}
+function createProjectWizard(parent) {
+    const name = null;
+    const desc = null;
+    const uuid = v4();
+    return [
+        {
+            title: 'Add Project',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createProjectAction(parent),
+            },
+            content: [
+                ...contentProjectWizard({
+                    name,
+                    desc,
+                    uuid,
+                }),
+            ],
+        },
+    ];
+}
+function updateProject(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['name', 'desc', 'uuid'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editProjectWizard(element) {
+    const name = element.getAttribute('name');
+    const desc = element.getAttribute('desc');
+    const uuid = element.getAttribute('uuid');
+    return [
+        {
+            title: 'Edit Project',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateProject(element),
+            },
+            content: [
+                ...contentProjectWizard({
+                    name,
+                    desc,
+                    uuid,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentSubCategoryWizard(options) {
+    return [
+        x `<scl-textfield
+      label="name"
+      .maybeValue=${options.name}
+      pattern="${patterns.tName}"
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="uuid"
+      .maybeValue=${options.uuid}
+      disabled
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="templateUuid"
+      .maybeValue=${options.templateUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="originUuid"
+      .maybeValue=${options.originUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+    ];
+}
+function createSubCategoryAction(parent) {
+    return (inputs) => {
+        const SubCategoryAttrs = {};
+        const SubCategoryKeys = [
+            'name',
+            'desc',
+            'uuid',
+            'templateUuid',
+            'originUuid',
+        ];
+        SubCategoryKeys.forEach(key => {
+            SubCategoryAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const SubCategoryNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:SubCategory', SubCategoryAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: SubCategoryNode,
+                reference: get6100Reference(parent, 'SubCategory'),
+            },
+        ];
+    };
+}
+function createSubCategoryWizard(parent) {
+    const name = null;
+    const desc = null;
+    const uuid = v4();
+    const templateUuid = null;
+    const originUuid = null;
+    return [
+        {
+            title: 'Add SubCategory',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createSubCategoryAction(parent),
+            },
+            content: [
+                ...contentSubCategoryWizard({
+                    name,
+                    desc,
+                    uuid,
+                    templateUuid,
+                    originUuid,
+                }),
+            ],
+        },
+    ];
+}
+function updateSubCategory(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['name', 'desc', 'uuid', 'templateUuid', 'originUuid'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editSubCategoryWizard(element) {
+    const name = element.getAttribute('name');
+    const desc = element.getAttribute('desc');
+    const uuid = element.getAttribute('uuid');
+    const templateUuid = element.getAttribute('templateUuid');
+    const originUuid = element.getAttribute('originUuid');
+    return [
+        {
+            title: 'Edit SubCategory',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateSubCategory(element),
+            },
+            content: [
+                ...contentSubCategoryWizard({
+                    name,
+                    desc,
+                    uuid,
+                    templateUuid,
+                    originUuid,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentProjectProcessReferenceWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="processReference"
+      .maybeValue=${options.processReference}
+      nullable
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="processUuid"
+      .maybeValue=${options.processUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+    ];
+}
+function createProjectProcessReferenceAction(parent) {
+    return (inputs) => {
+        const ProjectProcessReferenceAttrs = {};
+        const ProjectProcessReferenceKeys = [
+            'desc',
+            'processReference',
+            'processUuid',
+        ];
+        ProjectProcessReferenceKeys.forEach(key => {
+            ProjectProcessReferenceAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const projectProcessReferenceNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:ProjectProcessReference', ProjectProcessReferenceAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: projectProcessReferenceNode,
+                reference: get6100Reference(parent, 'ProjectProcessReference'),
+            },
+        ];
+    };
+}
+function createProjectProcessReferenceWizard(parent) {
+    const desc = null;
+    const processReference = null;
+    const processUuid = null;
+    return [
+        {
+            title: 'Add ProjectProcessReference',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createProjectProcessReferenceAction(parent),
+            },
+            content: [
+                ...contentProjectProcessReferenceWizard({
+                    desc,
+                    processReference,
+                    processUuid,
+                }),
+            ],
+        },
+    ];
+}
+function updateProjectProcessReference(element) {
+    return (inputs) => {
+        const attributes = {};
+        const processReferenceKeys = ['desc', 'processReference', 'processUuid'];
+        processReferenceKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (processReferenceKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editProjectProcessReferenceWizard(element) {
+    const desc = element.getAttribute('desc');
+    const processReference = element.getAttribute('processReference');
+    const processUuid = element.getAttribute('processUuid');
+    return [
+        {
+            title: 'Edit ProjectProcessReference',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateProjectProcessReference(element),
+            },
+            content: [
+                ...contentProjectProcessReferenceWizard({
+                    desc,
+                    processReference,
+                    processUuid,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentSignalRoleWizard(options) {
+    return [
+        x `<scl-textfield
+      label="name"
+      .maybeValue=${options.name}
+      pattern="${patterns.tName}"
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="uuid"
+      .maybeValue=${options.uuid}
+      disabled
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="templateUuid"
+      .maybeValue=${options.templateUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="originUuid"
+      .maybeValue=${options.originUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+    ];
+}
+function createSignalRoleAction(parent) {
+    return (inputs) => {
+        const SignalRoleAttrs = {};
+        const SignalRoleKeys = [
+            'name',
+            'desc',
+            'uuid',
+            'templateUuid',
+            'originUuid',
+        ];
+        SignalRoleKeys.forEach(key => {
+            SignalRoleAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const SignalRoleNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:SignalRole', SignalRoleAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: SignalRoleNode,
+                reference: get6100Reference(parent, 'SignalRole'),
+            },
+        ];
+    };
+}
+function createSignalRoleWizard(parent) {
+    const name = null;
+    const desc = null;
+    const uuid = v4();
+    const templateUuid = null;
+    const originUuid = null;
+    return [
+        {
+            title: 'Add SignalRole',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createSignalRoleAction(parent),
+            },
+            content: [
+                ...contentSignalRoleWizard({
+                    name,
+                    desc,
+                    uuid,
+                    templateUuid,
+                    originUuid,
+                }),
+            ],
+        },
+    ];
+}
+function updateSignalRole(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['name', 'desc', 'uuid', 'templateUuid', 'originUuid'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editSignalRoleWizard(element) {
+    const name = element.getAttribute('name');
+    const desc = element.getAttribute('desc');
+    const uuid = element.getAttribute('uuid');
+    const templateUuid = element.getAttribute('templateUuid');
+    const originUuid = element.getAttribute('originUuid');
+    return [
+        {
+            title: 'Edit SignalRole',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateSignalRole(element),
+            },
+            content: [
+                ...contentSignalRoleWizard({
+                    name,
+                    desc,
+                    uuid,
+                    templateUuid,
+                    originUuid,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentFunctionalVariantRefWizard(options) {
+    return [
+        x `<scl-select label="update" .maybeValue=${options.update} nullable
+      >${['add', 'remove'].map(type => x `<mwc-list-item value="${type}">${type}</mwc-list-item>`)}</scl-select
+    >`,
+        x `<scl-textfield
+      label="functionalVariant"
+      .maybeValue=${options.functionalVariant}
+      nullable
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="functionalVariantUuid"
+      .maybeValue=${options.functionalVariantUuid}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createFunctionalVariantRefAction(parent) {
+    return (inputs) => {
+        const FunctionalVariantRefAttrs = {};
+        const FunctionalVariantRefKeys = [
+            'functionalVariant',
+            'update',
+            'functionalVariantUuid',
+        ];
+        FunctionalVariantRefKeys.forEach(key => {
+            FunctionalVariantRefAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const FunctionalVariantRefNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:FunctionalVariantRef', FunctionalVariantRefAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: FunctionalVariantRefNode,
+                reference: get6100Reference(parent, 'FunctionalVariantRef'),
+            },
+        ];
+    };
+}
+function createFunctionalVariantRefWizard(parent) {
+    const functionalVariant = null;
+    const update = null;
+    const functionalVariantUuid = null;
+    return [
+        {
+            title: 'Add FunctionalVariantRef',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createFunctionalVariantRefAction(parent),
+            },
+            content: [
+                ...contentFunctionalVariantRefWizard({
+                    functionalVariant,
+                    update,
+                    functionalVariantUuid,
+                }),
+            ],
+        },
+    ];
+}
+function updateFunctionalVariantRef(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = [
+            'functionalVariant',
+            'update',
+            'functionalVariantUuid',
+        ];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editFunctionalVariantRefWizard(element) {
+    const functionalVariant = element.getAttribute('functionalVariant');
+    const update = element.getAttribute('update');
+    const functionalVariantUuid = element.getAttribute('functionalVariantUuid');
+    return [
+        {
+            title: 'Edit FunctionalVariantRef',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateFunctionalVariantRef(element),
+            },
+            content: [
+                ...contentFunctionalVariantRefWizard({
+                    functionalVariant,
+                    update,
+                    functionalVariantUuid,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentLNodeDataRefWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="data"
+      .maybeValue=${options.data}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="lnodeUuid"
+      .maybeValue=${options.lnodeUuid}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="doName"
+      .maybeValue=${options.doName}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="daName"
+      .maybeValue=${options.daName}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createLNodeDataRefAction(parent) {
+    return (inputs) => {
+        const LNodeDataRefAttrs = {};
+        const LNodeDataRefKeys = ['desc', 'data', 'lnodeUuid', 'doName', 'daName'];
+        LNodeDataRefKeys.forEach(key => {
+            LNodeDataRefAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const LNodeDataRefNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:LNodeDataRef', LNodeDataRefAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: LNodeDataRefNode,
+                reference: get6100Reference(parent, 'LNodeDataRef'),
+            },
+        ];
+    };
+}
+function createLNodeDataRefWizard(parent) {
+    const desc = null;
+    const data = null;
+    const lnodeUuid = null;
+    const doName = null;
+    const daName = null;
+    return [
+        {
+            title: 'Add LNodeDataRef',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createLNodeDataRefAction(parent),
+            },
+            content: [
+                ...contentLNodeDataRefWizard({
+                    desc,
+                    data,
+                    lnodeUuid,
+                    doName,
+                    daName,
+                }),
+            ],
+        },
+    ];
+}
+function updateLNodeDataRef(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['desc', 'data', 'lnodeUuid', 'doName', 'daName'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editLNodeDataRefWizard(element) {
+    const desc = element.getAttribute('desc');
+    const data = element.getAttribute('data');
+    const lnodeUuid = element.getAttribute('lnodeUuid');
+    const doName = element.getAttribute('doName');
+    const daName = element.getAttribute('daName');
+    return [
+        {
+            title: 'Edit LNodeDataRef',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateLNodeDataRef(element),
+            },
+            content: [
+                ...contentLNodeDataRefWizard({
+                    desc,
+                    data,
+                    lnodeUuid,
+                    doName,
+                    daName,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentLNodeInputRefWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="sourceRef"
+      .maybeValue=${options.sourceRef}
+      nullable
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="sourceRefUuid"
+      .maybeValue=${options.sourceRefUuid}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createLNodeInputRefAction(parent) {
+    return (inputs) => {
+        const LNodeInputRefAttrs = {};
+        const LNodeInputRefKeys = ['sourceRef', 'desc', 'sourceRefUuid'];
+        LNodeInputRefKeys.forEach(key => {
+            LNodeInputRefAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const LNodeInputRefNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:LNodeInputRef', LNodeInputRefAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: LNodeInputRefNode,
+                reference: get6100Reference(parent, 'LNodeInputRef'),
+            },
+        ];
+    };
+}
+function createLNodeInputRefWizard(parent) {
+    const sourceRef = null;
+    const desc = null;
+    const sourceRefUuid = null;
+    return [
+        {
+            title: 'Add LNodeInputRef',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createLNodeInputRefAction(parent),
+            },
+            content: [
+                ...contentLNodeInputRefWizard({
+                    sourceRef,
+                    desc,
+                    sourceRefUuid,
+                }),
+            ],
+        },
+    ];
+}
+function updateLNodeInputRef(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['sourceRef', 'desc', 'sourceRefUuid'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editLNodeInputRefWizard(element) {
+    const sourceRef = element.getAttribute('sourceRef');
+    const desc = element.getAttribute('desc');
+    const sourceRefUuid = element.getAttribute('sourceRefUuid');
+    return [
+        {
+            title: 'Edit LNodeInputRef',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateLNodeInputRef(element),
+            },
+            content: [
+                ...contentLNodeInputRefWizard({
+                    sourceRef,
+                    desc,
+                    sourceRefUuid,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentLNodeOutputRefWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="controlRef"
+      .maybeValue=${options.controlRef}
+      nullable
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="controlRefUuid"
+      .maybeValue=${options.controlRefUuid}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createLNodeOutputRefAction(parent) {
+    return (inputs) => {
+        const LNodeOutputRefAttrs = {};
+        const LNodeOutputRefKeys = ['controlRef', 'desc', 'controlRefUuid'];
+        LNodeOutputRefKeys.forEach(key => {
+            LNodeOutputRefAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const LNodeOutputRefNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:LNodeOutputRef', LNodeOutputRefAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: LNodeOutputRefNode,
+                reference: get6100Reference(parent, 'LNodeOutputRef'),
+            },
+        ];
+    };
+}
+function createLNodeOutputRefWizard(parent) {
+    const controlRef = null;
+    const desc = null;
+    const controlRefUuid = null;
+    return [
+        {
+            title: 'Add LNodeOutputRef',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createLNodeOutputRefAction(parent),
+            },
+            content: [
+                ...contentLNodeOutputRefWizard({
+                    controlRef,
+                    desc,
+                    controlRefUuid,
+                }),
+            ],
+        },
+    ];
+}
+function updateLNodeOutputRef(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['controlRef', 'desc', 'controlRefUuid'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editLNodeOutputRefWizard(element) {
+    const controlRef = element.getAttribute('controlRef');
+    const desc = element.getAttribute('desc');
+    const controlRefUuid = element.getAttribute('controlRefUuid');
+    return [
+        {
+            title: 'Edit LNodeOutputRef',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateLNodeOutputRef(element),
+            },
+            content: [
+                ...contentLNodeOutputRefWizard({
+                    controlRef,
+                    desc,
+                    controlRefUuid,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentFunctionalVariantWizard(options) {
+    return [
+        x `<scl-textfield
+      label="name"
+      .maybeValue=${options.name}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="uuid"
+      .maybeValue=${options.uuid}
+      disabled
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="templateUuid"
+      .maybeValue=${options.templateUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="originUuid"
+      .maybeValue=${options.originUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-checkbox
+      label="isBaseline"
+      .maybeValue=${options.isBaseline}
+      nullable
+    ></scl-checkbox>`,
+    ];
+}
+function createFunctionalVariantAction(parent) {
+    return (inputs) => {
+        const FunctionalVariantAttrs = {};
+        const FunctionalVariantKeys = [
+            'name',
+            'desc',
+            'uuid',
+            'templateUuid',
+            'originUuid',
+            'isBaseline',
+        ];
+        FunctionalVariantKeys.forEach(key => {
+            FunctionalVariantAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const FunctionalVariantNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:FunctionalVariant', FunctionalVariantAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: FunctionalVariantNode,
+                reference: get6100Reference(parent, 'FunctionalVariant'),
+            },
+        ];
+    };
+}
+function createFunctionalVariantWizard(parent) {
+    const name = null;
+    const desc = null;
+    const uuid = v4();
+    const templateUuid = null;
+    const originUuid = null;
+    const isBaseline = null;
+    return [
+        {
+            title: 'Add FunctionalVariant',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createFunctionalVariantAction(parent),
+            },
+            content: [
+                ...contentFunctionalVariantWizard({
+                    name,
+                    desc,
+                    uuid,
+                    templateUuid,
+                    originUuid,
+                    isBaseline,
+                }),
+            ],
+        },
+    ];
+}
+function updateFunctionalVariant(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = [
+            'name',
+            'desc',
+            'uuid',
+            'templateUuid',
+            'originUuid',
+            'isBaseline',
+        ];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editFunctionalVariantWizard(element) {
+    const name = element.getAttribute('name');
+    const desc = element.getAttribute('desc');
+    const uuid = element.getAttribute('uuid');
+    const templateUuid = element.getAttribute('templateUuid');
+    const originUuid = element.getAttribute('originUuid');
+    const isBaseline = element.getAttribute('isBaseline');
+    return [
+        {
+            title: 'Edit FunctionalVariant',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateFunctionalVariant(element),
+            },
+            content: [
+                ...contentFunctionalVariantWizard({
+                    name,
+                    desc,
+                    uuid,
+                    templateUuid,
+                    originUuid,
+                    isBaseline,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentFunctionalVariantGroupWizard(options) {
+    return [
+        x `<scl-textfield
+      label="name"
+      .maybeValue=${options.name}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="uuid"
+      .maybeValue=${options.uuid}
+      disabled
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="templateUuid"
+      .maybeValue=${options.templateUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="originUuid"
+      .maybeValue=${options.originUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+    ];
+}
+function createFunctionalVariantGroupAction(parent) {
+    return (inputs) => {
+        const FunctionalVariantGroupAttrs = {};
+        const FunctionalVariantGroupKeys = [
+            'name',
+            'desc',
+            'uuid',
+            'templateUuid',
+            'originUuid',
+        ];
+        FunctionalVariantGroupKeys.forEach(key => {
+            FunctionalVariantGroupAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const FunctionalVariantGroupNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:FunctionalVariantGroup', FunctionalVariantGroupAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: FunctionalVariantGroupNode,
+                reference: get6100Reference(parent, 'FunctionalVariantGroup'),
+            },
+        ];
+    };
+}
+function createFunctionalVariantGroupWizard(parent) {
+    const name = null;
+    const desc = null;
+    const uuid = v4();
+    const templateUuid = null;
+    const originUuid = null;
+    return [
+        {
+            title: 'Add FunctionalVariantGroup',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createFunctionalVariantGroupAction(parent),
+            },
+            content: [
+                ...contentFunctionalVariantGroupWizard({
+                    name,
+                    desc,
+                    uuid,
+                    templateUuid,
+                    originUuid,
+                }),
+            ],
+        },
+    ];
+}
+function updateFunctionalVariantGroup(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['name', 'desc', 'uuid', 'templateUuid', 'originUuid'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editFunctionalVariantGroupWizard(element) {
+    const name = element.getAttribute('name');
+    const desc = element.getAttribute('desc');
+    const uuid = element.getAttribute('uuid');
+    const templateUuid = element.getAttribute('templateUuid');
+    const originUuid = element.getAttribute('originUuid');
+    return [
+        {
+            title: 'Edit FunctionalVariantGroup',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateFunctionalVariantGroup(element),
+            },
+            content: [
+                ...contentFunctionalVariantGroupWizard({
+                    name,
+                    desc,
+                    uuid,
+                    templateUuid,
+                    originUuid,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentAllocationRoleRefWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="allocationRole"
+      .maybeValue=${options.allocationRole}
+      nullable
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="allocationRoleUuid"
+      .maybeValue=${options.allocationRoleUuid}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createAllocationRoleRefAction(parent) {
+    return (inputs) => {
+        const AllocationRoleRefAttrs = {};
+        const AllocationRoleRefKeys = [
+            'allocationRole',
+            'desc',
+            'allocationRoleUuid',
+        ];
+        AllocationRoleRefKeys.forEach(key => {
+            AllocationRoleRefAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const AllocationRoleRefNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:AllocationRoleRef', AllocationRoleRefAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: AllocationRoleRefNode,
+                reference: get6100Reference(parent, 'AllocationRoleRef'),
+            },
+        ];
+    };
+}
+function createAllocationRoleRefWizard(parent) {
+    const allocationRole = null;
+    const desc = null;
+    const allocationRoleUuid = null;
+    return [
+        {
+            title: 'Add AllocationRoleRef',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createAllocationRoleRefAction(parent),
+            },
+            content: [
+                ...contentAllocationRoleRefWizard({
+                    allocationRole,
+                    desc,
+                    allocationRoleUuid,
+                }),
+            ],
+        },
+    ];
+}
+function updateAllocationRoleRef(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['allocationRole', 'desc', 'allocationRoleUuid'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editAllocationRoleRefWizard(element) {
+    const allocationRole = element.getAttribute('allocationRole');
+    const desc = element.getAttribute('desc');
+    const allocationRoleUuid = element.getAttribute('allocationRoleUuid');
+    return [
+        {
+            title: 'Edit AllocationRoleRef',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateAllocationRoleRef(element),
+            },
+            content: [
+                ...contentAllocationRoleRefWizard({
+                    allocationRole,
+                    desc,
+                    allocationRoleUuid,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentVariableRefWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="value"
+      .maybeValue=${options.value}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="variable"
+      .maybeValue=${options.variable}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="variableUuid"
+      .maybeValue=${options.variableUuid}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createVariableRefAction(parent) {
+    return (inputs) => {
+        const VariableRefAttrs = {};
+        const VariableRefKeys = ['variable', 'desc', 'value', 'variableUuid'];
+        VariableRefKeys.forEach(key => {
+            VariableRefAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const VariableRefNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:VariableRef', VariableRefAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: VariableRefNode,
+                reference: get6100Reference(parent, 'VariableRef'),
+            },
+        ];
+    };
+}
+function createVariableRefWizard(parent) {
+    const desc = null;
+    const value = null;
+    const variable = null;
+    const variableUuid = null;
+    return [
+        {
+            title: 'Add VariableRef',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createVariableRefAction(parent),
+            },
+            content: [
+                ...contentVariableRefWizard({
+                    desc,
+                    value,
+                    variable,
+                    variableUuid,
+                }),
+            ],
+        },
+    ];
+}
+function updateVariableRef(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['variable', 'desc', 'value', 'variableUuid'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editVariableRefWizard(element) {
+    const desc = element.getAttribute('desc');
+    const value = element.getAttribute('value');
+    const variable = element.getAttribute('variable');
+    const variableUuid = element.getAttribute('variableUuid');
+    return [
+        {
+            title: 'Edit VariableRef',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateVariableRef(element),
+            },
+            content: [
+                ...contentVariableRefWizard({
+                    desc,
+                    value,
+                    variable,
+                    variableUuid,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentFunctionCategoryRefWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="functionCategory"
+      .maybeValue=${options.functionCategory}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="functionCategoryUuid"
+      .maybeValue=${options.functionCategoryUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+    ];
+}
+function createFunctionCategoryRefAction(parent) {
+    return (inputs) => {
+        const FunctionCategoryRefAttrs = {};
+        const FunctionCategoryRefKeys = [
+            'desc',
+            'functionCategory',
+            'functionCategoryUuid',
+        ];
+        FunctionCategoryRefKeys.forEach(key => {
+            FunctionCategoryRefAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const FunctionCategoryRefNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:FunctionCategoryRef', FunctionCategoryRefAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: FunctionCategoryRefNode,
+                reference: get6100Reference(parent, 'FunctionCategoryRef'),
+            },
+        ];
+    };
+}
+function createFunctionCategoryRefWizard(parent) {
+    const desc = null;
+    const functionCategory = null;
+    const functionCategoryUuid = null;
+    return [
+        {
+            title: 'Add FunctionCategoryRef',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createFunctionCategoryRefAction(parent),
+            },
+            content: [
+                ...contentFunctionCategoryRefWizard({
+                    desc,
+                    functionCategory,
+                    functionCategoryUuid,
+                }),
+            ],
+        },
+    ];
+}
+function updateFunctionCategoryRef(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['desc', 'functionCategory', 'functionCategoryUuid'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editFunctionCategoryRefWizard(element) {
+    const desc = element.getAttribute('desc');
+    const functionCategory = element.getAttribute('functionCategory');
+    const functionCategoryUuid = element.getAttribute('functionCategoryUuid');
+    return [
+        {
+            title: 'Edit FunctionCategoryRef',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateFunctionCategoryRef(element),
+            },
+            content: [
+                ...contentFunctionCategoryRefWizard({
+                    desc,
+                    functionCategory,
+                    functionCategoryUuid,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentPowerSystemRelationRefWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="powerSystemRelation"
+      .maybeValue=${options.powerSystemRelation}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="powerSystemRelationUuid"
+      .maybeValue=${options.powerSystemRelationUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+    ];
+}
+function createPowerSystemRelationRefAction(parent) {
+    return (inputs) => {
+        const PowerSystemRelationRefAttrs = {};
+        const PowerSystemRelationRefKeys = [
+            'desc',
+            'powerSystemRelation',
+            'powerSystemRelationUuid',
+        ];
+        PowerSystemRelationRefKeys.forEach(key => {
+            PowerSystemRelationRefAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const PowerSystemRelationRefNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:PowerSystemRelationRef', PowerSystemRelationRefAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: PowerSystemRelationRefNode,
+                reference: get6100Reference(parent, 'PowerSystemRelationRef'),
+            },
+        ];
+    };
+}
+function createPowerSystemRelationRefWizard(parent) {
+    const desc = null;
+    const powerSystemRelation = null;
+    const powerSystemRelationUuid = null;
+    return [
+        {
+            title: 'Add PowerSystemRelationRef',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createPowerSystemRelationRefAction(parent),
+            },
+            content: [
+                ...contentPowerSystemRelationRefWizard({
+                    desc,
+                    powerSystemRelation,
+                    powerSystemRelationUuid,
+                }),
+            ],
+        },
+    ];
+}
+function updatePowerSystemRelationRef(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = [
+            'desc',
+            'powerSystemRelation',
+            'powerSystemRelationUuid',
+        ];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editPowerSystemRelationRefWizard(element) {
+    const desc = element.getAttribute('desc');
+    const powerSystemRelation = element.getAttribute('powerSystemRelation');
+    const powerSystemRelationUuid = element.getAttribute('powerSystemRelationUuid');
+    return [
+        {
+            title: 'Edit PowerSystemRelationRef',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updatePowerSystemRelationRef(element),
+            },
+            content: [
+                ...contentPowerSystemRelationRefWizard({
+                    desc,
+                    powerSystemRelation,
+                    powerSystemRelationUuid,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentL2CommParametersWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="vlanId"
+      .maybeValue=${options.vlanId}
+      nullable
+      pattern="${patterns.vlanid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="vlanPriority"
+      .maybeValue=${options.vlanPriority}
+      nullable
+      pattern="${patterns.vlanPriority}"
+      type="number"
+      minValue="0"
+      maxValue="7"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="appId"
+      .maybeValue=${options.appId}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="macAddr"
+      .maybeValue=${options.macAddr}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createL2CommParametersAction(parent) {
+    return (inputs) => {
+        const L2CommParametersAttrs = {};
+        const L2CommParametersKeys = [
+            'desc',
+            'vlanId',
+            'vlanPriority',
+            'appId',
+            'macAddr',
+        ];
+        L2CommParametersKeys.forEach(key => {
+            L2CommParametersAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const L2CommParametersNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:L2CommParameters', L2CommParametersAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: L2CommParametersNode,
+                reference: get6100Reference(parent, 'L2CommParameters'),
+            },
+        ];
+    };
+}
+function createL2CommParametersWizard(parent) {
+    const desc = null;
+    const vlanId = null;
+    const vlanPriority = null;
+    const appId = null;
+    const macAddr = null;
+    return [
+        {
+            title: 'Add L2CommParameters',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createL2CommParametersAction(parent),
+            },
+            content: [
+                ...contentL2CommParametersWizard({
+                    desc,
+                    vlanId,
+                    vlanPriority,
+                    appId,
+                    macAddr,
+                }),
+            ],
+        },
+    ];
+}
+function updateL2CommParameters(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['desc', 'vlanId', 'vlanPriority', 'appId', 'macAddr'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editL2CommParametersWizard(element) {
+    const desc = element.getAttribute('desc');
+    const vlanId = element.getAttribute('vlanId');
+    const vlanPriority = element.getAttribute('vlanPriority');
+    const appId = element.getAttribute('appId');
+    const macAddr = element.getAttribute('macAddr');
+    return [
+        {
+            title: 'Edit L2CommParameters',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateL2CommParameters(element),
+            },
+            content: [
+                ...contentL2CommParametersWizard({
+                    desc,
+                    vlanId,
+                    vlanPriority,
+                    appId,
+                    macAddr,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentL3IPv4CommParametersWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="vlanId"
+      .maybeValue=${options.vlanId}
+      nullable
+      pattern="${patterns.vlanid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="vlanPriority"
+      .maybeValue=${options.vlanPriority}
+      nullable
+      pattern="${patterns.vlanPriority}"
+      type="number"
+      minValue="0"
+      maxValue="7"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="appId"
+      .maybeValue=${options.appId}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="IPv4"
+      .maybeValue=${options.IPv4}
+      nullable
+      pattern="${patterns.ipv4}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="IPv4-IGMPv3Src"
+      .maybeValue=${options.IPv4IGMPv3Src}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createL3IPv4CommParametersAction(parent) {
+    return (inputs) => {
+        const L3IPv4CommParametersAttrs = {};
+        const L3IPv4CommParametersKeys = [
+            'desc',
+            'vlanId',
+            'vlanPriority',
+            'appId',
+            'IPv4',
+            'IPv4-IGMPv3Src',
+        ];
+        L3IPv4CommParametersKeys.forEach(key => {
+            L3IPv4CommParametersAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const L3IPv4CommParametersNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:L3IPv4CommParameters', L3IPv4CommParametersAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: L3IPv4CommParametersNode,
+                reference: get6100Reference(parent, 'L3IPv4CommParameters'),
+            },
+        ];
+    };
+}
+function createL3IPv4CommParametersWizard(parent) {
+    const desc = null;
+    const vlanId = null;
+    const vlanPriority = null;
+    const appId = null;
+    const IPv4 = null;
+    const IPv4IGMPv3Src = null;
+    return [
+        {
+            title: 'Add L3IPv4CommParameters',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createL3IPv4CommParametersAction(parent),
+            },
+            content: [
+                ...contentL3IPv4CommParametersWizard({
+                    desc,
+                    vlanId,
+                    vlanPriority,
+                    appId,
+                    IPv4,
+                    IPv4IGMPv3Src,
+                }),
+            ],
+        },
+    ];
+}
+function updateL3IPv4CommParameters(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = [
+            'desc',
+            'vlanId',
+            'vlanPriority',
+            'appId',
+            'IPv4',
+            'IPv4-IGMPv3Src',
+        ];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editL3IPv4CommParametersWizard(element) {
+    const desc = element.getAttribute('desc');
+    const vlanId = element.getAttribute('vlanId');
+    const vlanPriority = element.getAttribute('vlanPriority');
+    const appId = element.getAttribute('appId');
+    const IPv4 = element.getAttribute('IPv4');
+    const IPv4IGMPv3Src = element.getAttribute('IPv4-IGMPv3Src');
+    return [
+        {
+            title: 'Edit L3IPv4CommParameters',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateL3IPv4CommParameters(element),
+            },
+            content: [
+                ...contentL3IPv4CommParametersWizard({
+                    desc,
+                    vlanId,
+                    vlanPriority,
+                    appId,
+                    IPv4,
+                    IPv4IGMPv3Src,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentL3IPv6CommParametersWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="vlanId"
+      .maybeValue=${options.vlanId}
+      nullable
+      pattern="${patterns.vlanid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="vlanPriority"
+      .maybeValue=${options.vlanPriority}
+      nullable
+      pattern="${patterns.vlanPriority}"
+      type="number"
+      minValue="0"
+      maxValue="7"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="appId"
+      .maybeValue=${options.appId}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="IPv6"
+      .maybeValue=${options.IPv6}
+      nullable
+      pattern="${patterns.ipv6}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="IPv6-IGMPv3Src"
+      .maybeValue=${options.IPv6IGMPv3Src}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createL3IPv6CommParametersAction(parent) {
+    return (inputs) => {
+        const L3IPv6CommParametersAttrs = {};
+        const L3IPv6CommParametersKeys = [
+            'desc',
+            'vlanId',
+            'vlanPriority',
+            'appId',
+            'IPv6',
+            'IPv6-IGMPv3Src',
+        ];
+        L3IPv6CommParametersKeys.forEach(key => {
+            L3IPv6CommParametersAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const L3IPv6CommParametersNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:L3IPv6CommParameters', L3IPv6CommParametersAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: L3IPv6CommParametersNode,
+                reference: get6100Reference(parent, 'L3IPv6CommParameters'),
+            },
+        ];
+    };
+}
+function createL3IPv6CommParametersWizard(parent) {
+    const desc = null;
+    const vlanId = null;
+    const vlanPriority = null;
+    const appId = null;
+    const IPv6 = null;
+    const IPv6IGMPv3Src = null;
+    return [
+        {
+            title: 'Add L3IPv6CommParameters',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createL3IPv6CommParametersAction(parent),
+            },
+            content: [
+                ...contentL3IPv6CommParametersWizard({
+                    desc,
+                    vlanId,
+                    vlanPriority,
+                    appId,
+                    IPv6,
+                    IPv6IGMPv3Src,
+                }),
+            ],
+        },
+    ];
+}
+function updateL3IPv6CommParameters(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = [
+            'desc',
+            'vlanId',
+            'vlanPriority',
+            'appId',
+            'IPv6',
+            'IPv6-IGMPv3Src',
+        ];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editL3IPv6CommParametersWizard(element) {
+    const desc = element.getAttribute('desc');
+    const vlanId = element.getAttribute('vlanId');
+    const vlanPriority = element.getAttribute('vlanPriority');
+    const appId = element.getAttribute('appId');
+    const IPv6 = element.getAttribute('IPv6');
+    const IPv6IGMPv3Src = element.getAttribute('IPv6-IGMPv3Src');
+    return [
+        {
+            title: 'Edit L3IPv6CommParameters',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateL3IPv6CommParameters(element),
+            },
+            content: [
+                ...contentL3IPv6CommParametersWizard({
+                    desc,
+                    vlanId,
+                    vlanPriority,
+                    appId,
+                    IPv6,
+                    IPv6IGMPv3Src,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentFunctionalSubVariantWizard(options) {
+    return [
+        x `<scl-textfield
+      label="name"
+      .maybeValue=${options.name}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="uuid"
+      .maybeValue=${options.uuid}
+      disabled
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="templateUuid"
+      .maybeValue=${options.templateUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="originUuid"
+      .maybeValue=${options.originUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-checkbox
+      label="isBaseline"
+      .maybeValue=${options.isBaseline}
+      nullable
+    ></scl-checkbox>`,
+    ];
+}
+function createFunctionalSubVariantAction(parent) {
+    return (inputs) => {
+        const FunctionalSubVariantAttrs = {};
+        const FunctionalSubVariantKeys = [
+            'name',
+            'desc',
+            'uuid',
+            'templateUuid',
+            'originUuid',
+            'isBaseline',
+        ];
+        FunctionalSubVariantKeys.forEach(key => {
+            FunctionalSubVariantAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const FunctionalSubVariantNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:FunctionalSubVariant', FunctionalSubVariantAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: FunctionalSubVariantNode,
+                reference: get6100Reference(parent, 'FunctionalSubVariant'),
+            },
+        ];
+    };
+}
+function createFunctionalSubVariantWizard(parent) {
+    const name = null;
+    const desc = null;
+    const uuid = v4();
+    const templateUuid = null;
+    const originUuid = null;
+    const isBaseline = null;
+    return [
+        {
+            title: 'Add FunctionalSubVariant',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createFunctionalSubVariantAction(parent),
+            },
+            content: [
+                ...contentFunctionalSubVariantWizard({
+                    name,
+                    desc,
+                    uuid,
+                    templateUuid,
+                    originUuid,
+                    isBaseline,
+                }),
+            ],
+        },
+    ];
+}
+function updateFunctionalSubVariant(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = [
+            'name',
+            'desc',
+            'uuid',
+            'templateUuid',
+            'originUuid',
+            'isBaseline',
+        ];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editFunctionalSubVariantWizard(element) {
+    const name = element.getAttribute('name');
+    const desc = element.getAttribute('desc');
+    const uuid = element.getAttribute('uuid');
+    const templateUuid = element.getAttribute('templateUuid');
+    const originUuid = element.getAttribute('originUuid');
+    const isBaseline = element.getAttribute('isBaseline');
+    return [
+        {
+            title: 'Edit FunctionalSubVariant',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateFunctionalSubVariant(element),
+            },
+            content: [
+                ...contentFunctionalSubVariantWizard({
+                    name,
+                    desc,
+                    uuid,
+                    templateUuid,
+                    originUuid,
+                    isBaseline,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentSDSWizard(options) {
+    return [
+        x `<scl-select
+      label="name"
+      .maybeValue=${options.name}
+      required
+      dialogInitialFocus
+      >${attributeNameEnum.map(type => x `<mwc-list-item value="${type}">${type}</mwc-list-item>`)}</scl-select
+    >`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="mappedDoName"
+      .maybeValue=${options.mappedDoName}
+      pattern="${patterns.mappedDoName}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="mappedLnUuid"
+      .maybeValue=${options.mappedLnUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="ix"
+      .maybeValue=${options.ix}
+      nullable
+      type="number"
+      minValue="0"
+    ></scl-textfield>`,
+    ];
+}
+function createSDSAction(parent) {
+    return (inputs) => {
+        const SDSAttrs = {};
+        const SDSKeys = ['name', 'desc', 'mappedDoName', 'mappedLnUuid', 'ix'];
+        SDSKeys.forEach(key => {
+            SDSAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const SDSNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:SDS', SDSAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: SDSNode,
+                reference: get6100Reference(parent, 'SDS'),
+            },
+        ];
+    };
+}
+function createSDSWizard(parent) {
+    const name = null;
+    const desc = null;
+    const mappedDoName = null;
+    const mappedLnUuid = null;
+    const ix = null;
+    return [
+        {
+            title: 'Add SDS',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createSDSAction(parent),
+            },
+            content: [
+                ...contentSDSWizard({
+                    name,
+                    desc,
+                    mappedDoName,
+                    mappedLnUuid,
+                    ix,
+                }),
+            ],
+        },
+    ];
+}
+function updateSDS(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['name', 'desc', 'mappedDoName', 'mappedLnUuid', 'ix'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editSDSWizard(element) {
+    const name = element.getAttribute('name');
+    const desc = element.getAttribute('desc');
+    const mappedDoName = element.getAttribute('mappedDoName');
+    const mappedLnUuid = element.getAttribute('mappedLnUuid');
+    const ix = element.getAttribute('ix');
+    return [
+        {
+            title: 'Edit SDS',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateSDS(element),
+            },
+            content: [
+                ...contentSDSWizard({
+                    name,
+                    desc,
+                    mappedDoName,
+                    mappedLnUuid,
+                    ix,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentDASWizard(options) {
+    return [
+        x `<scl-select
+      label="name"
+      .maybeValue=${options.name}
+      required
+      dialogInitialFocus
+      >${attributeNameEnum.map(type => x `<mwc-list-item value="${type}">${type}</mwc-list-item>`)}</scl-select
+    >`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="mappedDaName"
+      .maybeValue=${options.mappedDaName}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="mappedLnUuid"
+      .maybeValue=${options.mappedLnUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="ix"
+      .maybeValue=${options.ix}
+      nullable
+      type="number"
+      minValue="0"
+    ></scl-textfield>`,
+        x `<scl-select label="valKind" .maybeValue=${options.valKind} nullable
+      >${valKindEnum.map(type => x `<mwc-list-item value="${type}">${type}</mwc-list-item>`)}</scl-select
+    >`,
+        x `<scl-checkbox
+      label="valImport"
+      .maybeValue=${options.valImport}
+      nullable
+    ></scl-checkbox>`,
+    ];
+}
+function createDASAction(parent) {
+    return (inputs) => {
+        const DASAttrs = {};
+        const DASKeys = [
+            'name',
+            'desc',
+            'mappedDaName',
+            'mappedLnUuid',
+            'ix',
+            'valKind',
+            'valImport',
+        ];
+        DASKeys.forEach(key => {
+            DASAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const DASNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:DAS', DASAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: DASNode,
+                reference: get6100Reference(parent, 'DAS'),
+            },
+        ];
+    };
+}
+function createDASWizard(parent) {
+    const name = null;
+    const desc = null;
+    const mappedDaName = null;
+    const mappedLnUuid = null;
+    const ix = null;
+    const valKind = null;
+    const valImport = null;
+    return [
+        {
+            title: 'Add DAS',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createDASAction(parent),
+            },
+            content: [
+                ...contentDASWizard({
+                    name,
+                    desc,
+                    mappedDaName,
+                    mappedLnUuid,
+                    ix,
+                    valKind,
+                    valImport,
+                }),
+            ],
+        },
+    ];
+}
+function updateDAS(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = [
+            'name',
+            'desc',
+            'mappedDaName',
+            'mappedLnUuid',
+            'ix',
+            'valKind',
+            'valImport',
+        ];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editDASWizard(element) {
+    const name = element.getAttribute('name');
+    const desc = element.getAttribute('desc');
+    const mappedDaName = element.getAttribute('mappedDaName');
+    const mappedLnUuid = element.getAttribute('mappedLnUuid');
+    const ix = element.getAttribute('ix');
+    const valKind = element.getAttribute('valKind');
+    const valImport = element.getAttribute('valImport');
+    return [
+        {
+            title: 'Edit DAS',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateDAS(element),
+            },
+            content: [
+                ...contentDASWizard({
+                    name,
+                    desc,
+                    mappedDaName,
+                    mappedLnUuid,
+                    ix,
+                    valKind,
+                    valImport,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentSubscriberLNodeWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="resourceName"
+      .maybeValue=${options.resourceName}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="resourceNameUuid"
+      .maybeValue=${options.resourceNameUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="inputName"
+      .maybeValue=${options.inputName}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-select label="service" .maybeValue=${options.service} nullable
+      >${tSpecServiceType.map(type => x `<mwc-list-item value="${type}">${type}</mwc-list-item>`)}</scl-select
+    >`,
+        x `<scl-textfield
+      label="pLN"
+      .maybeValue=${options.pLN}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createSubscriberLNodeAction(parent) {
+    return (inputs) => {
+        const SubscriberLNodeAttrs = {};
+        const SubscriberLNodeKeys = [
+            'desc',
+            'resourceName',
+            'resourceNameUuid',
+            'inputName',
+            'service',
+            'pLN',
+        ];
+        SubscriberLNodeKeys.forEach(key => {
+            SubscriberLNodeAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const SubscriberLNodeNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:SubscriberLNode', SubscriberLNodeAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: SubscriberLNodeNode,
+                reference: get6100Reference(parent, 'SubscriberLNode'),
+            },
+        ];
+    };
+}
+function createSubscriberLNodeWizard(parent) {
+    const desc = null;
+    const resourceName = null;
+    const resourceNameUuid = null;
+    const inputName = null;
+    const service = null;
+    const pLN = null;
+    return [
+        {
+            title: 'Add SubscriberLNode',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createSubscriberLNodeAction(parent),
+            },
+            content: [
+                ...contentSubscriberLNodeWizard({
+                    desc,
+                    resourceName,
+                    resourceNameUuid,
+                    inputName,
+                    service,
+                    pLN,
+                }),
+            ],
+        },
+    ];
+}
+function updateSubscriberLNode(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = [
+            'desc',
+            'resourceName',
+            'resourceNameUuid',
+            'inputName',
+            'service',
+            'pLN',
+        ];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editSubscriberLNodeWizard(element) {
+    const desc = element.getAttribute('desc');
+    const resourceName = element.getAttribute('resourceName');
+    const resourceNameUuid = element.getAttribute('resourceNameUuid');
+    const inputName = element.getAttribute('inputName');
+    const service = element.getAttribute('service');
+    const pLN = element.getAttribute('pLN');
+    return [
+        {
+            title: 'Edit SubscriberLNode',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateSubscriberLNode(element),
+            },
+            content: [
+                ...contentSubscriberLNodeWizard({
+                    desc,
+                    resourceName,
+                    resourceNameUuid,
+                    inputName,
+                    service,
+                    pLN,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentControllingLNodeWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="resourceName"
+      .maybeValue=${options.resourceName}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="resourceNameUuid"
+      .maybeValue=${options.resourceNameUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="outputName"
+      .maybeValue=${options.outputName}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="pLN"
+      .maybeValue=${options.pLN}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createControllingLNodeAction(parent) {
+    return (inputs) => {
+        const ControllingLNodeAttrs = {};
+        const ControllingLNodeKeys = [
+            'desc',
+            'resourceName',
+            'resourceNameUuid',
+            'outputName',
+            'pLN',
+        ];
+        ControllingLNodeKeys.forEach(key => {
+            ControllingLNodeAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const ControllingLNodeNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:ControllingLNode', ControllingLNodeAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: ControllingLNodeNode,
+                reference: get6100Reference(parent, 'ControllingLNode'),
+            },
+        ];
+    };
+}
+function createControllingLNodeWizard(parent) {
+    const desc = null;
+    const resourceName = null;
+    const resourceNameUuid = null;
+    const outputName = null;
+    const pLN = null;
+    return [
+        {
+            title: 'Add ControllingLNode',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createControllingLNodeAction(parent),
+            },
+            content: [
+                ...contentControllingLNodeWizard({
+                    desc,
+                    resourceName,
+                    resourceNameUuid,
+                    outputName,
+                    pLN,
+                }),
+            ],
+        },
+    ];
+}
+function updateControllingLNode(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = [
+            'desc',
+            'resourceName',
+            'resourceNameUuid',
+            'outputName',
+            'pLN',
+        ];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editControllingLNodeWizard(element) {
+    const desc = element.getAttribute('desc');
+    const resourceName = element.getAttribute('resourceName');
+    const resourceNameUuid = element.getAttribute('resourceNameUuid');
+    const outputName = element.getAttribute('outputName');
+    const pLN = element.getAttribute('pLN');
+    return [
+        {
+            title: 'Edit ControllingLNode',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateControllingLNode(element),
+            },
+            content: [
+                ...contentControllingLNodeWizard({
+                    desc,
+                    resourceName,
+                    resourceNameUuid,
+                    outputName,
+                    pLN,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentLogParametersRefWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="id"
+      .maybeValue=${options.id}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+    ];
+}
+function createLogParametersRefAction(parent) {
+    return (inputs) => {
+        const LogParametersRefAttrs = {};
+        const LogParametersRefKeys = ['desc', 'id'];
+        LogParametersRefKeys.forEach(key => {
+            LogParametersRefAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const LogParametersRefNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:LogParametersRef', LogParametersRefAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: LogParametersRefNode,
+                reference: get6100Reference(parent, 'LogParametersRef'),
+            },
+        ];
+    };
+}
+function createLogParametersRefWizard(parent) {
+    const id = null;
+    const desc = null;
+    return [
+        {
+            title: 'Add LogParametersRef',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createLogParametersRefAction(parent),
+            },
+            content: [
+                ...contentLogParametersRefWizard({
+                    desc,
+                    id,
+                }),
+            ],
+        },
+    ];
+}
+function updateLogParametersRef(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['desc', 'id'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editLogParametersRefWizard(element) {
+    const id = element.getAttribute('id');
+    const desc = element.getAttribute('desc');
+    return [
+        {
+            title: 'Edit LogParametersRef',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateLogParametersRef(element),
+            },
+            content: [
+                ...contentLogParametersRefWizard({
+                    desc,
+                    id,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentAnalogueWiringParametersRefWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="id"
+      .maybeValue=${options.id}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+    ];
+}
+function createAnalogueWiringParametersRefAction(parent) {
+    return (inputs) => {
+        const AnalogueWiringParametersRefAttrs = {};
+        const AnalogueWiringParametersRefKeys = ['desc', 'id'];
+        AnalogueWiringParametersRefKeys.forEach(key => {
+            AnalogueWiringParametersRefAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const AnalogueWiringParametersRefNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:AnalogueWiringParametersRef', AnalogueWiringParametersRefAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: AnalogueWiringParametersRefNode,
+                reference: get6100Reference(parent, 'AnalogueWiringParametersRef'),
+            },
+        ];
+    };
+}
+function createAnalogueWiringParametersRefWizard(parent) {
+    const id = null;
+    const desc = null;
+    return [
+        {
+            title: 'Add AnalogueWiringParametersRef',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createAnalogueWiringParametersRefAction(parent),
+            },
+            content: [
+                ...contentAnalogueWiringParametersRefWizard({
+                    desc,
+                    id,
+                }),
+            ],
+        },
+    ];
+}
+function updateAnalogueWiringParametersRef(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['desc', 'id'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editAnalogueWiringParametersRefWizard(element) {
+    const id = element.getAttribute('id');
+    const desc = element.getAttribute('desc');
+    return [
+        {
+            title: 'Edit AnalogueWiringParametersRef',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateAnalogueWiringParametersRef(element),
+            },
+            content: [
+                ...contentAnalogueWiringParametersRefWizard({
+                    desc,
+                    id,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentBinaryWiringParametersRefWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="id"
+      .maybeValue=${options.id}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+    ];
+}
+function createBinaryWiringParametersRefAction(parent) {
+    return (inputs) => {
+        const BinaryWiringParametersRefAttrs = {};
+        const BinaryWiringParametersRefKeys = ['desc', 'id'];
+        BinaryWiringParametersRefKeys.forEach(key => {
+            BinaryWiringParametersRefAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const BinaryWiringParametersRefNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:BinaryWiringParametersRef', BinaryWiringParametersRefAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: BinaryWiringParametersRefNode,
+                reference: get6100Reference(parent, 'BinaryWiringParametersRef'),
+            },
+        ];
+    };
+}
+function createBinaryWiringParametersRefWizard(parent) {
+    const id = null;
+    const desc = null;
+    return [
+        {
+            title: 'Add BinaryWiringParametersRef',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createBinaryWiringParametersRefAction(parent),
+            },
+            content: [
+                ...contentBinaryWiringParametersRefWizard({
+                    desc,
+                    id,
+                }),
+            ],
+        },
+    ];
+}
+function updateBinaryWiringParametersRef(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['desc', 'id'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editBinaryWiringParametersRefWizard(element) {
+    const id = element.getAttribute('id');
+    const desc = element.getAttribute('desc');
+    return [
+        {
+            title: 'Edit BinaryWiringParametersRef',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateBinaryWiringParametersRef(element),
+            },
+            content: [
+                ...contentBinaryWiringParametersRefWizard({
+                    desc,
+                    id,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentGooseParametersRefWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="id"
+      .maybeValue=${options.id}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+    ];
+}
+function createGooseParametersRefAction(parent) {
+    return (inputs) => {
+        const GooseParametersRefAttrs = {};
+        const GooseParametersRefKeys = ['desc', 'id'];
+        GooseParametersRefKeys.forEach(key => {
+            GooseParametersRefAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const GooseParametersRefNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:GooseParametersRef', GooseParametersRefAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: GooseParametersRefNode,
+                reference: get6100Reference(parent, 'GooseParametersRef'),
+            },
+        ];
+    };
+}
+function createGooseParametersRefWizard(parent) {
+    const id = null;
+    const desc = null;
+    return [
+        {
+            title: 'Add GooseParametersRef',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createGooseParametersRefAction(parent),
+            },
+            content: [
+                ...contentGooseParametersRefWizard({
+                    desc,
+                    id,
+                }),
+            ],
+        },
+    ];
+}
+function updateGooseParametersRef(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['desc', 'id'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editGooseParametersRefWizard(element) {
+    const id = element.getAttribute('id');
+    const desc = element.getAttribute('desc');
+    return [
+        {
+            title: 'Edit GooseParametersRef',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateGooseParametersRef(element),
+            },
+            content: [
+                ...contentGooseParametersRefWizard({
+                    desc,
+                    id,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentSMVParametersRefWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="id"
+      .maybeValue=${options.id}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+    ];
+}
+function createSMVParametersRefAction(parent) {
+    return (inputs) => {
+        const SMVParametersRefAttrs = {};
+        const SMVParametersRefKeys = ['desc', 'id'];
+        SMVParametersRefKeys.forEach(key => {
+            SMVParametersRefAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const SMVParametersRefNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:SMVParametersRef', SMVParametersRefAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: SMVParametersRefNode,
+                reference: get6100Reference(parent, 'SMVParametersRef'),
+            },
+        ];
+    };
+}
+function createSMVParametersRefWizard(parent) {
+    const id = null;
+    const desc = null;
+    return [
+        {
+            title: 'Add SMVParametersRef',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createSMVParametersRefAction(parent),
+            },
+            content: [
+                ...contentSMVParametersRefWizard({
+                    desc,
+                    id,
+                }),
+            ],
+        },
+    ];
+}
+function updateSMVParametersRef(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['desc', 'id'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editSMVParametersRefWizard(element) {
+    const id = element.getAttribute('id');
+    const desc = element.getAttribute('desc');
+    return [
+        {
+            title: 'Edit SMVParametersRef',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateSMVParametersRef(element),
+            },
+            content: [
+                ...contentSMVParametersRefWizard({
+                    desc,
+                    id,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentReportParametersRefWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="id"
+      .maybeValue=${options.id}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+    ];
+}
+function createReportParametersRefAction(parent) {
+    return (inputs) => {
+        const ReportParametersRefAttrs = {};
+        const ReportParametersRefKeys = ['desc', 'id'];
+        ReportParametersRefKeys.forEach(key => {
+            ReportParametersRefAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const ReportParametersRefNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:ReportParametersRef', ReportParametersRefAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: ReportParametersRefNode,
+                reference: get6100Reference(parent, 'ReportParametersRef'),
+            },
+        ];
+    };
+}
+function createReportParametersRefWizard(parent) {
+    const id = null;
+    const desc = null;
+    return [
+        {
+            title: 'Add ReportParametersRef',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createReportParametersRefAction(parent),
+            },
+            content: [
+                ...contentReportParametersRefWizard({
+                    desc,
+                    id,
+                }),
+            ],
+        },
+    ];
+}
+function updateReportParametersRef(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['desc', 'id'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editReportParametersRefWizard(element) {
+    const id = element.getAttribute('id');
+    const desc = element.getAttribute('desc');
+    return [
+        {
+            title: 'Edit ReportParametersRef',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateReportParametersRef(element),
+            },
+            content: [
+                ...contentReportParametersRefWizard({
+                    desc,
+                    id,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentSubFunctionTemplateWizard(options) {
+    return [
+        x `<scl-textfield
+      label="name"
+      .maybeValue=${options.name}
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="type"
+      .maybeValue=${options.type}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="uuid"
+      .maybeValue=${options.uuid}
+      disabled
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="templateUuid"
+      .maybeValue=${options.templateUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="originUuid"
+      .maybeValue=${options.originUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+    ];
+}
+function createSubFunctionTemplateAction(parent) {
+    return (inputs) => {
+        const SubFunctionTemplateAttrs = {};
+        const SubFunctionTemplateKeys = [
+            'name',
+            'desc',
+            'type',
+            'uuid',
+            'templateUuid',
+            'originUuid',
+        ];
+        SubFunctionTemplateKeys.forEach(key => {
+            SubFunctionTemplateAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const SubFunctionTemplateNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:SubFunctionTemplate', SubFunctionTemplateAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: SubFunctionTemplateNode,
+                reference: get6100Reference(parent, 'SubFunctionTemplate'),
+            },
+        ];
+    };
+}
+function createSubFunctionTemplateWizard(parent) {
+    const name = null;
+    const desc = null;
+    const type = null;
+    const uuid = v4();
+    const templateUuid = null;
+    const originUuid = null;
+    return [
+        {
+            title: 'Add SubFunctionTemplate',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createSubFunctionTemplateAction(parent),
+            },
+            content: [
+                ...contentSubFunctionTemplateWizard({
+                    name,
+                    desc,
+                    type,
+                    uuid,
+                    templateUuid,
+                    originUuid,
+                }),
+            ],
+        },
+    ];
+}
+function updateSubFunctionTemplate(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = [
+            'name',
+            'desc',
+            'type',
+            'uuid',
+            'templateUuid',
+            'originUuid',
+        ];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editSubFunctionTemplateWizard(element) {
+    const name = element.getAttribute('name');
+    const desc = element.getAttribute('desc');
+    const type = element.getAttribute('type');
+    const uuid = element.getAttribute('uuid');
+    const templateUuid = element.getAttribute('templateUuid');
+    const originUuid = element.getAttribute('originUuid');
+    return [
+        {
+            title: 'Edit SubFunctionTemplate',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateSubFunctionTemplate(element),
+            },
+            content: [
+                ...contentSubFunctionTemplateWizard({
+                    name,
+                    desc,
+                    type,
+                    uuid,
+                    templateUuid,
+                    originUuid,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentInputVarRefWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="value"
+      .maybeValue=${options.value}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="variable"
+      .maybeValue=${options.variable}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createInputVarRefAction(parent) {
+    return (inputs) => {
+        const InputVarRefAttrs = {};
+        const InputVarRefKeys = ['variable', 'desc', 'value'];
+        InputVarRefKeys.forEach(key => {
+            InputVarRefAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const InputVarRefNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:InputVarRef', InputVarRefAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: InputVarRefNode,
+                reference: get6100Reference(parent, 'InputVarRef'),
+            },
+        ];
+    };
+}
+function createInputVarRefWizard(parent) {
+    const desc = null;
+    const value = null;
+    const variable = null;
+    return [
+        {
+            title: 'Add InputVarRef',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createInputVarRefAction(parent),
+            },
+            content: [
+                ...contentInputVarRefWizard({
+                    desc,
+                    value,
+                    variable,
+                }),
+            ],
+        },
+    ];
+}
+function updateInputVarRef(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['variable', 'desc', 'value'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editInputVarRefWizard(element) {
+    const desc = element.getAttribute('desc');
+    const value = element.getAttribute('value');
+    const variable = element.getAttribute('variable');
+    return [
+        {
+            title: 'Edit InputVarRef',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateInputVarRef(element),
+            },
+            content: [
+                ...contentInputVarRefWizard({
+                    desc,
+                    value,
+                    variable,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentOutputVarRefWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="value"
+      .maybeValue=${options.value}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="variable"
+      .maybeValue=${options.variable}
+      nullable
+    ></scl-textfield>`,
+    ];
+}
+function createOutputVarRefAction(parent) {
+    return (inputs) => {
+        const OutputVarRefAttrs = {};
+        const OutputVarRefKeys = ['variable', 'desc', 'value'];
+        OutputVarRefKeys.forEach(key => {
+            OutputVarRefAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const OutputVarRefNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:OutputVarRef', OutputVarRefAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: OutputVarRefNode,
+                reference: get6100Reference(parent, 'OutputVarRef'),
+            },
+        ];
+    };
+}
+function createOutputVarRefWizard(parent) {
+    const desc = null;
+    const value = null;
+    const variable = null;
+    return [
+        {
+            title: 'Add OutputVarRef',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createOutputVarRefAction(parent),
+            },
+            content: [
+                ...contentOutputVarRefWizard({
+                    desc,
+                    value,
+                    variable,
+                }),
+            ],
+        },
+    ];
+}
+function updateOutputVarRef(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = ['variable', 'desc', 'value'];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editOutputVarRefWizard(element) {
+    const desc = element.getAttribute('desc');
+    const value = element.getAttribute('value');
+    const variable = element.getAttribute('variable');
+    return [
+        {
+            title: 'Edit OutputVarRef',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateOutputVarRef(element),
+            },
+            content: [
+                ...contentOutputVarRefWizard({
+                    desc,
+                    value,
+                    variable,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentControlRefWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="pLN"
+      .maybeValue=${options.pLN}
+      pattern="${patterns.normalizedString}"
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="pDO"
+      .maybeValue=${options.pDO}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="resourceName"
+      .maybeValue=${options.resourceName}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="resourceUuid"
+      .maybeValue=${options.resourceUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="controlled"
+      .maybeValue=${options.controlled}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="controlledLNodeUuid"
+      .maybeValue=${options.controlledLNodeUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="controlledDoName"
+      .maybeValue=${options.controlledDoName}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="output"
+      .maybeValue=${options.output}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="outputInst"
+      .maybeValue=${options.outputInst}
+      pattern="${patterns.lnInst}"
+      type="number"
+      min="1"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="extCtrlAddr"
+      .maybeValue=${options.extCtrlAddr}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="extCtrlUuid"
+      .maybeValue=${options.extCtrlUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="uuid"
+      .maybeValue=${options.uuid}
+      disabled
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="templateUuid"
+      .maybeValue=${options.templateUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="originUuid"
+      .maybeValue=${options.originUuid}
+      nullable
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+    ];
+}
+function createControlRefAction(parent) {
+    return (inputs) => {
+        const ControlRefAttrs = {};
+        const ControlRefKeys = [
+            'pLN',
+            'desc',
+            'pDO',
+            'resourceName',
+            'resourceUuid',
+            'controlled',
+            'controlledLNodeUuid',
+            'controlledDoName',
+            'output',
+            'outputInst',
+            'extCtrlAddr',
+            'extCtrlUuid',
+            'uuid',
+            'templateUuid',
+            'originUuid',
+        ];
+        ControlRefKeys.forEach(key => {
+            ControlRefAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const ControlRefNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:ControlRef', ControlRefAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: ControlRefNode,
+                reference: get6100Reference(parent, 'ControlRef'),
+            },
+        ];
+    };
+}
+function createControlRefWizard(parent) {
+    const pLN = null;
+    const desc = null;
+    const pDO = null;
+    const resourceName = null;
+    const resourceUuid = null;
+    const controlled = null;
+    const controlledLNodeUuid = null;
+    const controlledDoName = null;
+    const output = null;
+    const outputInst = null;
+    const extCtrlAddr = null;
+    const extCtrlUuid = null;
+    const uuid = v4();
+    const templateUuid = null;
+    const originUuid = null;
+    return [
+        {
+            title: 'Add ControlRef',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createControlRefAction(parent),
+            },
+            content: [
+                ...contentControlRefWizard({
+                    desc,
+                    pLN,
+                    pDO,
+                    resourceName,
+                    resourceUuid,
+                    controlled,
+                    controlledLNodeUuid,
+                    controlledDoName,
+                    output,
+                    outputInst,
+                    extCtrlAddr,
+                    extCtrlUuid,
+                    uuid,
+                    templateUuid,
+                    originUuid,
+                }),
+            ],
+        },
+    ];
+}
+function updateControlRef(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = [
+            'pLN',
+            'desc',
+            'pDO',
+            'resourceName',
+            'resourceUuid',
+            'controlled',
+            'controlledLNodeUuid',
+            'controlledDoName',
+            'output',
+            'outputInst',
+            'extCtrlAddr',
+            'extCtrlUuid',
+            'uuid',
+            'templateUuid',
+            'originUuid',
+        ];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editControlRefWizard(element) {
+    const pLN = element.getAttribute('pLN');
+    const desc = element.getAttribute('desc');
+    const pDO = element.getAttribute('pDO');
+    const resourceName = element.getAttribute('resourceName');
+    const resourceUuid = element.getAttribute('resourceUuid');
+    const controlled = element.getAttribute('controlled');
+    const controlledLNodeUuid = element.getAttribute('controlledLNodeUuid');
+    const controlledDoName = element.getAttribute('controlledDoName');
+    const output = element.getAttribute('output');
+    const outputInst = element.getAttribute('outputInst');
+    const extCtrlAddr = element.getAttribute('extCtrlAddr');
+    const extCtrlUuid = element.getAttribute('extCtrlUuid');
+    const uuid = element.getAttribute('uuid');
+    const templateUuid = element.getAttribute('templateUuid');
+    const originUuid = element.getAttribute('originUuid');
+    return [
+        {
+            title: 'Edit ControlRef',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateControlRef(element),
+            },
+            content: [
+                ...contentControlRefWizard({
+                    pLN,
+                    desc,
+                    pDO,
+                    resourceName,
+                    resourceUuid,
+                    controlled,
+                    controlledLNodeUuid,
+                    controlledDoName,
+                    output,
+                    outputInst,
+                    extCtrlAddr,
+                    extCtrlUuid,
+                    uuid,
+                    templateUuid,
+                    originUuid,
+                }),
+            ],
+        },
+    ];
+}
+
+/* eslint-disable import/no-extraneous-dependencies */
+function contentCheckoutIDWizard(options) {
+    return [
+        x `<scl-textfield
+      label="desc"
+      .maybeValue=${options.desc}
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="uuid"
+      .maybeValue=${options.uuid}
+      disabled
+      pattern="${patterns.uuid}"
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="fileName"
+      .maybeValue=${options.fileName}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="version"
+      .maybeValue=${options.version}
+      pattern="${patterns.normalizedString}"
+      required
+      dialogInitialFocus
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="revision"
+      .maybeValue=${options.revision}
+      pattern="${patterns.normalizedString}"
+      required
+    ></scl-textfield>`,
+        x `<scl-textfield
+      label="when"
+      .maybeValue=${options.when}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-select label="fileType" .maybeValue=${options.fileType} required
+      >${tSCLFileType.map(type => x `<mwc-list-item value="${type}">${type}</mwc-list-item>`)}</scl-select
+    >`,
+        x `<scl-textfield
+      label="id"
+      .maybeValue=${options.id}
+      pattern="${patterns.normalizedString}"
+      nullable
+    ></scl-textfield>`,
+        x `<scl-select label="engRight" .maybeValue=${options.engRight} nullable
+      >${tRightEnum.map(type => x `<mwc-list-item value="${type}">${type}</mwc-list-item>`)}</scl-select
+    >`,
+    ];
+}
+function createCheckoutIDAction(parent) {
+    return (inputs) => {
+        const CheckoutIDAttrs = {};
+        const CheckoutIDKeys = [
+            'desc',
+            'uuid',
+            'fileName',
+            'version',
+            'revision',
+            'when',
+            'fileType',
+            'id',
+            'engRight',
+        ];
+        CheckoutIDKeys.forEach(key => {
+            CheckoutIDAttrs[key] = getValue(inputs.find(i => i.label === key));
+        });
+        const CheckoutIDNode = createElement(parent.ownerDocument, 'eIEC61850-6-100:CheckoutID', CheckoutIDAttrs, 'http://www.iec.ch/61850/2019/SCL/6-100');
+        return [
+            {
+                parent,
+                node: CheckoutIDNode,
+                reference: get6100Reference(parent, 'CheckoutID'),
+            },
+        ];
+    };
+}
+function createCheckoutIDWizard(parent) {
+    const desc = null;
+    const uuid = v4();
+    const fileName = null;
+    const version = null;
+    const revision = null;
+    const when = null;
+    const fileType = null;
+    const id = null;
+    const engRight = null;
+    return [
+        {
+            title: 'Add CheckoutID',
+            primary: {
+                icon: 'add',
+                label: 'add',
+                action: createCheckoutIDAction(parent),
+            },
+            content: [
+                ...contentCheckoutIDWizard({
+                    desc,
+                    uuid,
+                    fileName,
+                    version,
+                    revision,
+                    when,
+                    fileType,
+                    id,
+                    engRight,
+                }),
+            ],
+        },
+    ];
+}
+function updateCheckoutID(element) {
+    return (inputs) => {
+        const attributes = {};
+        const functionKeys = [
+            'desc',
+            'uuid',
+            'fileName',
+            'version',
+            'revision',
+            'when',
+            'fileType',
+            'id',
+            'engRight',
+        ];
+        functionKeys.forEach(key => {
+            attributes[key] = getValue(inputs.find(i => i.label === key));
+        });
+        if (functionKeys.some(key => attributes[key] !== element.getAttribute(key))) {
+            return [{ element, attributes }];
+        }
+        return [];
+    };
+}
+function editCheckoutIDWizard(element) {
+    const desc = element.getAttribute('desc');
+    const uuid = element.getAttribute('uuid');
+    const fileName = element.getAttribute('fileName');
+    const version = element.getAttribute('version');
+    const revision = element.getAttribute('revision');
+    const when = element.getAttribute('when');
+    const fileType = element.getAttribute('fileType');
+    const id = element.getAttribute('id');
+    const engRight = element.getAttribute('engRight');
+    return [
+        {
+            title: 'Edit CheckoutID',
+            primary: {
+                icon: 'edit',
+                label: 'save',
+                action: updateCheckoutID(element),
+            },
+            content: [
+                ...contentCheckoutIDWizard({
+                    desc,
+                    uuid,
+                    fileName,
+                    version,
+                    revision,
+                    when,
+                    fileType,
+                    id,
+                    engRight,
                 }),
             ],
         },
@@ -50596,6 +56182,170 @@ const wizards = {
     VariableApplyTo: {
         edit: editVariableApplyToWizard,
         create: createVariableApplyToWizard,
+    },
+    LNodeInputs: {
+        edit: editLNodeInputsWizard,
+        create: createLNodeInputsWizard,
+    },
+    LNodeOutputs: {
+        edit: editLNodeOutputsWizard,
+        create: createLNodeOutputsWizard,
+    },
+    LNodeSpecNaming: {
+        edit: editLNodeSpecNamingWizard,
+        create: createLNodeSpecNamingWizard,
+    },
+    SourceRef: {
+        edit: editSourceRefWizard,
+        create: createSourceRefWizard,
+    },
+    BayType: {
+        edit: editBayTypeWizard,
+        create: createBayTypeWizard,
+    },
+    DOS: {
+        edit: editDOSWizard,
+        create: createDOSWizard,
+    },
+    SDS: {
+        edit: editSDSWizard,
+        create: createSDSWizard,
+    },
+    DAS: {
+        edit: editDASWizard,
+        create: createDASWizard,
+    },
+    FunctionTemplate: {
+        edit: editFunctionTemplateWizard,
+        create: createFunctionTemplateWizard,
+    },
+    ProcessEcho: {
+        edit: editProcessEchoWizard,
+        create: createProcessEchoWizard,
+    },
+    Project: {
+        edit: editProjectWizard,
+        create: createProjectWizard,
+    },
+    SubCategory: {
+        edit: editSubCategoryWizard,
+        create: createSubCategoryWizard,
+    },
+    ProjectProcessReference: {
+        edit: editProjectProcessReferenceWizard,
+        create: createProjectProcessReferenceWizard,
+    },
+    SignalRole: {
+        edit: editSignalRoleWizard,
+        create: createSignalRoleWizard,
+    },
+    FunctionalVariantRef: {
+        edit: editFunctionalVariantRefWizard,
+        create: createFunctionalVariantRefWizard,
+    },
+    LNodeDataRef: {
+        edit: editLNodeDataRefWizard,
+        create: createLNodeDataRefWizard,
+    },
+    LNodeInputRef: {
+        edit: editLNodeInputRefWizard,
+        create: createLNodeInputRefWizard,
+    },
+    LNodeOutputRef: {
+        edit: editLNodeOutputRefWizard,
+        create: createLNodeOutputRefWizard,
+    },
+    FunctionalVariant: {
+        edit: editFunctionalVariantWizard,
+        create: createFunctionalVariantWizard,
+    },
+    FunctionalSubVariant: {
+        edit: editFunctionalSubVariantWizard,
+        create: createFunctionalSubVariantWizard,
+    },
+    FunctionalVariantGroup: {
+        edit: editFunctionalVariantGroupWizard,
+        create: createFunctionalVariantGroupWizard,
+    },
+    AllocationRoleRef: {
+        edit: editAllocationRoleRefWizard,
+        create: createAllocationRoleRefWizard,
+    },
+    VariableRef: {
+        edit: editVariableRefWizard,
+        create: createVariableRefWizard,
+    },
+    FunctionCategoryRef: {
+        edit: editFunctionCategoryRefWizard,
+        create: createFunctionCategoryRefWizard,
+    },
+    PowerSystemRelationRef: {
+        edit: editPowerSystemRelationRefWizard,
+        create: createPowerSystemRelationRefWizard,
+    },
+    L2CommParameters: {
+        edit: editL2CommParametersWizard,
+        create: createL2CommParametersWizard,
+    },
+    L3IPv4CommParameters: {
+        edit: editL3IPv4CommParametersWizard,
+        create: createL3IPv4CommParametersWizard,
+    },
+    L3IPv6CommParameters: {
+        edit: editL3IPv6CommParametersWizard,
+        create: createL3IPv6CommParametersWizard,
+    },
+    SubscriberLNode: {
+        edit: editSubscriberLNodeWizard,
+        create: createSubscriberLNodeWizard,
+    },
+    ControllingLNode: {
+        edit: editControllingLNodeWizard,
+        create: createControllingLNodeWizard,
+    },
+    LogParametersRef: {
+        edit: editLogParametersRefWizard,
+        create: createLogParametersRefWizard,
+    },
+    AnalogueWiringParametersRef: {
+        edit: editAnalogueWiringParametersRefWizard,
+        create: createAnalogueWiringParametersRefWizard,
+    },
+    BinaryWiringParametersRef: {
+        edit: editBinaryWiringParametersRefWizard,
+        create: createBinaryWiringParametersRefWizard,
+    },
+    GooseParametersRef: {
+        edit: editGooseParametersRefWizard,
+        create: createGooseParametersRefWizard,
+    },
+    SMVParametersRef: {
+        edit: editSMVParametersRefWizard,
+        create: createSMVParametersRefWizard,
+    },
+    ReportParametersRef: {
+        edit: editReportParametersRefWizard,
+        create: createReportParametersRefWizard,
+    },
+    SubFunctionTemplate: {
+        edit: editSubFunctionTemplateWizard,
+        create: createSubFunctionTemplateWizard,
+    },
+    InputVarRef: {
+        edit: editInputVarRefWizard,
+        create: createInputVarRefWizard,
+    },
+    OutputVarRef: {
+        edit: editOutputVarRefWizard,
+        create: createOutputVarRefWizard,
+    },
+    ControlRef: {
+        edit: editControlRefWizard,
+        create: createControlRefWizard,
+    },
+    CheckoutID: {
+        edit: editCheckoutIDWizard,
+        create: createCheckoutIDWizard,
     },
 };
 

@@ -4,8 +4,8 @@ import '../../../foundation/components/scl-textfield.js';
 import { UUID } from 'crypto';
 import { Wizard } from '../../foundation.js';
 type RenderOptions = {
-    behaviorDescription: string | null;
     desc: string | null;
+    behaviorDescription: string | null;
     behaviorDescriptionUuid: UUID | null;
 };
 export declare function contentBehaviorDescriptionRefWizard(options: RenderOptions): TemplateResult[];

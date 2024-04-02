@@ -5,8 +5,6 @@ type RenderOptions = {
     id: string | null;
     desc: string | null;
     inpRef: string | null;
-    fctInp: string | null;
-    dsgInp: string | null;
     inpNam: string | null;
     debTm: string | null;
     vInOff: string | null;

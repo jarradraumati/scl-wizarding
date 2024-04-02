@@ -1,5 +1,7 @@
+/// <reference types="node" />
 import { TemplateResult } from 'lit';
 import '../../../foundation/components/scl-textfield.js';
+import { UUID } from 'crypto';
 import { Wizard } from '../../foundation.js';
 type RenderOptions = {
     eelement: string | null;
@@ -10,6 +12,7 @@ type RenderOptions = {
     sGroup: string | null;
     format: string | null;
     defaultValue: string | null;
+    elementUuid: UUID | null;
 };
 export declare function contentVariableApplyToWizard(options: RenderOptions): TemplateResult[];
 export declare function createVariableApplyToWizard(parent: Element): Wizard;
