@@ -45354,13 +45354,12 @@ function updateAction$a(element) {
     };
 }
 function mapAction(element) {
+    let lnSelector = 'LN';
     return (_, wizard) => {
         var _a;
         const list = (_a = wizard.shadowRoot) === null || _a === void 0 ? void 0 : _a.querySelector('#lnList');
         if (list.selected.value.endsWith('LN0'))
-            var lnSelector = 'LN0';
-        else
-            var lnSelector = 'LN';
+            lnSelector = 'LN0';
         const selectedLN = element.ownerDocument.querySelector(selector(lnSelector, list.selected.value));
         const { iedName, ldInst, prefix, inst, lnType } = logicalNodeParameters(selectedLN);
         const attributes = {};
