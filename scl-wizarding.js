@@ -45357,7 +45357,11 @@ function mapAction(element) {
     return (_, wizard) => {
         var _a;
         const list = (_a = wizard.shadowRoot) === null || _a === void 0 ? void 0 : _a.querySelector('#lnList');
-        const selectedLN = element.ownerDocument.querySelector(selector('LN', list.selected.value));
+        if (list.selected.value.endsWith('LN0'))
+            var lnSelector = 'LN0';
+        else
+            var lnSelector = 'LN';
+        const selectedLN = element.ownerDocument.querySelector(selector(lnSelector, list.selected.value));
         const { iedName, ldInst, prefix, inst, lnType } = logicalNodeParameters(selectedLN);
         const attributes = {};
         const lNodeTypeKeys = ['iedName', 'ldInst', 'prefix', 'lnInst', 'lnType'];
