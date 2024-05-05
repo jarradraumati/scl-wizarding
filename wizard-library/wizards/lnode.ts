@@ -18,6 +18,7 @@ import {
 import { Edit, Insert } from '@openscd/open-scd-core';
 import { OscdFilteredList } from '@openscd/oscd-filtered-list';
 
+import { ifDefined } from 'lit/directives/if-defined.js';
 import {
   Wizard,
   WizardActor,
@@ -266,7 +267,7 @@ function createAction(parent: Element): WizardActor {
       .filter(item => !item.disabled)
       .map(item => item.value)
       .map(id => {
-        if (id.endsWith('LLN0'))
+        if (id.endsWith('LN0'))
           return parent.ownerDocument.querySelector(selector('LN0', id));
         if (id.startsWith('#'))
           return parent.ownerDocument.querySelector(selector('LNodeType', id));
@@ -307,13 +308,17 @@ function updateAction(element: Element): WizardActor {
 }
 
 function mapAction(element: Element): WizardActor {
+  let lnSelector = 'LN';
   return (_: WizardInputElement[], wizard: Element): Edit[] => {
     const list = wizard.shadowRoot?.querySelector(
       '#lnList',
     ) as OscdFilteredList;
 
+    if ((list.selected as ListItemBase).value.endsWith('LN0'))
+      lnSelector = 'LN0';
+
     const selectedLN = element.ownerDocument.querySelector(
-      selector('LN', (list.selected as ListItemBase).value),
+      selector(lnSelector, (list.selected as ListItemBase).value),
     ) as Element;
 
     const { iedName, ldInst, prefix, inst, lnType } =
@@ -373,8 +378,14 @@ function renderListItem(value: {
     value.anyLn,
   );
 
+  let ln = identity(value.anyLn);
+
+  if (lnClass === 'LLN0') {
+    ln += '>>LN0';
+  }
+
   return html`<mwc-check-list-item
-    value="${identity(value.anyLn)}"
+    value="${ln}"
     twoline
     ?disabled=${value.selected}
     ?selected=${value.childLNode}
@@ -528,14 +539,13 @@ export function editLNodeWizard(element: Element, subWizard?: boolean): Wizard {
                   class="${classMap({ hidden: selectedIEDs.length })}"
                   id="iedList"
                   multi
-                  disableCheckAll
                   @selected="${(evt: Event) => filterIEDLN(evt, element)}"
                   >${renderIEDItems(element)}</oscd-filtered-list
                 >
               </div>
               <oscd-filtered-list
                 id="lnList"
-                searchField.value="${lnClass}"
+                searchField.value="${ifDefined(ifDefined(lnClass))}"
               ></oscd-filtered-list>
             </div>
           </div>`,
