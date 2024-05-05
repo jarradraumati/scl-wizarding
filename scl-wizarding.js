@@ -45532,14 +45532,13 @@ function editLNodeWizard(element, subWizard) {
                   class="${o$1({ hidden: selectedIEDs.length })}"
                   id="iedList"
                   multi
-                  disableCheckAll
                   @selected="${(evt) => filterIEDLN(evt, element)}"
                   >${renderIEDItems(element)}</oscd-filtered-list
                 >
               </div>
               <oscd-filtered-list
                 id="lnList"
-                searchField.value="${lnClass}"
+                searchField.value="${l$1(l$1(lnClass))}"
               ></oscd-filtered-list>
             </div>
           </div>`,
